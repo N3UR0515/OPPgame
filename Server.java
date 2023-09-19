@@ -1,3 +1,5 @@
+import org.lwjgl.Sys;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -10,7 +12,6 @@ public class Server {
     private static final int MAX_CLIENTS = 10;
     private static List<ClientHandler> clients = new ArrayList<>();
     private static List<PlayerPosition> playerPositions = new ArrayList<>();
-    private static ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_CLIENTS);
 
     public static void main(String[] args) {
         try {
@@ -25,16 +26,15 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clientId);
                 clients.add(clientHandler);
-                threadPool.execute(clientHandler);
+
                 clientId++;
 
-                /*Thread thread = new Thread(clientHandler);
-                thread.start();*/
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public static void broadcastPlayerPositions() {
         synchronized (playerPositions) {
@@ -79,71 +79,53 @@ public class Server {
             }
         }
     }
-
-
-    public static void removeClientHandler(ClientHandler clientHandler) {
-        clients.remove(clientHandler);
-    }
 }
 
 class ClientHandler implements Runnable {
     private Socket clientSocket;
-    private BufferedWriter out;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
     private int clientId;
-    private BufferedReader in;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientSocket = clientSocket;
         this.clientId = clientId;
         try {
-            out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            new Thread(this::run).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     @Override
     public void run() {
         try {
-            String message;
-
-            while ((message = in.readLine()) != null) {
-                // Parse the received message (assuming it's in the format "X:Y")
-                String[] parts = message.split(":");
-                if (parts.length == 2) {
-                    int x = Integer.parseInt(parts[0]);
-                    int y = Integer.parseInt(parts[1]);
-
-                    // Store the player's position in the server
-                    Server.storePlayerPosition(clientId, x, y);
-
-                    // Broadcast updated positions to all clients
-                    Server.broadcastPlayerPositions();
-                }
+            String player;
+            while((player = (String) in.readObject()) != null)
+            {
+               System.out.println(player);
+               String[] parts = player.split(":");
+               if(parts.length == 2)
+               {
+                   int x = Integer.parseInt(parts[0]);
+                   int y = Integer.parseInt(parts[1]);
+                   Server.storePlayerPosition(clientId, x, y);
+                   Server.broadcastPlayerPositions();
+               }
             }
-        } catch (SocketException e) {
-            // Handle socket disconnection here
-            System.out.println("Client " + clientId + " disconnected.");
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            // Close resources and remove the client handler
-            try {
-                out.close();
-                in.close();
-                clientSocket.close();
-                Server.removeClientHandler(this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public void sendMessage(String message) {
         try {
-            out.write(message);
-            out.newLine(); // Add a newline to separate messages
+            out.writeObject(message);
             out.flush(); // Flush the buffered output to ensure it's sent immediately
         } catch (IOException e) {
             e.printStackTrace();

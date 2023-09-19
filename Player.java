@@ -17,14 +17,17 @@ public class Player {
     private boolean isMovingUp;
     private boolean isMovingDown;
 
-    public Player(int HP, Map map)
+    public Player(int HP, Map map, int rel_x, int rel_y)
     {
-        x = map.getTile(0).getX();
-        y = map.getTile(0).getY();
-        rel_x = 0;
-        rel_y = 0;
+        //x = map.getTile(0).getX();
+        //y = map.getTile(0).getY();
+        this.rel_x = rel_x;
+        this.rel_y = rel_y;
         this.HP = HP;
         this.map = map;
+        Tile tile = map.getTileByLoc(rel_x, rel_y);
+        x = tile.getX();
+        y = tile.getY();
 
         triangle = new Polygon();
         triangle.addPoint(x, y - 50); // Top vertex
