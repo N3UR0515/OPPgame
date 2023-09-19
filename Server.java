@@ -2,11 +2,15 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
     private static final int PORT = 12345;
+    private static final int MAX_CLIENTS = 10;
     private static List<ClientHandler> clients = new ArrayList<>();
     private static List<PlayerPosition> playerPositions = new ArrayList<>();
+    private static ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_CLIENTS);
 
     public static void main(String[] args) {
         try {
@@ -21,10 +25,11 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clientId);
                 clients.add(clientHandler);
+                threadPool.execute(clientHandler);
                 clientId++;
 
-                Thread thread = new Thread(clientHandler);
-                thread.start();
+                /*Thread thread = new Thread(clientHandler);
+                thread.start();*/
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -34,6 +39,7 @@ public class Server {
     public static void broadcastPlayerPositions() {
         synchronized (playerPositions) {
             String positions = playerPositions.stream()
+                    .filter(pp -> pp.changed)
                     .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
                     .reduce("", (acc, pos) -> acc + pos + ";");
 
@@ -48,10 +54,32 @@ public class Server {
 
     public static void storePlayerPosition(int clientId, int x, int y) {
         synchronized (playerPositions) {
-            playerPositions.removeIf(pp -> pp.getClientId() == clientId);
-            playerPositions.add(new PlayerPosition(clientId, x, y));
+            boolean found = false;
+
+            for (PlayerPosition pp : playerPositions) {
+                if (pp.getClientId() == clientId) {
+                    // Check if x and y have changed
+                    if (pp.getX() != x || pp.getY() != y) {
+                        pp.setX(x);
+                        pp.setY(y);
+                        pp.changed = true;
+                    }
+                    else
+                    {
+                        pp.changed = false;
+                    }
+                    found = true;
+                    break; // No need to continue searching
+                }
+            }
+
+            // If no matching player position was found, add a new one
+            if (!found) {
+                playerPositions.add(new PlayerPosition(clientId, x, y, true));
+            }
         }
     }
+
 
     public static void removeClientHandler(ClientHandler clientHandler) {
         clients.remove(clientHandler);
@@ -60,7 +88,7 @@ public class Server {
 
 class ClientHandler implements Runnable {
     private Socket clientSocket;
-    private PrintWriter out;
+    private BufferedWriter out;
     private int clientId;
     private BufferedReader in;
 
@@ -68,7 +96,8 @@ class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.clientId = clientId;
         try {
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,12 +106,9 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message;
 
             while ((message = in.readLine()) != null) {
-                //System.out.println("Received from client " + clientId + ": " + message);
-
                 // Parse the received message (assuming it's in the format "X:Y")
                 String[] parts = message.split(":");
                 if (parts.length == 2) {
@@ -105,6 +131,7 @@ class ClientHandler implements Runnable {
             // Close resources and remove the client handler
             try {
                 out.close();
+                in.close();
                 clientSocket.close();
                 Server.removeClientHandler(this);
             } catch (IOException e) {
@@ -113,8 +140,13 @@ class ClientHandler implements Runnable {
         }
     }
 
-
     public void sendMessage(String message) {
-        out.println(message);
+        try {
+            out.write(message);
+            out.newLine(); // Add a newline to separate messages
+            out.flush(); // Flush the buffered output to ensure it's sent immediately
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

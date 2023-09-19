@@ -1,4 +1,3 @@
-import org.lwjgl.Sys;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -6,13 +5,15 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Test extends BasicGame {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
     private Socket socket;
-    private PrintWriter out;
+    private BufferedWriter out;
     private BufferedReader in;
     private List<PlayerPosition> otherPlayerPositions = new ArrayList<>();
     private final Object playerPositionsLock = new Object(); // Lock for accessing otherPlayerPositions
@@ -20,6 +21,8 @@ public class Test extends BasicGame {
     private Player player;
     private Camera camera;
     private Enemy enemy;
+    private String oldPlayerPosition = "-1:-1\n";
+    private ExecutorService sendExecutor = Executors.newSingleThreadExecutor(); // Single-threaded executor for sending messages
 
     public Test() {
         super("Game");
@@ -47,7 +50,7 @@ public class Test extends BasicGame {
 
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
-            out = new PrintWriter(socket.getOutputStream(), true);
+            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,12 +62,28 @@ public class Test extends BasicGame {
         camera.updateCamera(container);
         enemy.updateEnemy(player);
 
-        synchronized (playerPositionsLock) {
-            out.println(player.getRel_x() + ":" + player.getRel_y());
-
+        synchronized (playerPositionsLock)
+        {
             try {
+                // Send player's position to the server
+                final String playerPositionMessage = player.getRel_x() + ":" + player.getRel_y() + "\n";
+                //if(!oldPlayerPosition.equals(playerPositionMessage))
+                {
+                    sendExecutor.execute(() -> {
+                        try {
+                            out.write(playerPositionMessage);
+                            out.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+                oldPlayerPosition = playerPositionMessage;
+
+                // Receive and process messages from the server
                 String message;
-                if((message = in.readLine()) != null) {
+                if ((message = in.readLine()) != null && !message.isEmpty()) {
+                    System.out.println(message);
                     String[] players = message.split(";");
                     for (String p : players) {
                         String[] parts = p.split(":");
@@ -73,14 +92,13 @@ public class Test extends BasicGame {
                         int x = Integer.parseInt(coords[0]);
                         int y = Integer.parseInt(coords[1]);
                         otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
-                        otherPlayerPositions.add(new PlayerPosition(clientId, x, y));
+                        otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
                     }
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     public void render(GameContainer container, Graphics g) throws SlickException {
@@ -92,7 +110,7 @@ public class Test extends BasicGame {
                 int y = pp.getY();
                 Tile tile = map.getTileByLoc(x, y);
                 g.setColor(Color.green);
-                g.fill(new Rectangle(tile.getX() + camera.cameraX, tile.getY()+ camera.cameraY, 50, 50));
+                g.fill(new Rectangle(tile.getX() + camera.cameraX, tile.getY() + camera.cameraY, 50, 50));
             }
         }
 
