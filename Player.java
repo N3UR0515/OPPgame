@@ -4,6 +4,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.Graphics;
 
+import java.io.ObjectOutputStream;
+
 public class Player {
     private int x;
     private int y;
@@ -35,7 +37,7 @@ public class Player {
         triangle.addPoint(x + 50, y + 50); // Bottom-right vertex
     }
 
-    public void updatePlayer(GameContainer container) {
+    public boolean updatePlayer(GameContainer container) {
         Input input = container.getInput();
 
         // Reset movement flags
@@ -107,9 +109,15 @@ public class Player {
         } else if (isMovingDown) {
             rel_y++;
         }
+
         getRealLoc();
         triangle.setCenterX(x);
         triangle.setCenterY(y);
+
+        return isMovingDown ||
+                isMovingLeft||
+                isMovingUp  ||
+                isMovingRight;
     }
 
 

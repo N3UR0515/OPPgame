@@ -64,7 +64,7 @@ public class Test extends BasicGame {
     public void Send()
     {
         try {
-            while(true)
+            //while(true)
             {
                 if(!oldPlayerPosition.equals(player.getRel_x() + ":" + player.getRel_y()))
                 {
@@ -109,7 +109,10 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-        player.updatePlayer(container);
+        if (player.updatePlayer(container))
+        {
+            new Thread(this::Send).start();
+        };
         camera.updateCamera(container);
         enemy.updateEnemy(player);
     }
