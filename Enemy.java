@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Enemy {
-    private int x;
+    private int x; // Where enemy is drawn
     private int y;
-    private int rel_x;
+    private int rel_x; // On which tile enemy stands
     private int rel_y;
     private int HP;
     private final Polygon triangle;

@@ -5,7 +5,6 @@ public class Camera {
     Player player;
     int cameraX;
     int cameraY;
-    int y;
     public Camera(GameContainer container, Player player)
     {
         this.player = player;

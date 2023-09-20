@@ -43,8 +43,8 @@ public class Test extends BasicGame {
     }
 
     public void init(GameContainer container) throws SlickException {
-        int numCols = 1000 / 150;
-        int numRows = 1000 / 150;
+        int numCols = 100;
+        int numRows = 100;
         map = new Map(numCols, numRows);
         player = new Player(10, map, 0, 0);
         camera = new Camera(container, player);

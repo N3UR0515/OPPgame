@@ -7,17 +7,13 @@ import org.newdawn.slick.Graphics;
 import java.io.ObjectOutputStream;
 
 public class Player {
-    private int x;
+    private int x; // Where player is being drawn
     private int y;
-    private int rel_x;
+    private int rel_x; // On which tile player stands
     private int rel_y;
     private int HP;
     private final Polygon triangle;
     private Map map;
-    private boolean isMovingLeft;
-    private boolean isMovingRight;
-    private boolean isMovingUp;
-    private boolean isMovingDown;
 
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
@@ -41,10 +37,10 @@ public class Player {
         Input input = container.getInput();
 
         // Reset movement flags
-        isMovingRight = false;
-        isMovingLeft = false;
-        isMovingUp = false;
-        isMovingDown = false;
+        boolean isMovingRight = false;
+        boolean isMovingLeft = false;
+        boolean isMovingUp = false;
+        boolean isMovingDown = false;
         if (input.isKeyPressed(Input.KEY_Q)) {
 
             if (rel_x % 2 != 0 && rel_x > 0) {
@@ -115,8 +111,8 @@ public class Player {
         triangle.setCenterY(y);
 
         return isMovingDown ||
-                isMovingLeft||
-                isMovingUp  ||
+                isMovingLeft ||
+                isMovingUp ||
                 isMovingRight;
     }
 
