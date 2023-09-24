@@ -1,12 +1,11 @@
-import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
-import org.newdawn.slick.Graphics;
 
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public class Player {
+public class Player implements Serializable {
     private int x; // Where player is being drawn
     private int y;
     private int rel_x; // On which tile player stands
@@ -133,6 +132,14 @@ public class Player {
     public int getRel_y()
     {
         return rel_y;
+    }
+    public void setRel_x(int x)
+    {
+        rel_x = x;
+    }
+    public void setRel_y(int y)
+    {
+        rel_y = y;
     }
     public void damagePlayer()
     {

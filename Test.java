@@ -87,19 +87,28 @@ public class Test extends BasicGame {
             while((players = (String) in.readObject()) != null && !players.isEmpty())
             {
                 System.out.println(players);
-                String[] ps = players.split(";");
-                for(String p : ps)
-                {
-                    String[] parts = p.split(":");
-                    int clientId = Integer.parseInt(parts[0]);
-                    String[] coords = parts[1].split(",");
-                    int x = Integer.parseInt(coords[0]);
-                    int y = Integer.parseInt(coords[1]);
-                    otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
-                    otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
+                if(players.startsWith("e")) {
+                    String[] ps = players.split(":");
+                    int x = Integer.parseInt(ps[0].substring(1));
+                    int y = Integer.parseInt(ps[1]);
+                    enemy.updateEnemy(new Player(0,map,x, y));
+//                    enemy.setRel_x(x);
+//                    enemy.setRel_y(y);
+                } else {
+                    String[] ps = players.split(";");
+                    for (String p : ps) {
+                        String[] parts = p.split(":");
+                        int clientId = Integer.parseInt(parts[0]);
+                        String[] coords = parts[1].split(",");
+                        int x = Integer.parseInt(coords[0]);
+                        int y = Integer.parseInt(coords[1]);
+                        otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
+                        otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
 
+                    }
                 }
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -115,7 +124,7 @@ public class Test extends BasicGame {
             new Thread(this::Send).start();
         };
         camera.updateCamera(container);
-        enemy.updateEnemy(player);
+        //enemy.updateEnemy(player);
     }
 
     public void render(GameContainer container, Graphics g) throws SlickException {

@@ -47,6 +47,18 @@ public class Server {
             }
         }
     }
+    public static void broadcastEnemyPositions(Enemy enemy) {
+        synchronized (enemy) {
+//            String positions = playerPositions.stream()
+//                    .filter(pp -> pp.changed)
+//                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
+//                    .reduce("", (acc, pos) -> acc + pos + ";");
+
+            for (ClientHandler client : clients) {
+                client.sendMessage("e" + enemy.getRel_x() + ":" + enemy.getRel_y());
+            }
+        }
+    }
 
 
 
@@ -86,7 +98,7 @@ class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private int clientId;
     private Map map;
-    private Player player;
+    private Player playerModel;
     private Camera camera;
     private Enemy enemy;
 
@@ -98,10 +110,10 @@ class ClientHandler implements Runnable {
             in = new ObjectInputStream(clientSocket.getInputStream());
 
             map = (Map) in.readObject();
-            player = (Player) in.readObject();
+            System.out.println(map.getRows());
+            playerModel = (Player) in.readObject();
             camera = (Camera) in.readObject();
-            Enemy enemy = new Enemy(10, map, camera);
-            enemy.updateEnemy(player);
+            enemy = new Enemy(10, map, camera);
             new Thread(this::run).start();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -123,6 +135,11 @@ class ClientHandler implements Runnable {
                    int y = Integer.parseInt(parts[1]);
                    Server.storePlayerPosition(clientId, x, y);
                    Server.broadcastPlayerPositions();
+
+                   playerModel.setRel_x(x);
+                   playerModel.setRel_y(y);
+                   enemy.updateEnemy(playerModel);
+                   Server.broadcastEnemyPositions(enemy);
                }
             }
         } catch (IOException e) {

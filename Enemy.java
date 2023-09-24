@@ -26,6 +26,18 @@ public class Enemy {
         triangle.addPoint(x - 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-left vertex
         triangle.addPoint(x + 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-right vertex
     }
+    public int getRel_x(){
+        return rel_x;
+    }
+    public int getRel_y(){
+        return rel_y;
+    }
+    public void setRel_x(int x){
+        rel_x = x;
+    }
+    public void setRel_y(int y){
+        rel_y = y;
+    }
 
     public void updateEnemy(Player player) {
         getRealLoc();
@@ -54,34 +66,34 @@ public class Enemy {
         int prel_x = player.getRel_x();
         int prel_y = player.getRel_y();
 
-        if(tile.id %2 == 0)
-        {
-            //{-1, -1}, {0, -1}, {-1, 1}, {-1, 0}, {0, 1}, {1, 0}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() +1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getY() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()))
-            {
-                return true;
-            }
-
-        }
-        else
-        {
-            //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getY()+1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()+1))
-            {
-                return true;
-            }
-        }
-        return false;
+//        if(tile.id %2 == 0)
+//        {
+//            //{-1, -1}, {0, -1}, {-1, 1}, {-1, 0}, {0, 1}, {1, 0}
+//            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
+//                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
+//                    (prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() +1) ||
+//                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY()) ||
+//                    (prel_x == tile.getTrel_x() && prel_y == tile.getY() + 1)||
+//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()))
+//            {
+//                return true;
+//            }
+//
+//        }
+//        else
+//        {
+//            //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+//            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
+//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
+//                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
+//                    (prel_x == tile.getTrel_x() && prel_y == tile.getY()+1) ||
+//                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY() + 1)||
+//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()+1))
+//            {
+//                return true;
+//            }
+//        }
+        return prel_x==tile.getTrel_x()&&prel_y==tile.getTrel_y();
     }
 
     private void seekPlayer(Player player) {
