@@ -9,7 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="slick" level="project" />
     <orderEntry type="library" exported="" name="ibxm" level="project" />
-    <orderEntry type="library" exported="" name="lwjgl" level="project" />
     <orderEntry type="library" exported="" name="windows" level="project" />
+    <orderEntry type="library" exported="" name="lwjgl" level="project" />
   </component>
 </module>

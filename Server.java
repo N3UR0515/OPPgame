@@ -1,11 +1,10 @@
-import org.lwjgl.Sys;
-
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
     private static final int PORT = 12345;
@@ -86,6 +85,10 @@ class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private int clientId;
+    private Map map;
+    private Player player;
+    private Camera camera;
+    private Enemy enemy;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientSocket = clientSocket;
@@ -93,8 +96,14 @@ class ClientHandler implements Runnable {
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
+
+            map = (Map) in.readObject();
+            player = (Player) in.readObject();
+            camera = (Camera) in.readObject();
+            Enemy enemy = new Enemy(10, map, camera);
+            enemy.updateEnemy(player);
             new Thread(this::run).start();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

@@ -1,15 +1,11 @@
-import org.lwjgl.Sys;
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Rectangle;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 public class Test extends BasicGame {
     private static final String SERVER_IP = "localhost";
@@ -54,6 +50,11 @@ public class Test extends BasicGame {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
+
+            out.writeObject(map);
+            out.writeObject(player);
+            out.writeObject(camera);
+
             new Thread(this::Send).start();
             new Thread(this::Receive).start();
         }catch (IOException e) {
