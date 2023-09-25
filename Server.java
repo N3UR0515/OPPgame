@@ -9,8 +9,7 @@ import java.util.List;
 public class Server {
     private static final int PORT = 12345;
     private static List<ClientHandler> clients = new ArrayList<>();
-    private static List<PlayerPosition> playerPositions = new ArrayList<>();
-    private static List<Player> players = new ArrayList<>();
+    private static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
     public static Enemy enemy;
     public  static Turnline turnline;
@@ -25,7 +24,9 @@ public class Server {
             enemy = new Enemy(10, map, 0, 1);
 
             int clientId = 1; // Initialize a unique identifier for clients
-            new Thread(Server::updateEnemy).start();
+            //new Thread(Server::updateEnemy).start();
+            enemies.add(new EnemyHandler(0));
+
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -33,6 +34,9 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clientId);
                 clients.add(clientHandler);
+
+
+
 
                 clientId++;
 
@@ -44,106 +48,50 @@ public class Server {
 
 
     public static void broadcastPlayerPositions() {
-        synchronized (playerPositions)
+        //synchronized (playerPositions)
         {
-            String positions = playerPositions.stream()
+            StringBuilder positions = new StringBuilder();
+            for(ClientHandler client : clients)
+            {
+                positions.append(client.clientId).append(":").append(client.playerModel.getRel_x()).append(",").append(client.playerModel.getRel_y()).append(";");
+            }
+            /*String positions = playerPositions.stream()
                     //.filter(pp -> pp.changed)
                     .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
-                    .reduce("", (acc, pos) -> acc + pos + ";");
+                    .reduce("", (acc, pos) -> acc + pos + ";");*/
 
             for (ClientHandler client : clients) {
-                client.sendMessage(positions);
+                client.sendMessage(positions.toString());
             }
         }
     }
     public static void broadcastEnemyPositions() {
-        synchronized (enemy) {
+        //synchronized (enemy)
+        {
+            StringBuilder positions = new StringBuilder();
+            for(EnemyHandler enemy:enemies)
+            {
+                positions.append("e").append(enemy.enemyId).append(":").append(enemy.enemyModel.getRel_x()).append(",").append(enemy.enemyModel.getRel_y()).append(";");
+            }
 //            String positions = playerPositions.stream()
 //                    .filter(pp -> pp.changed)
 //                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
 //                    .reduce("", (acc, pos) -> acc + pos + ";");
 
             for (ClientHandler client : clients) {
-                client.sendMessage("e" + enemy.getRel_x() + ":" + enemy.getRel_y());
+                client.sendMessage(positions.toString());
             }
         }
     }
 
-
-
-
-    public static void storePlayerPosition(int clientId, int x, int y) {
-        synchronized (playerPositions) {
-            boolean found = false;
-
-            for (PlayerPosition pp : playerPositions) {
-                if (pp.getClientId() == clientId) {
-                    // Check if x and y have changed
-                    if (pp.getX() != x || pp.getY() != y) {
-                        pp.setX(x);
-                        pp.setY(y);
-                        pp.changed = true;
-                    }
-                    else
-                    {
-                        pp.changed = false;
-                    }
-                    found = true;
-                    break; // No need to continue searching
-                }
-            }
-
-            // If no matching player position was found, add a new one
-            if (!found) {
-                playerPositions.add(new PlayerPosition(clientId, x, y, true));
-            }
-        }
-    }
-
-    public static void storePlayer(Player player)
-    {
-        synchronized (players)
-        {
-            players.add(player);
-        }
-    }
-    public static void updatePlayers(int clientId, int x, int y)
-    {
-        synchronized (players)
-        {
-            for(Player player:players)
-            {
-                if (player.id == clientId)
-                {
-                    player.setRel_x(x);
-                    player.setRel_y(y);
-                }
-            }
-        }
-    }
-
-    private static void updateEnemy()
-    {
-        while (true)
-        {
-            //System.out.println(playerPositions.size());
-            if(!playerPositions.isEmpty())
-            {
-                enemy.updateCharacter(new Player(10, map, playerPositions.get(0).getX(), playerPositions.get(0).getY()));
-                //broadcastEnemyPositions();
-            }
-        }
-
-
-    }
 }
 
 class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private int clientId;
-    private Player playerModel;
+    public int clientId;
+    public Player playerModel;
     private boolean isPlayerTurn = false;
 
     public ClientHandler(Socket clientSocket, int clientId) {
@@ -153,8 +101,7 @@ class ClientHandler implements Runnable {
             playerModel = new Player(10, Server.map, 0, 0);
             playerModel.id = clientId;
             Server.turnline.Add(playerModel);
-            Server.storePlayer(playerModel);
-            Server.storePlayerPosition(clientId, 0, 0);
+
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -180,7 +127,7 @@ class ClientHandler implements Runnable {
             while((player = (String) in.readObject()) != null)
             {
                System.out.println(player);
-                if(Server.turnline.getCharacter().id == clientId)
+                if(Server.turnline.getCharacter() instanceof Player && Server.turnline.getCharacter().id == clientId)
                 {
                     sendMessage("YOUR TURN");
                     String[] parts = player.split(":");
@@ -188,12 +135,13 @@ class ClientHandler implements Runnable {
                     {
                         int x = Integer.parseInt(parts[0]);
                         int y = Integer.parseInt(parts[1]);
-                        Server.storePlayerPosition(clientId, x, y);
-                        Server.broadcastPlayerPositions();
+
+
 
                         playerModel.setRel_x(x);
                         playerModel.setRel_y(y);
-                        Server.updatePlayers(clientId, x, y);
+
+                        Server.broadcastPlayerPositions();
                         //enemy.updateEnemy(playerModel);
                         //Server.broadcastEnemyPositions();
                     }

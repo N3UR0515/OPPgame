@@ -96,9 +96,9 @@ public class Test extends BasicGame {
             {
                 System.out.println(players);
                 if(players.startsWith("e")) {
-                    String[] ps = players.split(":");
-                    int x = Integer.parseInt(ps[0].substring(1));
-                    int y = Integer.parseInt(ps[1]);
+                    //String[] ps = players.split(":");
+                    //int x = Integer.parseInt(ps[0].substring(1));
+                    //int y = Integer.parseInt(ps[1]);
                     //enemy.updateEnemy(new Player(0,map,x, y));
 //                    enemy.setRel_x(x);
 //                    enemy.setRel_y(y);
@@ -131,13 +131,12 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-        if(MyTurn)
+        //if(MyTurn)
         {
             if (player.updateCharacter(container))
             {
-                MyTurn = false;
                 new Thread(this::Send).start();
-
+                MyTurn = false;
             };
         }
 
