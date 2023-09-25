@@ -26,6 +26,18 @@ public class Enemy {
         triangle.addPoint(x - 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-left vertex
         triangle.addPoint(x + 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-right vertex
     }
+
+    public Enemy(int HP, Map map)
+    {
+        x = map.getTile(1).getX();
+        y = map.getTile(1).getY();
+        rel_x = 1;
+        rel_y = 0;
+        this.HP = HP;
+        this.map = map;
+
+        triangle = new Polygon();
+    }
     public int getRel_x(){
         return rel_x;
     }

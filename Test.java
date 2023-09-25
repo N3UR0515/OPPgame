@@ -39,26 +39,32 @@ public class Test extends BasicGame {
     }
 
     public void init(GameContainer container) throws SlickException {
-        int numCols = 100;
-        int numRows = 100;
-        map = new Map(numCols, numRows);
-        player = new Player(10, map, 0, 0);
-        camera = new Camera(container, player);
-        enemy = new Enemy(10, map, camera);
+
+        //player = new Player(10, map, 0, 0);
+        //camera = new Camera(container, player);
+
+        //map = new Map(0, 0);
 
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            out.writeObject(map);
-            out.writeObject(player);
-            out.writeObject(camera);
+            map = (Map) in.readObject();
+            player = (Player) in.readObject();
+            camera = new Camera(container, player);
+            enemy = new Enemy(10, map, camera);
+
+            //out.writeObject(map);
+            //out.writeObject(player);
+            //out.writeObject(camera);
 
             new Thread(this::Send).start();
             new Thread(this::Receive).start();
         }catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -91,7 +97,7 @@ public class Test extends BasicGame {
                     String[] ps = players.split(":");
                     int x = Integer.parseInt(ps[0].substring(1));
                     int y = Integer.parseInt(ps[1]);
-                    enemy.updateEnemy(new Player(0,map,x, y));
+                    //enemy.updateEnemy(new Player(0,map,x, y));
 //                    enemy.setRel_x(x);
 //                    enemy.setRel_y(y);
                 } else {

@@ -6,6 +6,7 @@ import org.newdawn.slick.geom.Polygon;
 import java.io.Serializable;
 
 public class Player implements Serializable {
+    public int id;
     private int x; // Where player is being drawn
     private int y;
     private int rel_x; // On which tile player stands

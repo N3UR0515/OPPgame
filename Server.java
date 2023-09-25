@@ -8,16 +8,22 @@ import java.util.List;
 
 public class Server {
     private static final int PORT = 12345;
-    private static final int MAX_CLIENTS = 10;
     private static List<ClientHandler> clients = new ArrayList<>();
     private static List<PlayerPosition> playerPositions = new ArrayList<>();
+    private static List<Player> players = new ArrayList<>();
+    public static Map map;
+    public static Enemy enemy;
 
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 
+            map = new Map(100, 100);
+            enemy = new Enemy(10, map);
+
             int clientId = 1; // Initialize a unique identifier for clients
+            new Thread(Server::updateEnemy).start();
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -36,9 +42,10 @@ public class Server {
 
 
     public static void broadcastPlayerPositions() {
-        synchronized (playerPositions) {
+        synchronized (playerPositions)
+        {
             String positions = playerPositions.stream()
-                    .filter(pp -> pp.changed)
+                    //.filter(pp -> pp.changed)
                     .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
                     .reduce("", (acc, pos) -> acc + pos + ";");
 
@@ -47,7 +54,7 @@ public class Server {
             }
         }
     }
-    public static void broadcastEnemyPositions(Enemy enemy) {
+    public static void broadcastEnemyPositions() {
         synchronized (enemy) {
 //            String positions = playerPositions.stream()
 //                    .filter(pp -> pp.changed)
@@ -90,6 +97,43 @@ public class Server {
             }
         }
     }
+
+    public static void storePlayer(Player player)
+    {
+        synchronized (players)
+        {
+            players.add(player);
+        }
+    }
+    public static void updatePlayers(int clientId, int x, int y)
+    {
+        synchronized (players)
+        {
+            for(Player player:players)
+            {
+                if (player.id == clientId)
+                {
+                    player.setRel_x(x);
+                    player.setRel_y(y);
+                }
+            }
+        }
+    }
+
+    private static void updateEnemy()
+    {
+        while (true)
+        {
+            //System.out.println(playerPositions.size());
+            if(!playerPositions.isEmpty())
+            {
+                enemy.updateEnemy(new Player(10, map, playerPositions.get(0).getX(), playerPositions.get(0).getY()));
+                broadcastEnemyPositions();
+            }
+        }
+
+
+    }
 }
 
 class ClientHandler implements Runnable {
@@ -97,25 +141,29 @@ class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private int clientId;
-    private Map map;
     private Player playerModel;
-    private Camera camera;
-    private Enemy enemy;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientSocket = clientSocket;
         this.clientId = clientId;
         try {
+            playerModel = new Player(10, Server.map, 0, 0);
+            playerModel.id = clientId;
+            Server.storePlayer(playerModel);
+            Server.storePlayerPosition(clientId, 0, 0);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
 
-            map = (Map) in.readObject();
-            System.out.println(map.getRows());
-            playerModel = (Player) in.readObject();
-            camera = (Camera) in.readObject();
-            enemy = new Enemy(10, map, camera);
+            out.writeObject(Server.map);
+            out.writeObject(playerModel);
+
+            //map = (Map) in.readObject();
+            //System.out.println(map.getRows());
+            //playerModel = (Player) in.readObject();
+            //camera = (Camera) in.readObject();
+            //enemy = new Enemy(10, map, camera);
             new Thread(this::run).start();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -138,8 +186,9 @@ class ClientHandler implements Runnable {
 
                    playerModel.setRel_x(x);
                    playerModel.setRel_y(y);
-                   enemy.updateEnemy(playerModel);
-                   Server.broadcastEnemyPositions(enemy);
+                   Server.updatePlayers(clientId, x, y);
+                   //enemy.updateEnemy(playerModel);
+                   //Server.broadcastEnemyPositions();
                }
             }
         } catch (IOException e) {
