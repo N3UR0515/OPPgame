@@ -7,8 +7,6 @@ import java.io.Serializable;
 
 public class Player extends Character implements Serializable {
 
-    public int id;
-
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
         super(HP, map, rel_x, rel_y);

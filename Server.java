@@ -13,12 +13,14 @@ public class Server {
     private static List<Player> players = new ArrayList<>();
     public static Map map;
     public static Enemy enemy;
+    public  static Turnline turnline;
 
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 
+            turnline = new Turnline();
             map = new Map(100, 100);
             enemy = new Enemy(10, map, 0, 1);
 
@@ -142,6 +144,7 @@ class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private int clientId;
     private Player playerModel;
+    private boolean isPlayerTurn = false;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientSocket = clientSocket;
@@ -149,6 +152,7 @@ class ClientHandler implements Runnable {
         try {
             playerModel = new Player(10, Server.map, 0, 0);
             playerModel.id = clientId;
+            Server.turnline.Add(playerModel);
             Server.storePlayer(playerModel);
             Server.storePlayerPosition(clientId, 0, 0);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -176,20 +180,26 @@ class ClientHandler implements Runnable {
             while((player = (String) in.readObject()) != null)
             {
                System.out.println(player);
-               String[] parts = player.split(":");
-               if(parts.length == 2)
-               {
-                   int x = Integer.parseInt(parts[0]);
-                   int y = Integer.parseInt(parts[1]);
-                   Server.storePlayerPosition(clientId, x, y);
-                   Server.broadcastPlayerPositions();
+                if(Server.turnline.getCharacter().id == clientId)
+                {
+                    sendMessage("YOUR TURN");
+                    String[] parts = player.split(":");
+                    if(parts.length == 2)
+                    {
+                        int x = Integer.parseInt(parts[0]);
+                        int y = Integer.parseInt(parts[1]);
+                        Server.storePlayerPosition(clientId, x, y);
+                        Server.broadcastPlayerPositions();
 
-                   playerModel.setRel_x(x);
-                   playerModel.setRel_y(y);
-                   Server.updatePlayers(clientId, x, y);
-                   //enemy.updateEnemy(playerModel);
-                   //Server.broadcastEnemyPositions();
-               }
+                        playerModel.setRel_x(x);
+                        playerModel.setRel_y(y);
+                        Server.updatePlayers(clientId, x, y);
+                        //enemy.updateEnemy(playerModel);
+                        //Server.broadcastEnemyPositions();
+                    }
+                    Server.turnline.Next();
+                }
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

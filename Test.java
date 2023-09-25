@@ -1,3 +1,4 @@
+import org.lwjgl.Sys;
 import org.newdawn.slick.*;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class Test extends BasicGame {
     private Camera camera;
     private Enemy enemy;
     private String oldPlayerPosition = "-1:-1\n";
+    public boolean MyTurn = true;
 
     public Test() {
         super("Game");
@@ -100,6 +102,10 @@ public class Test extends BasicGame {
                     //enemy.updateEnemy(new Player(0,map,x, y));
 //                    enemy.setRel_x(x);
 //                    enemy.setRel_y(y);
+                } else if (players.equals("YOUR TURN")) {
+                    System.out.println("My Turn");
+                    MyTurn = true;
+
                 } else {
                     String[] ps = players.split(";");
                     for (String p : ps) {
@@ -125,10 +131,16 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-        if (player.updateCharacter(container))
+        if(MyTurn)
         {
-            new Thread(this::Send).start();
-        };
+            if (player.updateCharacter(container))
+            {
+                MyTurn = false;
+                new Thread(this::Send).start();
+
+            };
+        }
+
         camera.updateCamera(container);
         //enemy.updateEnemy(player);
     }
