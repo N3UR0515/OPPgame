@@ -53,7 +53,7 @@ public class Test extends BasicGame {
             map = (Map) in.readObject();
             player = (Player) in.readObject();
             camera = new Camera(container, player);
-            enemy = new Enemy(10, map, camera);
+            enemy = new Enemy(10, map, 0, 1, camera);
 
             //out.writeObject(map);
             //out.writeObject(player);
@@ -125,7 +125,7 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-        if (player.updatePlayer(container))
+        if (player.updateCharacter(container))
         {
             new Thread(this::Send).start();
         };
@@ -139,11 +139,11 @@ public class Test extends BasicGame {
         synchronized (playerPositionsLock) {
             for (PlayerPosition pp : otherPlayerPositions) {
                 Player otherPlayer = new Player(10, map, pp.getX(), pp.getY());
-                otherPlayer.drawPlayer(g);
+                otherPlayer.drawCharacter(g);
             }
         }
 
-        player.drawPlayer(g);
-        enemy.drawEnemy(g);
+        player.drawCharacter(g);
+        enemy.drawCharacter(g);
     }
 }

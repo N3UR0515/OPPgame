@@ -20,7 +20,7 @@ public class Server {
             System.out.println("Server is running and listening on port " + PORT);
 
             map = new Map(100, 100);
-            enemy = new Enemy(10, map);
+            enemy = new Enemy(10, map, 0, 1);
 
             int clientId = 1; // Initialize a unique identifier for clients
             new Thread(Server::updateEnemy).start();
@@ -127,8 +127,8 @@ public class Server {
             //System.out.println(playerPositions.size());
             if(!playerPositions.isEmpty())
             {
-                enemy.updateEnemy(new Player(10, map, playerPositions.get(0).getX(), playerPositions.get(0).getY()));
-                broadcastEnemyPositions();
+                enemy.updateCharacter(new Player(10, map, playerPositions.get(0).getX(), playerPositions.get(0).getY()));
+                //broadcastEnemyPositions();
             }
         }
 

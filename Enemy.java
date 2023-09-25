@@ -1,75 +1,45 @@
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Enemy {
-    private int x; // Where enemy is drawn
-    private int y;
-    private int rel_x; // On which tile enemy stands
-    private int rel_y;
-    private int HP;
-    private final Polygon triangle;
-    private Map map;
+public class Enemy extends Character {
 
-    public Enemy(int HP, Map map, Camera camera) {
-        x = map.getTile(1).getX();
-        y = map.getTile(1).getY();
-        rel_x = 1;
-        rel_y = 0;
-        this.HP = HP;
-        this.map = map;
-
-        triangle = new Polygon();
-        triangle.addPoint(x + camera.cameraX, y - 50 + camera.cameraY); // Top vertex
-        triangle.addPoint(x - 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-left vertex
-        triangle.addPoint(x + 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-right vertex
-    }
-
-    public Enemy(int HP, Map map)
+    public Enemy(int HP, Map map, int rel_x, int rel_y, Camera camera)
     {
-        x = map.getTile(1).getX();
-        y = map.getTile(1).getY();
-        rel_x = 1;
-        rel_y = 0;
-        this.HP = HP;
-        this.map = map;
-
-        triangle = new Polygon();
+        super(HP, map, rel_x, rel_y, camera);
     }
-    public int getRel_x(){
-        return rel_x;
-    }
-    public int getRel_y(){
-        return rel_y;
-    }
-    public void setRel_x(int x){
-        rel_x = x;
-    }
-    public void setRel_y(int y){
-        rel_y = y;
+    public Enemy(int HP, Map map, int rel_x, int rel_y)
+    {
+        super(HP, map, rel_x, rel_y);
     }
 
-    public void updateEnemy(Player player) {
+    @Override
+    public boolean updateCharacter(GameContainer container) {
+        return false;
+    }
+
+    @Override
+    public void updateCharacter(Character character) {
         getRealLoc();
         triangle.setCenterX(x);
         triangle.setCenterY(y);
 
-        if (checkDistance(player, map.getTileByLoc(rel_x, rel_y))) {
-            player.damagePlayer();
-        } else {
-            seekPlayer(player);
+        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
+        {
+            character.damageCharacter();
+        }
+        else
+        {
+            seekPlayer((Player) character);
         }
     }
 
-    private void getRealLoc() {
-        Tile tile = map.getTileByLoc(rel_x, rel_y);
-        x = tile.getX();
-        y = tile.getY();
-    }
 
-    public void drawEnemy(Graphics g) {
+    @Override
+    public void drawCharacter(Graphics g) {
         g.setColor(org.newdawn.slick.Color.blue);
         g.fill(triangle);
     }

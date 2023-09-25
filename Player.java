@@ -5,35 +5,17 @@ import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
 
-public class Player implements Serializable {
+public class Player extends Character implements Serializable {
+
     public int id;
-    private int x; // Where player is being drawn
-    private int y;
-    private int rel_x; // On which tile player stands
-    private int rel_y;
-    private int HP;
-    private final Polygon triangle;
-    private Map map;
 
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
-        //x = map.getTile(0).getX();
-        //y = map.getTile(0).getY();
-        this.rel_x = rel_x;
-        this.rel_y = rel_y;
-        this.HP = HP;
-        this.map = map;
-        Tile tile = map.getTileByLoc(rel_x, rel_y);
-        x = tile.getX();
-        y = tile.getY();
-
-        triangle = new Polygon();
-        triangle.addPoint(x, y - 50); // Top vertex
-        triangle.addPoint(x - 50, y + 50); // Bottom-left vertex
-        triangle.addPoint(x + 50, y + 50); // Bottom-right vertex
+        super(HP, map, rel_x, rel_y);
     }
 
-    public boolean updatePlayer(GameContainer container) {
+    @Override
+    public boolean updateCharacter(GameContainer container) {
         Input input = container.getInput();
 
         // Reset movement flags
@@ -116,44 +98,13 @@ public class Player implements Serializable {
                 isMovingRight;
     }
 
+    @Override
+    public void updateCharacter(Character character) {
 
-    public int getX()
-    {
-        return x;
-    }
-    public int getY()
-    {
-        return y;
     }
 
-    public int getRel_x()
-    {
-        return rel_x;
-    }
-    public int getRel_y()
-    {
-        return rel_y;
-    }
-    public void setRel_x(int x)
-    {
-        rel_x = x;
-    }
-    public void setRel_y(int y)
-    {
-        rel_y = y;
-    }
-    public void damagePlayer()
-    {
-        HP--;
-    }
-    private void getRealLoc()
-    {
-        Tile tile = map.getTileByLoc(rel_x, rel_y);
-        x = tile.getX();
-        y = tile.getY();
-    }
-
-    public void drawPlayer(Graphics g)
+    @Override
+    public void drawCharacter(Graphics g)
     {
         g.setColor(org.newdawn.slick.Color.red);
         g.fill(triangle);
