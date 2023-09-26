@@ -1,24 +1,36 @@
 import org.lwjgl.Sys;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
     private static final int PORT = 12345;
-    private static final int MAX_CLIENTS = 10;
     private static List<ClientHandler> clients = new ArrayList<>();
-    private static List<PlayerPosition> playerPositions = new ArrayList<>();
+    public static List<EnemyHandler> enemies = new ArrayList<>();
+    public static Map map;
+    public static Enemy enemy;
+    public  static Turnline turnline;
 
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 
+            turnline = new Turnline();
+            map = new Map(100, 100);
+            enemy = new Enemy(10, map, 0, 1);
+
             int clientId = 1; // Initialize a unique identifier for clients
+            //new Thread(Server::updateEnemy).start();
+            enemies.add(new EnemyHandler(0));
+
+            new Thread(Server::Turns).start();
+
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -26,6 +38,7 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clientId);
                 clients.add(clientHandler);
+
 
                 clientId++;
 
@@ -35,65 +48,115 @@ public class Server {
         }
     }
 
-
-    public static void broadcastPlayerPositions() {
-        synchronized (playerPositions) {
-            String positions = playerPositions.stream()
-                    .filter(pp -> pp.changed)
-                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
-                    .reduce("", (acc, pos) -> acc + pos + ";");
-
-            for (ClientHandler client : clients) {
-                client.sendMessage(positions);
+    public static void Turns()
+    {
+        while(true)
+        {
+            try {
+                Thread.sleep(1000);
+            }  catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-        }
-    }
-
-
-
-
-    public static void storePlayerPosition(int clientId, int x, int y) {
-        synchronized (playerPositions) {
-            boolean found = false;
-
-            for (PlayerPosition pp : playerPositions) {
-                if (pp.getClientId() == clientId) {
-                    // Check if x and y have changed
-                    if (pp.getX() != x || pp.getY() != y) {
-                        pp.setX(x);
-                        pp.setY(y);
-                        pp.changed = true;
-                    }
-                    else
+            if(turnline.getCharacter() != null)
+            {
+                Character character = turnline.getCharacter();
+                System.out.println(character.id);
+                if(character instanceof Player)
+                {
+                    for(ClientHandler client : clients)
                     {
-                        pp.changed = false;
+                        if(client.clientId == character.id)
+                        {
+                            client.run();
+                            break;
+                        }
                     }
-                    found = true;
-                    break; // No need to continue searching
+                }
+                else if(character instanceof Enemy)
+                {
+                    for(EnemyHandler enemy : enemies)
+                    {
+                        if(enemy.enemyId == character.id)
+                        {
+                            enemy.run();
+                            break;
+                        }
+                    }
                 }
             }
 
-            // If no matching player position was found, add a new one
-            if (!found) {
-                playerPositions.add(new PlayerPosition(clientId, x, y, true));
+        }
+    }
+
+
+    public static void broadcastPlayerPositions() {
+        //synchronized (playerPositions)
+        {
+            StringBuilder positions = new StringBuilder();
+            for(ClientHandler client : clients)
+            {
+                positions.append(client.clientId).append(":").append(client.playerModel.getRel_x()).append(",").append(client.playerModel.getRel_y()).append(";");
+            }
+            /*String positions = playerPositions.stream()
+                    //.filter(pp -> pp.changed)
+                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
+                    .reduce("", (acc, pos) -> acc + pos + ";");*/
+
+            for (ClientHandler client : clients) {
+                client.sendMessage(positions.toString());
             }
         }
     }
+    public static void broadcastEnemyPositions() {
+        //synchronized (enemy)
+        {
+            StringBuilder positions = new StringBuilder();
+            for(EnemyHandler enemy:enemies)
+            {
+                positions.append("e").append(enemy.enemyId).append(":").append(enemy.enemyModel.getRel_x()).append(",").append(enemy.enemyModel.getRel_y()).append(";");
+            }
+//            String positions = playerPositions.stream()
+//                    .filter(pp -> pp.changed)
+//                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
+//                    .reduce("", (acc, pos) -> acc + pos + ";");
+
+            for (ClientHandler client : clients) {
+                client.sendMessage(positions.toString());
+            }
+        }
+    }
+
 }
 
 class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private int clientId;
+    public int clientId;
+    public Player playerModel;
+    private boolean isPlayerTurn = false;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientSocket = clientSocket;
         this.clientId = clientId;
         try {
+            playerModel = new Player(10, Server.map, 0, 0);
+            playerModel.id = clientId;
+            Server.turnline.Add(playerModel);
+
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            new Thread(this::run).start();
+
+            out.writeObject(Server.map);
+            out.writeObject(playerModel);
+
+            //map = (Map) in.readObject();
+            //System.out.println(map.getRows());
+            //playerModel = (Player) in.readObject();
+            //camera = (Camera) in.readObject();
+            //enemy = new Enemy(10, map, camera);
+
+            //new Thread(this::run).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,17 +167,34 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             String player;
-            while((player = (String) in.readObject()) != null)
+            if((player = (String) in.readObject()) != null)
             {
                System.out.println(player);
-               String[] parts = player.split(":");
-               if(parts.length == 2)
-               {
-                   int x = Integer.parseInt(parts[0]);
-                   int y = Integer.parseInt(parts[1]);
-                   Server.storePlayerPosition(clientId, x, y);
-                   Server.broadcastPlayerPositions();
-               }
+                if(Server.turnline.getCharacter() instanceof Player && Server.turnline.getCharacter().id == clientId)
+                {
+                    sendMessage("YOUR TURN");
+                    String[] parts = player.split(":");
+                    if(parts.length == 2)
+                    {
+                        int x = Integer.parseInt(parts[0]);
+                        int y = Integer.parseInt(parts[1]);
+
+
+
+                        playerModel.setRel_x(x);
+                        playerModel.setRel_y(y);
+
+                        Server.broadcastPlayerPositions();
+                        //enemy.updateEnemy(playerModel);
+                        //Server.broadcastEnemyPositions();
+
+                    }
+                    System.out.println("help");
+                    Server.turnline.Add(Server.enemies.get(0).enemyModel);
+                    Server.turnline.Next();
+
+                }
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

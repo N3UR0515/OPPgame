@@ -2,8 +2,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 
-public class Tile {
-    private static int size = 100;
+import java.io.Serializable;
+
+public class Tile implements Serializable {
+    private static int size = 10;
     public int id;
     private int x;             // X-coordinate of the tile
     private int y;             // Y-coordinate of the tile

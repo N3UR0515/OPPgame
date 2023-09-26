@@ -1,7 +1,9 @@
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
-public class Map {
+import java.io.Serializable;
+
+public class Map implements Serializable {
     private Tile[] tiles;
     private int cols;
     private int rows;
