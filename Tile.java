@@ -2,11 +2,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 
-import java.io.Serializable;
-
-public class Tile implements Serializable {
-    private static int size = 10;
-    public int id;
+public class Tile {
+    private static int size = 100;
+    public boolean id;
     private int x;             // X-coordinate of the tile
     private int y;             // Y-coordinate of the tile
     private int trel_x;
@@ -16,7 +14,7 @@ public class Tile implements Serializable {
     private boolean isAvailable; // Availability status of the tile
 
     // Constructor to initialize a Tile object
-    public Tile(int id, int x, int y, int tx, int ty, Color texture, boolean isVisible, boolean isAvailable) {
+    public Tile(boolean id, int x, int y, int tx, int ty, Color texture, boolean isVisible, boolean isAvailable) {
         this.id = id;
         this.x = x;
         this.y = y;

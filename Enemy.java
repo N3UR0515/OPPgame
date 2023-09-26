@@ -1,45 +1,51 @@
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Enemy extends Character {
+public class Enemy {
+    private int x; // Where enemy is drawn
+    private int y;
+    private int rel_x; // On which tile enemy stands
+    private int rel_y;
+    private int HP;
+    private final Polygon triangle;
+    private Map map;
 
-    public Enemy(int HP, Map map, int rel_x, int rel_y, Camera camera)
-    {
-        super(HP, map, rel_x, rel_y, camera);
-    }
-    public Enemy(int HP, Map map, int rel_x, int rel_y)
-    {
-        super(HP, map, rel_x, rel_y);
+    public Enemy(int HP, Map map, Camera camera) {
+        x = map.getTile(1).getX();
+        y = map.getTile(1).getY();
+        rel_x = 1;
+        rel_y = 0;
+        this.HP = HP;
+        this.map = map;
+
+        triangle = new Polygon();
+        triangle.addPoint(x + camera.cameraX, y - 50 + camera.cameraY); // Top vertex
+        triangle.addPoint(x - 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-left vertex
+        triangle.addPoint(x + 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-right vertex
     }
 
-    @Override
-    public boolean updateCharacter(GameContainer container) {
-        return false;
-    }
-
-    @Override
-    public void updateCharacter(Character character) {
+    public void updateEnemy(Player player) {
         getRealLoc();
         triangle.setCenterX(x);
         triangle.setCenterY(y);
 
-        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
-        {
-            character.damageCharacter();
-        }
-        else
-        {
-            seekPlayer((Player) character);
+        if (checkDistance(player, map.getTileByLoc(rel_x, rel_y))) {
+            player.damagePlayer();
+        } else {
+            seekPlayer(player);
         }
     }
 
+    private void getRealLoc() {
+        Tile tile = map.getTileByLoc(rel_x, rel_y);
+        x = tile.getX();
+        y = tile.getY();
+    }
 
-    @Override
-    public void drawCharacter(Graphics g) {
+    public void drawEnemy(Graphics g) {
         g.setColor(org.newdawn.slick.Color.blue);
         g.fill(triangle);
     }
@@ -48,15 +54,15 @@ public class Enemy extends Character {
         int prel_x = player.getRel_x();
         int prel_y = player.getRel_y();
 
-        if(tile.id %2 == 0)
+        if(tile.id)
         {
             //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
             if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
                     (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()))
+                    (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y()-1) ||
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getY() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()))
             {
                 return true;
             }
@@ -68,15 +74,14 @@ public class Enemy extends Character {
             if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
                     (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
                     (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y()+1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()+1))
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getY()+1) ||
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()+1))
             {
                 return true;
             }
         }
         return false;
-        //return prel_x==tile.getTrel_x()&&prel_y==tile.getTrel_y();
     }
 
     private void seekPlayer(Player player) {
@@ -117,14 +122,14 @@ public class Enemy extends Character {
         int y = tile.getTrel_y();
 
         int[][] directionsEven = {
-                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+                {-1, -1}, {0, -1}, {-1, 1}, {-1, 0}, {0, 1}, {1, 0}
         };
         int[][] directionsOdd = {
                 {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
         };
         int[][] directions ={};
 
-        if(tile.id %2 == 0)
+        if(tile.id)
         {
             directions = directionsEven;
         }

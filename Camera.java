@@ -1,8 +1,7 @@
+import org.lwjgl.Sys;
 import org.newdawn.slick.GameContainer;
 
-import java.io.Serializable;
-
-public class Camera implements Serializable {
+public class Camera {
     Player player;
     int cameraX;
     int cameraY;

@@ -1,19 +1,39 @@
+import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.Graphics;
 
-import java.io.Serializable;
+import java.io.ObjectOutputStream;
 
-public class Player extends Character implements Serializable {
+public class Player {
+    private int x; // Where player is being drawn
+    private int y;
+    private int rel_x; // On which tile player stands
+    private int rel_y;
+    private int HP;
+    private final Polygon triangle;
+    private Map map;
 
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
-        super(HP, map, rel_x, rel_y);
+        //x = map.getTile(0).getX();
+        //y = map.getTile(0).getY();
+        this.rel_x = rel_x;
+        this.rel_y = rel_y;
+        this.HP = HP;
+        this.map = map;
+        Tile tile = map.getTileByLoc(rel_x, rel_y);
+        x = tile.getX();
+        y = tile.getY();
+
+        triangle = new Polygon();
+        triangle.addPoint(x, y - 50); // Top vertex
+        triangle.addPoint(x - 50, y + 50); // Bottom-left vertex
+        triangle.addPoint(x + 50, y + 50); // Bottom-right vertex
     }
 
-    @Override
-    public boolean updateCharacter(GameContainer container) {
+    public boolean updatePlayer(GameContainer container) {
         Input input = container.getInput();
 
         // Reset movement flags
@@ -72,18 +92,29 @@ public class Player extends Character implements Serializable {
             }
         }
 
-
+        int tempRel_x = 0;
+        int tempRel_y = 0;
 
         // Move the player based on the flags
         if (isMovingRight) {
-            rel_x++;
+            tempRel_x++;
         } else if (isMovingLeft) {
-            rel_x--;
+            tempRel_x--;
         }
         if (isMovingUp) {
-            rel_y--;
+            tempRel_y--;
         } else if (isMovingDown) {
-            rel_y++;
+            tempRel_y++;
+        }
+
+        //Check if moving to an unavailable tile. If so - do not move
+        if (!map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y).isAvailable()) {
+            return false;
+        }
+        //Moving to an available tile
+        else {
+            rel_x += tempRel_x;
+            rel_y += tempRel_y;
         }
 
         getRealLoc();
@@ -96,13 +127,36 @@ public class Player extends Character implements Serializable {
                 isMovingRight;
     }
 
-    @Override
-    public void updateCharacter(Character character) {
 
+    public int getX()
+    {
+        return x;
+    }
+    public int getY()
+    {
+        return y;
     }
 
-    @Override
-    public void drawCharacter(Graphics g)
+    public int getRel_x()
+    {
+        return rel_x;
+    }
+    public int getRel_y()
+    {
+        return rel_y;
+    }
+    public void damagePlayer()
+    {
+        HP--;
+    }
+    private void getRealLoc()
+    {
+        Tile tile = map.getTileByLoc(rel_x, rel_y);
+        x = tile.getX();
+        y = tile.getY();
+    }
+
+    public void drawPlayer(Graphics g)
     {
         g.setColor(org.newdawn.slick.Color.red);
         g.fill(triangle);
