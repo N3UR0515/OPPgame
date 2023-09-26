@@ -122,8 +122,8 @@ public class Test extends BasicGame {
                         String[] coords = parts[1].split(",");
                         int x = Integer.parseInt(coords[0]);
                         int y = Integer.parseInt(coords[1]);
-                        otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
-                        otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
+                        //otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
+                        //otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
 
                     }
                 }
