@@ -29,6 +29,8 @@ public class Server {
             //new Thread(Server::updateEnemy).start();
             enemies.add(new EnemyHandler(0));
 
+            new Thread(Server::Turns).start();
+
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -38,15 +40,51 @@ public class Server {
                 clients.add(clientHandler);
 
 
-
-
-
-
                 clientId++;
 
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void Turns()
+    {
+        while(true)
+        {
+            try {
+                Thread.sleep(1000);
+            }  catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if(turnline.getCharacter() != null)
+            {
+                Character character = turnline.getCharacter();
+                System.out.println(character.id);
+                if(character instanceof Player)
+                {
+                    for(ClientHandler client : clients)
+                    {
+                        if(client.clientId == character.id)
+                        {
+                            client.run();
+                            break;
+                        }
+                    }
+                }
+                else if(character instanceof Enemy)
+                {
+                    for(EnemyHandler enemy : enemies)
+                    {
+                        if(enemy.enemyId == character.id)
+                        {
+                            enemy.run();
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -118,7 +156,7 @@ class ClientHandler implements Runnable {
             //camera = (Camera) in.readObject();
             //enemy = new Enemy(10, map, camera);
 
-            new Thread(this::run).start();
+            //new Thread(this::run).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,7 +167,7 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             String player;
-            while((player = (String) in.readObject()) != null)
+            if((player = (String) in.readObject()) != null)
             {
                System.out.println(player);
                 if(Server.turnline.getCharacter() instanceof Player && Server.turnline.getCharacter().id == clientId)

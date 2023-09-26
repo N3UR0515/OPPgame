@@ -27,9 +27,9 @@ public abstract class Character implements Serializable {
         y = tile.getY();
 
         triangle = new Polygon();
-        triangle.addPoint(x, y - 50);
-        triangle.addPoint(x -50, y + 50);
-        triangle.addPoint(x + 50, y +50);
+        triangle.addPoint(x, y - 5);
+        triangle.addPoint(x -5, y + 5);
+        triangle.addPoint(x + 5, y +5);
     }
 
     public Character(int HP, Map map, int rel_x, int rel_y, Camera camera)
@@ -45,9 +45,9 @@ public abstract class Character implements Serializable {
         y = tile.getY();
 
         triangle = new Polygon();
-        triangle.addPoint(x + camera.cameraX, y - 50 + camera.cameraY); // Top vertex
-        triangle.addPoint(x - 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-left vertex
-        triangle.addPoint(x + 50 + camera.cameraX, y + 50 + camera.cameraY); // Bottom-right vertex
+        triangle.addPoint(x + camera.cameraX, y - 5 + camera.cameraY); // Top vertex
+        triangle.addPoint(x - 5 + camera.cameraX, y + 5 + camera.cameraY); // Bottom-left vertex
+        triangle.addPoint(x + 5 + camera.cameraX, y + 5 + camera.cameraY); // Bottom-right vertex
     }
 
     public abstract boolean updateCharacter(GameContainer container);

@@ -5,7 +5,7 @@ import org.newdawn.slick.geom.Polygon;
 import java.io.Serializable;
 
 public class Tile implements Serializable {
-    private static int size = 100;
+    private static int size = 10;
     public int id;
     private int x;             // X-coordinate of the tile
     private int y;             // Y-coordinate of the tile

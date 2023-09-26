@@ -31,7 +31,7 @@ public class Test extends BasicGame {
     public static void main(String[] arguments) {
         try {
             AppGameContainer app = new AppGameContainer(new Test());
-            app.setDisplayMode(1920, 1080, false);
+            app.setDisplayMode(800, 600, false);
             app.setShowFPS(true);
             app.setVSync(true);
             app.start();
@@ -149,6 +149,8 @@ public class Test extends BasicGame {
         }
 
         camera.updateCamera(container);
+        enemy.setRel_y(enemy.rel_y);
+        enemy.setRel_x(enemy.rel_x);
         //enemy.updateEnemy(player);
     }
 

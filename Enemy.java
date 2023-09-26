@@ -48,34 +48,35 @@ public class Enemy extends Character {
         int prel_x = player.getRel_x();
         int prel_y = player.getRel_y();
 
-//        if(tile.id %2 == 0)
-//        {
-//            //{-1, -1}, {0, -1}, {-1, 1}, {-1, 0}, {0, 1}, {1, 0}
-//            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
-//                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-//                    (prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() +1) ||
-//                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY()) ||
-//                    (prel_x == tile.getTrel_x() && prel_y == tile.getY() + 1)||
-//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()))
-//            {
-//                return true;
-//            }
-//
-//        }
-//        else
-//        {
-//            //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-//            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
-//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
-//                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-//                    (prel_x == tile.getTrel_x() && prel_y == tile.getY()+1) ||
-//                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY() + 1)||
-//                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()+1))
-//            {
-//                return true;
-//            }
-//        }
-        return prel_x==tile.getTrel_x()&&prel_y==tile.getTrel_y();
+        if(tile.id %2 == 0)
+        {
+            //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
+                    (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y() -1) ||
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()))
+            {
+                return true;
+            }
+
+        }
+        else
+        {
+            //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y()+1) ||
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()+1))
+            {
+                return true;
+            }
+        }
+        return false;
+        //return prel_x==tile.getTrel_x()&&prel_y==tile.getTrel_y();
     }
 
     private void seekPlayer(Player player) {
@@ -116,7 +117,7 @@ public class Enemy extends Character {
         int y = tile.getTrel_y();
 
         int[][] directionsEven = {
-                {-1, -1}, {0, -1}, {-1, 1}, {-1, 0}, {0, 1}, {1, 0}
+                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
         };
         int[][] directionsOdd = {
                 {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
