@@ -28,9 +28,9 @@ public class Player {
         y = tile.getY();
 
         triangle = new Polygon();
-        triangle.addPoint(x, y - 5); // Top vertex
-        triangle.addPoint(x - 5, y + 5); // Bottom-left vertex
-        triangle.addPoint(x + 5, y + 5); // Bottom-right vertex
+        triangle.addPoint(x, y - 50); // Top vertex
+        triangle.addPoint(x - 50, y + 50); // Bottom-left vertex
+        triangle.addPoint(x + 50, y + 50); // Bottom-right vertex
     }
 
     public boolean updatePlayer(GameContainer container) {

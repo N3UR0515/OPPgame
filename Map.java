@@ -34,26 +34,14 @@ public class Map {
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                tiles[tempCol * rows + tempRow] =
-                        new Tile(true,Tile.getSize() + tempCol * Tile.getSize() + (int)(Tile.getSize()/1.5) * tempCol,
-                                Tile.getSize() + tempRow * Tile.getSize() + Tile.getSize() * tempRow,
-                                tempCol, tempRow,
-                                Color.white,
-                                true,
-                                true);
+                createTile(tempRow, tempCol, true, true);
             } else {
                 if (tiles[tempCol * rows + tempRow] != null) {
                     i--;
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                tiles[tempCol * rows + tempRow] =
-                        new Tile(false, Tile.getSize() + tempCol * Tile.getSize() + (int)(Tile.getSize()/1.5) * tempCol,
-                                2*Tile.getSize() + tempRow * Tile.getSize() + Tile.getSize() * tempRow,
-                                tempCol, tempRow,
-                                Color.white,
-                                true,
-                                true);
+                createTile(tempRow, tempCol, true, false);
             }
         }
 
@@ -67,27 +55,14 @@ public class Map {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-
-                    tiles[col * rows + row] =
-                            new Tile(true,Tile.getSize() + col * Tile.getSize() + (int)(Tile.getSize()/1.5) * col,
-                                    Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row,
-                                    col, row,
-                                    Color.black,
-                                    true,
-                                    false);
+                    createTile(row, col, false, true);
                 }
                 else
                 {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-                    tiles[col * rows + row] =
-                            new Tile(false, Tile.getSize() + col * Tile.getSize() + (int)(Tile.getSize()/1.5) * col,
-                                    2*Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row,
-                                    col, row,
-                                    Color.black,
-                                    true,
-                                    false);
+                    createTile(row, col, false, false);
                 }
 
             }
@@ -109,15 +84,19 @@ public class Map {
         }
 
         //Generating rooms
-        ArrayList<Tile> roomTiles = new ArrayList<>(); //After all getAreaTiles() calls this will be filled with room tiles. Duplicates will happen
+        ArrayList<Tile> roomTiles = new ArrayList<>(); //After all getAreaTiles() calls this will be filled with room tiles. Duplicates will be here
         for (String center : roomCenters) {
             getAreaTiles(roomTiles, 2, getTileByLoc(decryptCol(center), decryptRow(center)));
         }
+        //Removing duplicates
         Set<Tile> set = new LinkedHashSet<>(roomTiles);
         roomTiles.clear();
         roomTiles.addAll(set);
+
         for (Tile tile : roomTiles){
-            tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = new Tile(tile.id, tile.getX(), tile.getY(), tile.getTrel_x(),  tile.getTrel_y(), Color.white, true, true);
+            if (isUnavailable(tile)) {
+                createTile(tile.getTrel_y(), tile.getTrel_x(), true, tile.id);
+            }
         }
     }
 
@@ -138,11 +117,7 @@ public class Map {
             if (isCloseToTile(tileToFind, currentTile)) {
                 Random RNG = new Random();
                 int decisionMaker = RNG.nextInt(4);
-                if (decisionMaker == 3) {
-                    paintPath(prec, currentTile, true);
-                } else {
-                    paintPath(prec, currentTile, false);
-                }
+                paintPath(prec, currentTile, decisionMaker == 3);
                 return;
             }
 
@@ -220,12 +195,20 @@ public class Map {
             if (isWide) {
                 ArrayList<Tile> neighbors = getNeighbors(currentTile);
                 for (Tile n : neighbors){
-                    tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = new Tile(n.id, n.getX(), n.getY(), n.getTrel_x(),  n.getTrel_y(), Color.white, true, true);
+                    if (isUnavailable(n)) {
+                        createTile(n.getTrel_y(), n.getTrel_x(),true, n.id);
+                    }
                 }
             }
-            tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = new Tile(currentTile.id, currentTile.getX(), currentTile.getY(), currentTile.getTrel_x(), currentTile.getTrel_y(), Color.white, true, true);
+            if (isUnavailable(currentTile)) {
+                createTile(currentTile.getTrel_y(), currentTile.getTrel_x(), true, currentTile.id);
+            }
             currentTile = prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()];
         }
+    }
+
+    private boolean isUnavailable(Tile tile) {
+        return !tile.isAvailable();
     }
 
     private boolean isCloseToTile(Tile destination, Tile currentTile) {
@@ -244,7 +227,6 @@ public class Map {
             {
                 return true;
             }
-
         }
         else
         {
@@ -270,6 +252,22 @@ public class Map {
                 tile.draw(g);
             }
         }
+    }
+
+    private void createTile(int row, int column, boolean isWhite, boolean isID) {
+        Color color;
+        if (isWhite) {
+            color = Color.white;
+        } else {
+            color = Color.black;
+        }
+        tiles[column * this.rows + row] =
+                new Tile(isID,Tile.getSize() + column * Tile.getSize() + (int)(Tile.getSize()/1.5) * column,
+                        isID? Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row : 2 * Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row,
+                        column, row,
+                        color,
+                        true,
+                        isWhite);
     }
 
     public int getRows()

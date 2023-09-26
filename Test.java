@@ -128,6 +128,6 @@ public class Test extends BasicGame {
         }
 
         player.drawPlayer(g);
-//        enemy.drawEnemy(g);
+        enemy.drawEnemy(g);
     }
 }

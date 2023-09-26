@@ -3,7 +3,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 
 public class Tile {
-    private static int size = 10;
+    private static int size = 100;
     public boolean id;
     private int x;             // X-coordinate of the tile
     private int y;             // Y-coordinate of the tile
