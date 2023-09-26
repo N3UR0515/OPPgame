@@ -72,18 +72,29 @@ public class Player extends Character implements Serializable {
             }
         }
 
-
+        int tempRel_x = 0;
+        int tempRel_y = 0;
 
         // Move the player based on the flags
         if (isMovingRight) {
-            rel_x++;
+            tempRel_x++;
         } else if (isMovingLeft) {
-            rel_x--;
+            tempRel_x--;
         }
         if (isMovingUp) {
-            rel_y--;
+            tempRel_y--;
         } else if (isMovingDown) {
-            rel_y++;
+            tempRel_y++;
+        }
+
+        //Check if moving to an unavailable tile. If so - do not move
+        if (!map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y).isAvailable()) {
+            return false;
+        }
+        //Moving to an available tile
+        else {
+            rel_x += tempRel_x;
+            rel_y += tempRel_y;
         }
 
         getRealLoc();

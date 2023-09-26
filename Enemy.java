@@ -48,7 +48,7 @@ public class Enemy extends Character {
         int prel_x = player.getRel_x();
         int prel_y = player.getRel_y();
 
-        if(tile.id %2 == 0)
+        if(tile.id)
         {
             //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
             if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
@@ -124,7 +124,7 @@ public class Enemy extends Character {
         };
         int[][] directions ={};
 
-        if(tile.id %2 == 0)
+        if(tile.id)
         {
             directions = directionsEven;
         }
