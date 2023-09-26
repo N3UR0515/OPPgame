@@ -1,3 +1,5 @@
+import org.lwjgl.Sys;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,7 +11,7 @@ import java.util.List;
 public class Server {
     private static final int PORT = 12345;
     private static List<ClientHandler> clients = new ArrayList<>();
-    private static List<EnemyHandler> enemies = new ArrayList<>();
+    public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
     public static Enemy enemy;
     public  static Turnline turnline;
@@ -34,6 +36,8 @@ public class Server {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, clientId);
                 clients.add(clientHandler);
+
+
 
 
 
@@ -113,6 +117,7 @@ class ClientHandler implements Runnable {
             //playerModel = (Player) in.readObject();
             //camera = (Camera) in.readObject();
             //enemy = new Enemy(10, map, camera);
+
             new Thread(this::run).start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,8 +149,12 @@ class ClientHandler implements Runnable {
                         Server.broadcastPlayerPositions();
                         //enemy.updateEnemy(playerModel);
                         //Server.broadcastEnemyPositions();
+
                     }
+                    System.out.println("help");
+                    Server.turnline.Add(Server.enemies.get(0).enemyModel);
                     Server.turnline.Next();
+
                 }
 
             }

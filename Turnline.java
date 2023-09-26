@@ -10,19 +10,35 @@ public class Turnline {
     }
     public void Remove(Character character)
     {
-        characterTurns.removeIf(c -> c.equals(character));
+        if(!characterTurns.isEmpty())
+        {
+            characterTurns.removeIf(c -> c.equals(character));
+        }
+
     }
     public void Next()
     {
-        Character character = characterTurns.remove();
-        characterTurns.add(character);
+        if(!characterTurns.isEmpty())
+        {
+            Character character = characterTurns.remove();
+            characterTurns.add(character);
+        }
+
     }
     public Character getCharacter()
     {
-        return characterTurns.peek();
+        if(!characterTurns.isEmpty())
+        {
+            return characterTurns.peek();
+        }
+        return null;
     }
     public void Add(Character character)
     {
         characterTurns.add(character);
+    }
+    public int getSize()
+    {
+        return characterTurns.size();
     }
 }

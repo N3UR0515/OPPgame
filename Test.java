@@ -96,12 +96,20 @@ public class Test extends BasicGame {
             {
                 System.out.println(players);
                 if(players.startsWith("e")) {
-                    //String[] ps = players.split(":");
-                    //int x = Integer.parseInt(ps[0].substring(1));
-                    //int y = Integer.parseInt(ps[1]);
-                    //enemy.updateEnemy(new Player(0,map,x, y));
-//                    enemy.setRel_x(x);
-//                    enemy.setRel_y(y);
+                    String[] es = players.split(";");
+                    for(String e: es)
+                    {
+                        String[] parts = e.split(":");
+                        int enemyId = Integer.parseInt(parts[0].substring(1));
+                        String[] coords = parts[1].split(",");
+                        int x = Integer.parseInt(coords[0]);
+                        int y = Integer.parseInt(coords[1]);
+                        enemy.setRel_x(x);
+                        enemy.setRel_y(y);
+                        enemy.updateCharacter(new Player(10, map, x, y));
+
+                    }
+
                 } else if (players.equals("YOUR TURN")) {
                     System.out.println("My Turn");
                     MyTurn = true;

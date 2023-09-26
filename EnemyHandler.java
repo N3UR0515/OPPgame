@@ -18,12 +18,26 @@ public class EnemyHandler implements Runnable
     }
     @Override
     public void run() {
-        if( Server.turnline.getCharacter().id == enemyId)
+        while (true)
         {
-           // System.out.println(Server.turnline.getCharacter().id);
-            enemyModel.updateCharacter(new Player(10, Server.map, 1, 1));
-            Server.broadcastEnemyPositions();
-            Server.turnline.Next();
+            System.out.println("aaaaaaaa");
+
+            if( Server.turnline.getCharacter() != null && Server.turnline.getCharacter() instanceof Enemy && Server.turnline.getCharacter().id == enemyId)
+            {
+                System.out.println(Server.turnline.getCharacter().id);
+                Server.turnline.Remove(enemyModel);
+                if(Server.turnline.getCharacter() != null)
+                {
+                    enemyModel.updateCharacter((Player)Server.turnline.getCharacter());
+                }
+
+                Server.broadcastEnemyPositions();
+
+                //Server.turnline.Next();
+
+
+            }
         }
+
     }
 }
