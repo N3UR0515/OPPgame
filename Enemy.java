@@ -60,9 +60,9 @@ public class Enemy {
             if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
                     (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
                     (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y()-1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getY() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()))
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()))
             {
                 return true;
             }
@@ -74,9 +74,9 @@ public class Enemy {
             if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
                     (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
                     (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getY()+1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getY() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getY()+1))
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y()+1) ||
+                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y() + 1)||
+                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()+1))
             {
                 return true;
             }

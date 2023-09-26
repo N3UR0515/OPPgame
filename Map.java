@@ -234,9 +234,9 @@ public class Map {
             if((destX == currentTile.getTrel_x() -1 && destY == currentTile.getTrel_y()) ||
                     (destX == currentTile.getTrel_x()+1 && destY == currentTile.getTrel_y()) ||
                     (destX == currentTile.getTrel_x() && destY == currentTile.getTrel_y() -1) ||
-                    (destX == currentTile.getTrel_x() && destY == currentTile.getY()+1) ||
-                    (destX == currentTile.getTrel_x()-1 && destY == currentTile.getY() + 1)||
-                    (destX == currentTile.getTrel_x()+1 && destY == currentTile.getY()+1))
+                    (destX == currentTile.getTrel_x() && destY == currentTile.getTrel_y()+1) ||
+                    (destX == currentTile.getTrel_x()-1 && destY == currentTile.getTrel_y() + 1)||
+                    (destX == currentTile.getTrel_x()+1 && destY == currentTile.getTrel_y()+1))
             {
                 return true;
             }
