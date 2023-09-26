@@ -71,10 +71,14 @@ public abstract class Character implements Serializable {
 
     public void setRel_x(int x) {
         rel_x = x;
+        getRealLoc();
+        triangle.setCenterX(this.x);
     }
 
     public void setRel_y(int y) {
         rel_y = y;
+        getRealLoc();
+        triangle.setCenterY(this.y);
     }
 
     public void damageCharacter() {

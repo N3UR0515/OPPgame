@@ -106,7 +106,7 @@ public class Test extends BasicGame {
                         int y = Integer.parseInt(coords[1]);
                         enemy.setRel_x(x);
                         enemy.setRel_y(y);
-                        enemy.updateCharacter(new Player(10, map, x, y));
+                        //enemy.updateCharacter(new Player(10, map, x, y));
 
                     }
 
