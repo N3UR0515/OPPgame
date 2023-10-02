@@ -13,7 +13,6 @@ public class Server {
     private static List<ClientHandler> clients = new ArrayList<>();
     public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
-    public static Enemy enemy;
     public  static Turnline turnline;
 
     public static void main(String[] args) {
@@ -23,7 +22,6 @@ public class Server {
 
             turnline = new Turnline();
             map = new Map(100, 100);
-            enemy = new Enemy(10, map, 0, 1);
 
             int clientId = 1; // Initialize a unique identifier for clients
             //new Thread(Server::updateEnemy).start();
@@ -53,7 +51,7 @@ public class Server {
         while(true)
         {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             }  catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -129,15 +127,12 @@ public class Server {
 }
 
 class ClientHandler implements Runnable {
-    private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     public int clientId;
     public Player playerModel;
-    private boolean isPlayerTurn = false;
 
     public ClientHandler(Socket clientSocket, int clientId) {
-        this.clientSocket = clientSocket;
         this.clientId = clientId;
         try {
             playerModel = new Player(10, Server.map, 0, 0);

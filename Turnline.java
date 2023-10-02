@@ -37,8 +37,8 @@ public class Turnline {
     {
         characterTurns.add(character);
     }
-    public int getSize()
-    {
-        return characterTurns.size();
-    }
+    //public int getSize()
+    //{
+    //    return characterTurns.size();
+    //}
 }
