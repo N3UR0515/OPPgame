@@ -3,12 +3,23 @@ import java.util.Queue;
 
 public class Turnline {
     private Queue<Character> characterTurns;
+    private static Turnline instance;
 
-    public Turnline()
+    private Turnline(){characterTurns = new LinkedList<>();}
+    public static Turnline getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new Turnline();
+        }
+        return  instance;
+    }
+
+    //public Turnline()
     {
         characterTurns = new LinkedList<>();
     }
-    public void Remove(Character character)
+    public synchronized void Remove(Character character)
     {
         if(!characterTurns.isEmpty())
         {
@@ -16,7 +27,7 @@ public class Turnline {
         }
 
     }
-    public void Next()
+    public synchronized void Next()
     {
         if(!characterTurns.isEmpty())
         {
