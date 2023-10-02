@@ -14,11 +14,6 @@ public class Turnline {
         }
         return  instance;
     }
-
-    //public Turnline()
-    {
-        characterTurns = new LinkedList<>();
-    }
     public synchronized void Remove(Character character)
     {
         if(!characterTurns.isEmpty())
