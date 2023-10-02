@@ -6,7 +6,7 @@ public class Turnline {
     private static Turnline instance;
 
     private Turnline(){characterTurns = new LinkedList<>();}
-    public static Turnline getInstance()
+    public synchronized static Turnline getInstance()
     {
         if(instance == null)
         {
