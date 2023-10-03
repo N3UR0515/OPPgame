@@ -1,3 +1,4 @@
+import org.lwjgl.Sys;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -115,6 +116,9 @@ public class Player extends Character implements Serializable {
     @Override
     public void drawCharacter(Graphics g)
     {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
         g.setColor(org.newdawn.slick.Color.red);
         g.fill(triangle);
     }

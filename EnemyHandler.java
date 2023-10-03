@@ -16,32 +16,28 @@ public class EnemyHandler implements Runnable
         EnemyFactory factory = new EnemyFactory();
         enemyModel = factory.createEnemy(rng.nextInt(15), 0, 4);
         Turnline.getInstance().Add(enemyModel);
-
-        //this.run();
     }
     @Override
     public void run() {
-        //while (true)
         {
-
-            //System.out.println("aaaaaaaa");
-           /* try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }*/
             Turnline turnline = Turnline.getInstance();
             if ( turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == enemyId)
             {
-//                turnline.Remove(enemyModel);
-                if(!Server.clients.isEmpty())
+                turnline.Remove(enemyModel);
+                if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
                 {
+                    enemyModel.updateCharacter((Player)turnline.getCharacter());
 
-                    enemyModel.updateCharacter(Server.clients.get(0).playerModel);
-                    Server.broadcastEnemyPositions();
-
-                    turnline.Next();
+                    Packet packet = new Packet(enemyId, enemyModel.getRel_x(), enemyModel.getRel_y(), true);
+                    try {
+                        Server.broadcastPacket(packet);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+
+                //Server.turnline.Next();
+
 
             }
         }

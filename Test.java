@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Test extends BasicGame {
@@ -15,13 +16,11 @@ public class Test extends BasicGame {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private List<PlayerPosition> otherPlayerPositions = new ArrayList<>();
-    private final Object playerPositionsLock = new Object(); // Lock for accessing otherPlayerPositions
+    private HashMap<Integer, Player> players = new HashMap<>();
+    private HashMap<Integer, Enemy> enemies = new HashMap<>();
     private Map map;
     private Player player;
     private Camera camera;
-    private Enemy enemy;
-    private String oldPlayerPosition = "-1:-1\n";
     public boolean MyTurn = true;
 
     public Test() {
@@ -42,11 +41,6 @@ public class Test extends BasicGame {
 
     public void init(GameContainer container) throws SlickException {
 
-        //player = new Player(10, map, 0, 0);
-        //camera = new Camera(container, player);
-
-        //map = new Map(0, 0);
-
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -56,10 +50,6 @@ public class Test extends BasicGame {
             player = (Player) in.readObject();
             camera = new Camera(container, player);
             enemy = new Zombie(10, map, 0, 1, camera);
-
-            //out.writeObject(map);
-            //out.writeObject(player);
-            //out.writeObject(camera);
 
             new Thread(this::Send).start();
             new Thread(this::Receive).start();
@@ -72,63 +62,51 @@ public class Test extends BasicGame {
 
     public void Send()
     {
-        try {
-            //while(true)
-            {
-                if(!oldPlayerPosition.equals(player.getRel_x() + ":" + player.getRel_y()))
-                {
-                    out.writeObject(player.getRel_x() + ":" + player.getRel_y());
-                    oldPlayerPosition = player.getRel_x() + ":" + player.getRel_y();
-                }
-
-            }
-
+        try
+        {
+            Packet packet = new Packet(0, player.getRel_x(), player.getRel_y(), false);
+            out.writeObject(packet);
+            out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void Receive()
-    {
-        try {
-            String players;
-            while((players = (String) in.readObject()) != null && !players.isEmpty())
+
+    public void Receive() {
+        Packet packet;
+        try{
+            while((packet = (Packet)in.readObject()) != null)
             {
-                System.out.println(players);
-                if(players.startsWith("e")) {
-                    String[] es = players.split(";");
-                    for(String e: es)
+                if(packet.isEnemy)
+                {
+                    if(enemies.containsKey(packet.id))
                     {
-                        String[] parts = e.split(":");
-                        int enemyId = Integer.parseInt(parts[0].substring(1));
-                        String[] coords = parts[1].split(",");
-                        int x = Integer.parseInt(coords[0]);
-                        int y = Integer.parseInt(coords[1]);
-                        enemy.setRel_x(x);
-                        enemy.setRel_y(y);
-                        //enemy.updateCharacter(new Player(10, map, x, y));
-
+                        Enemy temp = enemies.get(packet.id);
+                        temp.setRel_y(packet.y);
+                        temp.setRel_x(packet.x);
+                        enemies.replace(packet.id, temp);
                     }
-
-                } else if (players.equals("YOUR TURN")) {
-                    System.out.println("My Turn");
-                    MyTurn = true;
-
-                } else {
-                    String[] ps = players.split(";");
-                    for (String p : ps) {
-                        String[] parts = p.split(":");
-                        int clientId = Integer.parseInt(parts[0]);
-                        String[] coords = parts[1].split(",");
-                        int x = Integer.parseInt(coords[0]);
-                        int y = Integer.parseInt(coords[1]);
-                        otherPlayerPositions.removeIf(pp -> pp.getClientId() == clientId);
-                        otherPlayerPositions.add(new PlayerPosition(clientId, x, y, true));
-
+                    else
+                    {
+                        enemies.put(packet.id, new Enemy(10, map, packet.x, packet.y, camera));
+                    }
+                }
+                else
+                {
+                    if(players.containsKey(packet.id))
+                    {
+                        Player temp = players.get(packet.id);
+                        temp.setRel_y(packet.y);
+                        temp.setRel_x(packet.x);
+                        players.replace(packet.id, temp);
+                    }
+                    else
+                    {
+                        players.put(packet.id, new Player(10, map, packet.x, packet.y));
                     }
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -139,32 +117,28 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-        //if(MyTurn)
-        {
             if (player.updateCharacter(container))
             {
                 new Thread(this::Send).start();
                 MyTurn = false;
             };
-        }
 
         camera.updateCamera(container);
-        enemy.setRel_y(enemy.rel_y);
-        enemy.setRel_x(enemy.rel_x);
-        //enemy.updateEnemy(player);
     }
 
     public void render(GameContainer container, Graphics g) throws SlickException {
         map.drawMap(g, camera);
 
-        synchronized (playerPositionsLock) {
-            for (PlayerPosition pp : otherPlayerPositions) {
-                Player otherPlayer = new Player(10, map, pp.getX(), pp.getY());
-                otherPlayer.drawCharacter(g);
-            }
+        for(Player p: players.values())
+        {
+            p.drawCharacter(g);
+        }
+
+        for(Enemy e: enemies.values())
+        {
+            e.drawCharacter(g);
         }
 
         player.drawCharacter(g);
-        enemy.drawCharacter(g);
     }
 }
