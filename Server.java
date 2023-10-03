@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Server {
     private static final int PORT = 12345;
-    private static List<ClientHandler> clients = new ArrayList<>();
+    public static List<ClientHandler> clients = new ArrayList<>();
     public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
     //public  static Turnline turnline;
@@ -26,6 +26,8 @@ public class Server {
             int clientId = 1; // Initialize a unique identifier for clients
             //new Thread(Server::updateEnemy).start();
             enemies.add(new EnemyHandler(0));
+//            enemies.add(new EnemyHandler(3));
+//            enemies.add(new EnemyHandler(2));
 
             new Thread(Server::Turns).start();
 
@@ -51,7 +53,7 @@ public class Server {
         while(true)
         {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             }  catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -136,7 +138,7 @@ class ClientHandler implements Runnable {
     public ClientHandler(Socket clientSocket, int clientId) {
         this.clientId = clientId;
         try {
-            playerModel = new Player(10, Server.map, 0, 0);
+            playerModel = new Player(10, Server.map, 4, 1);
             playerModel.id = clientId;
             Turnline.getInstance().Add(playerModel);
 
@@ -187,7 +189,7 @@ class ClientHandler implements Runnable {
 
                     }
                     System.out.println("help");
-                    turnline.Add(Server.enemies.get(0).enemyModel);
+//                    turnline.Add(Server.enemies.get(0).enemyModel);
                     turnline.Next();
 
                 }

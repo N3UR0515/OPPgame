@@ -55,7 +55,7 @@ public class Test extends BasicGame {
             map = (Map) in.readObject();
             player = (Player) in.readObject();
             camera = new Camera(container, player);
-            enemy = new Enemy(10, map, 0, 1, camera);
+            enemy = new Zombie(10, map, 0, 1, camera);
 
             //out.writeObject(map);
             //out.writeObject(player);

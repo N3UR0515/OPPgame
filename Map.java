@@ -85,7 +85,7 @@ public class Map implements Serializable {
         //Generating rooms
         ArrayList<Tile> roomTiles = new ArrayList<>(); //After all getAreaTiles() calls this will be filled with room tiles. Duplicates will be here
         for (String center : roomCenters) {
-            getAreaTiles(roomTiles, 2, getTileByLoc(decryptCol(center), decryptRow(center)));
+            getAreaTiles(roomTiles, 4, getTileByLoc(decryptCol(center), decryptRow(center)));
         }
         //Removing duplicates
         Set<Tile> set = new LinkedHashSet<>(roomTiles);
@@ -287,5 +287,9 @@ public class Map implements Serializable {
     public Tile getTileByLoc(int x, int y)
     {
         return tiles[x * rows + y];
+    }
+
+    public int getTileCount(){
+        return this.tiles.length;
     }
 }
