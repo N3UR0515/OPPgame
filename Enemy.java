@@ -16,34 +16,6 @@ public abstract class Enemy extends Character {
         super(HP, map, rel_x, rel_y);
     }
 
-//    @Override
-//    public boolean updateCharacter(GameContainer container) {
-//        return false;
-//    }
-
-//    @Override
-//    public void updateCharacter(Character character) {
-//        getRealLoc();
-//        triangle.setCenterX(x);
-//        triangle.setCenterY(y);
-//
-//        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
-//        {
-//            character.damageCharacter();
-//        }
-//        else
-//        {
-//            seekPlayer((Player) character);
-//        }
-//    }
-
-
-//    @Override
-//    public void drawCharacter(Graphics g) {
-//        g.setColor(org.newdawn.slick.Color.blue);
-//        g.fill(triangle);
-//    }
-
     protected abstract boolean checkDistance(Player player, Tile tile);
 
     protected abstract boolean checkDistance(Tile tile);

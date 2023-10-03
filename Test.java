@@ -49,7 +49,6 @@ public class Test extends BasicGame {
             map = (Map) in.readObject();
             player = (Player) in.readObject();
             camera = new Camera(container, player);
-            enemy = new Zombie(10, map, 0, 1, camera);
 
             new Thread(this::Send).start();
             new Thread(this::Receive).start();
@@ -89,7 +88,7 @@ public class Test extends BasicGame {
                     }
                     else
                     {
-                        enemies.put(packet.id, new Enemy(10, map, packet.x, packet.y, camera));
+                        enemies.put(packet.id, new Zombie(10, map, packet.x, packet.y, camera));
                     }
                 }
                 else

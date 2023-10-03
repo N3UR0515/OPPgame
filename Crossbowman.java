@@ -1,3 +1,4 @@
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
@@ -37,8 +38,11 @@ public class Crossbowman extends Enemy {
 
     @Override
     public void drawCharacter(Graphics g) {
-        g.setColor(org.newdawn.slick.Color.blue);
-        g.fill(triangle);
+        this.getRealLoc();
+        this.triangle.setCenterX((float)this.x);
+        this.triangle.setCenterY((float)this.y);
+        g.setColor(Color.blue);
+        g.fill(this.triangle);
     }
 
     @Override
