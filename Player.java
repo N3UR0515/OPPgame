@@ -115,6 +115,9 @@ public class Player extends Character implements Serializable {
     @Override
     public void drawCharacter(Graphics g)
     {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
         g.setColor(org.newdawn.slick.Color.red);
         g.fill(triangle);
     }

@@ -40,6 +40,9 @@ public class Enemy extends Character {
 
     @Override
     public void drawCharacter(Graphics g) {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
         g.setColor(org.newdawn.slick.Color.blue);
         g.fill(triangle);
     }
