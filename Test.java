@@ -88,7 +88,7 @@ public class Test extends BasicGame {
                     }
                     else
                     {
-                        enemies.put(packet.id, new Enemy(10, map, packet.x, packet.y, camera));
+                        enemies.put(packet.id, new Zombie(10, map, packet.x, packet.y, camera));
                     }
                 }
                 else
@@ -111,9 +111,7 @@ public class Test extends BasicGame {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 
 
 

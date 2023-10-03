@@ -3,6 +3,7 @@ import org.lwjgl.Sys;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Random;
 
 public class EnemyHandler implements Runnable
 {
@@ -11,7 +12,9 @@ public class EnemyHandler implements Runnable
 
     public EnemyHandler(int enemyId) throws IOException {
         this.enemyId = enemyId;
-        enemyModel = new Enemy(10, Server.map, 0, 0);
+        Random rng = new Random();
+        EnemyFactory factory = new EnemyFactory();
+        enemyModel = factory.createEnemy(rng.nextInt(15), 0, 4);
         Turnline.getInstance().Add(enemyModel);
     }
     @Override
