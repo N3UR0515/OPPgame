@@ -12,7 +12,7 @@ public class EnemyHandler implements Runnable
     public EnemyHandler(int enemyId) throws IOException {
         this.enemyId = enemyId;
         enemyModel = new Enemy(10, Server.map, 0, 0);
-        Server.turnline.Add(enemyModel);
+        Turnline.getInstance().Add(enemyModel);
 
         //this.run();
     }
@@ -27,13 +27,13 @@ public class EnemyHandler implements Runnable
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }*/
-
-            if ( Server.turnline.getCharacter() != null && Server.turnline.getCharacter() instanceof Enemy && Server.turnline.getCharacter().id == enemyId)
+            Turnline turnline = Turnline.getInstance();
+            if ( turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == enemyId)
             {
-                Server.turnline.Remove(enemyModel);
-                if(Server.turnline.getCharacter() != null && Server.turnline.getCharacter() instanceof Player)
+                turnline.Remove(enemyModel);
+                if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
                 {
-                    enemyModel.updateCharacter((Player)Server.turnline.getCharacter());
+                    enemyModel.updateCharacter((Player)turnline.getCharacter());
                 }
 
                 Server.broadcastEnemyPositions();

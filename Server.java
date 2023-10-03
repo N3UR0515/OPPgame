@@ -13,14 +13,14 @@ public class Server {
     private static List<ClientHandler> clients = new ArrayList<>();
     public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
-    public  static Turnline turnline;
+    //public  static Turnline turnline;
 
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 
-            turnline = new Turnline();
+            //turnline = new Turnline();
             map = new Map(100, 100);
 
             int clientId = 1; // Initialize a unique identifier for clients
@@ -55,6 +55,7 @@ public class Server {
             }  catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            Turnline turnline = Turnline.getInstance();
             if(turnline.getCharacter() != null)
             {
                 Character character = turnline.getCharacter();
@@ -137,7 +138,7 @@ class ClientHandler implements Runnable {
         try {
             playerModel = new Player(10, Server.map, 0, 0);
             playerModel.id = clientId;
-            Server.turnline.Add(playerModel);
+            Turnline.getInstance().Add(playerModel);
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
@@ -165,7 +166,8 @@ class ClientHandler implements Runnable {
             if((player = (String) in.readObject()) != null)
             {
                System.out.println(player);
-                if(Server.turnline.getCharacter() instanceof Player && Server.turnline.getCharacter().id == clientId)
+               Turnline turnline = Turnline.getInstance();
+                if(turnline.getCharacter() instanceof Player && turnline.getCharacter().id == clientId)
                 {
                     sendMessage("YOUR TURN");
                     String[] parts = player.split(":");
@@ -185,8 +187,8 @@ class ClientHandler implements Runnable {
 
                     }
                     System.out.println("help");
-                    Server.turnline.Add(Server.enemies.get(0).enemyModel);
-                    Server.turnline.Next();
+                    turnline.Add(Server.enemies.get(0).enemyModel);
+                    turnline.Next();
 
                 }
 
