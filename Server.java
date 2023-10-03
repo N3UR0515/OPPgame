@@ -13,18 +13,16 @@ public class Server {
     private static List<ClientHandler> clients = new ArrayList<>();
     public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
-    //public  static Turnline turnline;
 
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 
-            //turnline = new Turnline();
             map = new Map(100, 100);
 
             int clientId = 1; // Initialize a unique identifier for clients
-            //new Thread(Server::updateEnemy).start();
+
             enemies.add(new EnemyHandler(0));
 
             new Thread(Server::Turns).start();
@@ -87,41 +85,10 @@ public class Server {
         }
     }
 
-
-    public static void broadcastPlayerPositions() {
-        //synchronized (playerPositions)
+    public static void broadcastPacket(Packet packet) throws IOException {
+        for(ClientHandler client : clients)
         {
-            StringBuilder positions = new StringBuilder();
-            for(ClientHandler client : clients)
-            {
-                positions.append(client.clientId).append(":").append(client.playerModel.getRel_x()).append(",").append(client.playerModel.getRel_y()).append(";");
-            }
-            /*String positions = playerPositions.stream()
-                    //.filter(pp -> pp.changed)
-                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
-                    .reduce("", (acc, pos) -> acc + pos + ";");*/
-
-            for (ClientHandler client : clients) {
-                client.sendMessage(positions.toString());
-            }
-        }
-    }
-    public static void broadcastEnemyPositions() {
-        //synchronized (enemy)
-        {
-            StringBuilder positions = new StringBuilder();
-            for(EnemyHandler enemy:enemies)
-            {
-                positions.append("e").append(enemy.enemyId).append(":").append(enemy.enemyModel.getRel_x()).append(",").append(enemy.enemyModel.getRel_y()).append(";");
-            }
-//            String positions = playerPositions.stream()
-//                    .filter(pp -> pp.changed)
-//                    .map(pp -> pp.getClientId() + ":" + pp.getX() + "," + pp.getY())
-//                    .reduce("", (acc, pos) -> acc + pos + ";");
-
-            for (ClientHandler client : clients) {
-                client.sendMessage(positions.toString());
-            }
+            client.sendPacket(packet);
         }
     }
 
@@ -146,52 +113,34 @@ class ClientHandler implements Runnable {
             out.writeObject(Server.map);
             out.writeObject(playerModel);
 
-            //map = (Map) in.readObject();
-            //System.out.println(map.getRows());
-            //playerModel = (Player) in.readObject();
-            //camera = (Camera) in.readObject();
-            //enemy = new Enemy(10, map, camera);
-
-            //new Thread(this::run).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
     @Override
-    public void run() {
-        try {
-            String player;
-            if((player = (String) in.readObject()) != null)
+    public void run()
+    {
+        try
+        {
+            Packet packet;
+            if((packet = (Packet) in.readObject()) != null)
             {
-               System.out.println(player);
-               Turnline turnline = Turnline.getInstance();
+                Turnline turnline = Turnline.getInstance();
                 if(turnline.getCharacter() instanceof Player && turnline.getCharacter().id == clientId)
                 {
-                    sendMessage("YOUR TURN");
-                    String[] parts = player.split(":");
-                    if(parts.length == 2)
-                    {
-                        int x = Integer.parseInt(parts[0]);
-                        int y = Integer.parseInt(parts[1]);
+                    playerModel.setRel_x(packet.x);
+                    playerModel.setRel_y(packet.y);
+
+                    System.out.println(packet.x);
 
 
+                    Packet outPacket = new Packet(clientId, packet.x, packet.y, false);
+                    Server.broadcastPacket(outPacket);
 
-                        playerModel.setRel_x(x);
-                        playerModel.setRel_y(y);
-
-                        Server.broadcastPlayerPositions();
-                        //enemy.updateEnemy(playerModel);
-                        //Server.broadcastEnemyPositions();
-
-                    }
-                    System.out.println("help");
                     turnline.Add(Server.enemies.get(0).enemyModel);
                     turnline.Next();
-
                 }
-
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -200,12 +149,8 @@ class ClientHandler implements Runnable {
         }
     }
 
-    public void sendMessage(String message) {
-        try {
-            out.writeObject(message);
-            out.flush(); // Flush the buffered output to ensure it's sent immediately
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendPacket(Packet packet) throws IOException {
+        out.writeObject(packet);
+        out.flush();
     }
 }
