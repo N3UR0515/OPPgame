@@ -14,7 +14,7 @@ public class EnemyHandler implements Runnable
         this.enemyId = enemyId;
         Random rng = new Random();
         EnemyFactory factory = new EnemyFactory();
-        enemyModel = factory.createEnemy(rng.nextInt(15), 0, 4);
+        enemyModel = factory.createEnemy(rng.nextInt(15), 0, 5);
         Turnline.getInstance().Add(enemyModel);
     }
     @Override

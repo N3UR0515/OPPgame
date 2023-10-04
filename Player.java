@@ -5,6 +5,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Player extends Character implements Serializable {
 
@@ -13,9 +14,77 @@ public class Player extends Character implements Serializable {
         super(HP, map, rel_x, rel_y);
     }
 
+    private boolean attack(GameContainer container)
+    {
+        Input input = container.getInput();
+
+        if(input.isMousePressed(0))
+        {
+            int mouseX = input.getMouseX();
+            int mouseY = input.getMouseY();
+
+            int coordX = (mouseX - x) / 16;
+            int coordY = (mouseY- y + 5) / 20;
+
+            int [][] directionsEven = {
+                    {0, 0}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+            };
+            int[][] directionsOdd = {
+                    {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+            };
+
+            Tile tileShortDistance = null;
+            int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize();
+
+            int[][] directions ={};
+
+            if(map.getTileByLoc(rel_x, rel_y).id)
+            {
+                directions = directionsEven;
+            }
+            else
+            {
+                directions = directionsOdd;
+            }
+
+            for(int[] dir : directions)
+            {
+                int dx = dir[0];
+                int dy = dir[1];
+
+                if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
+                {
+                    Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
+                    if(tile.isAvailable())
+                    {
+                        if(tileShortDistance == null)
+                        {
+                            tileShortDistance = tile;
+                            distance = tile.getDistance(mouseX, mouseY);
+                        } else if (tile.getDistance(mouseX, mouseY) < distance) {
+                            tileShortDistance = tile;
+                            distance = tile.getDistance(mouseX, mouseY);
+                        }
+                    }
+                }
+            }
+
+            assert tileShortDistance != null;
+            System.out.println(tileShortDistance.getTrel_x());
+            System.out.println(tileShortDistance.getTrel_y());
+            return true;
+        }
+
+
+
+        return false;
+    }
+
     @Override
     public boolean updateCharacter(GameContainer container) {
         Input input = container.getInput();
+
+        attack(container);
 
         // Reset movement flags
         boolean isMovingRight = false;
