@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Server {
     private static final int PORT = 12345;
-    private static List<ClientHandler> clients = new ArrayList<>();
+    public static List<ClientHandler> clients = new ArrayList<>();
     public static List<EnemyHandler> enemies = new ArrayList<>();
     public static Map map;
 
@@ -49,7 +49,7 @@ public class Server {
         while(true)
         {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             }  catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
