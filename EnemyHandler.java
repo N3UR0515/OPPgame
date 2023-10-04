@@ -27,6 +27,17 @@ public class EnemyHandler implements Runnable
                 if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
                 {
                     enemyModel.updateCharacter((Player)turnline.getCharacter());
+                    Packet p = new Packet(-1, -1, -1, true);
+                    p.isAttack = true;
+                    p.HP = turnline.getCharacter().getHP();
+                    try {
+                        Server.clients.get(0).sendPacket(p);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if(turnline.getCharacter().getHP() <= 0)
+                        turnline.Remove(turnline.getCharacter());
 
                     Packet packet = new Packet(enemyId, enemyModel.getRel_x(), enemyModel.getRel_y(), true);
                     try {
@@ -36,7 +47,7 @@ public class EnemyHandler implements Runnable
                     }
                 }
 
-                //Server.turnline.Next();
+                //turnline.Next();
 
 
             }

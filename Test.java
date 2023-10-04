@@ -63,7 +63,18 @@ public class Test extends BasicGame {
     {
         try
         {
-            Packet packet = new Packet(0, player.getRel_x(), player.getRel_y(), false);
+            Packet packet;
+            if(player.getAttackTile() != null)
+            {
+                Tile tile = player.getAttackTile();
+                packet = new Packet(0, tile.getTrel_x(), tile.getTrel_y(), false);
+                packet.isAttack = true;
+                player.endAttack();
+            }
+            else
+            {
+                packet = new Packet(0, player.getRel_x(), player.getRel_y(), false);
+            }
             out.writeObject(packet);
             out.flush();
         } catch (IOException e) {
@@ -77,7 +88,11 @@ public class Test extends BasicGame {
         try{
             while((packet = (Packet)in.readObject()) != null)
             {
-                if(packet.isEnemy)
+                if(packet.isAttack)
+                {
+                    player.setHP(packet.HP);
+                }
+                else if(packet.isEnemy)
                 {
                     if(enemies.containsKey(packet.id))
                     {
@@ -139,5 +154,6 @@ public class Test extends BasicGame {
         }
 
         player.drawCharacter(g);
+        player.drawHealth(g);
     }
 }
