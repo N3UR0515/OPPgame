@@ -48,11 +48,11 @@ public class Server {
     {
         while(true)
         {
-            try {
+            /*try {
                 Thread.sleep(1000);
             }  catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
             Turnline turnline = Turnline.getInstance();
             if(turnline.getCharacter() != null)
             {
@@ -129,16 +129,53 @@ class ClientHandler implements Runnable {
                 Turnline turnline = Turnline.getInstance();
                 if(turnline.getCharacter() instanceof Player && turnline.getCharacter().id == clientId)
                 {
-                    playerModel.setRel_x(packet.x);
-                    playerModel.setRel_y(packet.y);
+                    if(!packet.isAttack)
+                    {
+                        playerModel.setRel_x(packet.x);
+                        playerModel.setRel_y(packet.y);
 
-                    System.out.println(packet.x);
 
+                        Packet outPacket = new Packet(clientId, packet.x, packet.y, false);
+                        Server.broadcastPacket(outPacket);
+                    }
+                    else
+                    {
+                        for(EnemyHandler enemy : Server.enemies)
+                        {
+                            Enemy e = enemy.enemyModel;
+                            if(e.rel_y == packet.y && e.rel_x == packet.x)
+                            {
+                                enemy.enemyModel.damageCharacter();
+                                System.out.println(enemy.enemyModel.getHP());
+                                if(enemy.enemyModel.getHP() <= 0)
+                                {
+                                    turnline.Remove(enemy.enemyModel);
+                                }
+                                break;
+                            }
+                        }
 
-                    Packet outPacket = new Packet(clientId, packet.x, packet.y, false);
-                    Server.broadcastPacket(outPacket);
+                        for(ClientHandler client : Server.clients)
+                        {
+                            Player p = client.playerModel;
+                            if(p.rel_y == packet.y && p.rel_x == packet.x)
+                            {
+                                client.playerModel.damageCharacter();
+                                Packet pa = new Packet(-1, -1, -1, false);
+                                pa.isAttack = true;
+                                pa.HP = client.playerModel.getHP();
+                                client.sendPacket(pa);
+                                if(client.playerModel.getHP() <= 0)
+                                {
+                                    turnline.Remove(client.playerModel);
+                                }
+                                break;
+                            }
+                        }
+                    }
 
-                    turnline.Add(Server.enemies.get(0).enemyModel);
+                    if(Server.enemies.get(0).enemyModel.getHP() > 0)
+                        turnline.Add(Server.enemies.get(0).enemyModel);
                     turnline.Next();
                 }
             }

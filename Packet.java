@@ -5,6 +5,8 @@ public class Packet implements Serializable {
     public int x;
     public int y;
     public boolean isEnemy;
+    public boolean isAttack;
+    public int HP = -10;
 
     public Packet(int id, int x, int y, boolean isEnemy)
     {

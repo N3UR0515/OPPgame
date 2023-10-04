@@ -4,13 +4,95 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 
+import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Player extends Character implements Serializable {
+    private Tile attackTile = null;
 
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
         super(HP, map, rel_x, rel_y);
+    }
+
+    public void endAttack()
+    {
+        attackTile = null;
+    }
+    public Tile getAttackTile()
+    {
+        return attackTile;
+    }
+
+    private boolean attack(GameContainer container)
+    {
+        Input input = container.getInput();
+
+        if(input.isMousePressed(0))
+        {
+            int mouseX = input.getMouseX();
+            int mouseY = input.getMouseY();
+
+            if(mouseX - x < 30 && mouseY - y < 30)
+            {
+                int coordX = (mouseX - x) / 16;
+                int coordY = (mouseY- y + 5) / 20;
+
+                int [][] directionsEven = {
+                        {0, 0}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+                };
+                int[][] directionsOdd = {
+                        {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+                };
+
+                Tile tileShortDistance = null;
+                int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize();
+
+                int[][] directions ={};
+
+                if(map.getTileByLoc(rel_x, rel_y).id)
+                {
+                    directions = directionsEven;
+                }
+                else
+                {
+                    directions = directionsOdd;
+                }
+
+                for(int[] dir : directions)
+                {
+                    int dx = dir[0];
+                    int dy = dir[1];
+
+                    if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
+                    {
+                        Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
+                        if(tile.isAvailable())
+                        {
+                            if(tileShortDistance == null)
+                            {
+                                tileShortDistance = tile;
+                                distance = tile.getDistance(mouseX, mouseY);
+                            } else if (tile.getDistance(mouseX, mouseY) < distance) {
+                                tileShortDistance = tile;
+                                distance = tile.getDistance(mouseX, mouseY);
+                            }
+                        }
+                    }
+                }
+
+                assert tileShortDistance != null;
+                System.out.println(tileShortDistance.getTrel_x());
+                System.out.println(tileShortDistance.getTrel_y());
+                attackTile = tileShortDistance;
+                return true;
+            }
+        }
+
+
+
+        return false;
     }
 
     @Override
@@ -105,7 +187,8 @@ public class Player extends Character implements Serializable {
         return isMovingDown ||
                 isMovingLeft ||
                 isMovingUp ||
-                isMovingRight;
+                isMovingRight ||
+                attack(container);
     }
 
     @Override
@@ -122,4 +205,20 @@ public class Player extends Character implements Serializable {
         g.setColor(org.newdawn.slick.Color.red);
         g.fill(triangle);
     }
+
+    public void drawHealth(Graphics g) {
+        int outerBoxX = 50;
+        int outerBoxY = 50;
+        int outerBoxWidth = 100;
+        int outerBoxHeight = 20;
+
+        int innerBoxWidth = (int) ((double) HP / 10 * outerBoxWidth);
+
+        g.setColor(org.newdawn.slick.Color.red);
+        g.fillRect(outerBoxX, outerBoxY, outerBoxWidth, outerBoxHeight);
+
+        g.setColor(org.newdawn.slick.Color.green);
+        g.fillRect(outerBoxX, outerBoxY, innerBoxWidth, outerBoxHeight);
+    }
+
 }

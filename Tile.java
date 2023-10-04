@@ -83,6 +83,11 @@ public class Tile implements Serializable {
         return size;
     }
 
+    public int getDistance(int objectX, int objectY)
+    {
+        return (int) Math.sqrt(Math.pow(objectX - x, 2)+Math.pow(objectY - y,2));
+    }
+
     public void draw(Graphics g) {
         if (isVisible) {
             g.setColor(texture);

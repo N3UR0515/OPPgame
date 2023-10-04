@@ -90,6 +90,15 @@ public abstract class Character implements Serializable {
         x = tile.getX();
         y = tile.getY();
     }
+    public int getHP()
+    {
+        return HP;
+    }
+
+    public void setHP(int health)
+    {
+        this.HP = health;
+    }
 
     public abstract void drawCharacter(Graphics g);
 }
