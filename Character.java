@@ -13,7 +13,7 @@ public abstract class Character implements Serializable {
     protected final Polygon triangle;
     protected Map map;
     protected Camera camera;
-    public int id;
+    public int id = 0;
 
     public Character(int HP, Map map, int rel_x, int rel_y)
     {

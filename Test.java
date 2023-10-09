@@ -40,7 +40,6 @@ public class Test extends BasicGame {
     }
 
     public void init(GameContainer container) throws SlickException {
-
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -64,16 +63,20 @@ public class Test extends BasicGame {
         try
         {
             Packet packet;
+            PacketBuilder builder;
             if(player.getAttackTile() != null)
             {
                 Tile tile = player.getAttackTile();
-                packet = new Packet(0, tile.getTrel_x(), tile.getTrel_y(), false);
-                packet.isAttack = true;
+                builder = new PlayerAttackPacketBuilder();
+                PacketDirector.constructPlayerAttackPacket(builder, tile);
+                packet = builder.getPacket();
                 player.endAttack();
             }
             else
             {
-                packet = new Packet(0, player.getRel_x(), player.getRel_y(), false);
+                builder = new ChangeOfPlayerPositionPacketBuilder();
+                PacketDirector.constructChangeOfPlayerPositonPacket(builder, player);
+                packet = builder.getPacket();
             }
             out.writeObject(packet);
             out.flush();
@@ -88,36 +91,36 @@ public class Test extends BasicGame {
         try{
             while((packet = (Packet)in.readObject()) != null)
             {
-                if(packet.isAttack)
+                if(packet.isAttack())
                 {
-                    player.setHP(packet.HP);
+                    player.setHP(packet.getHP());
                 }
-                else if(packet.isEnemy)
+                else if(packet.isEnemy())
                 {
-                    if(enemies.containsKey(packet.id))
+                    if(enemies.containsKey(packet.getId()))
                     {
-                        Enemy temp = enemies.get(packet.id);
-                        temp.setRel_y(packet.y);
-                        temp.setRel_x(packet.x);
-                        enemies.replace(packet.id, temp);
+                        Enemy temp = enemies.get(packet.getId());
+                        temp.setRel_y(packet.getY());
+                        temp.setRel_x(packet.getX());
+                        enemies.replace(packet.getId(), temp);
                     }
                     else
                     {
-                        enemies.put(packet.id, new Zombie(10, map, packet.x, packet.y, camera));
+                        enemies.put(packet.getId(), new Zombie(10, map, packet.getX(), packet.getY(), camera));
                     }
                 }
                 else
                 {
-                    if(players.containsKey(packet.id))
+                    if(players.containsKey(packet.getId()))
                     {
-                        Player temp = players.get(packet.id);
-                        temp.setRel_y(packet.y);
-                        temp.setRel_x(packet.x);
-                        players.replace(packet.id, temp);
+                        Player temp = players.get(packet.getId());
+                        temp.setRel_y(packet.getY());
+                        temp.setRel_x(packet.getX());
+                        players.replace(packet.getId(), temp);
                     }
                     else
                     {
-                        players.put(packet.id, new Player(10, map, packet.x, packet.y));
+                        players.put(packet.getId(), new Player(10, map, packet.getX(), packet.getY()));
                     }
                 }
             }
