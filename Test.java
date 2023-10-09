@@ -16,8 +16,8 @@ public class Test extends BasicGame {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private HashMap<Integer, Player> players = new HashMap<>();
-    private HashMap<Integer, Enemy> enemies = new HashMap<>();
+    private HashMap<Integer, Character> players = new HashMap<>();
+    private HashMap<Integer, Character> enemies = new HashMap<>();
     private Map map;
     private Player player;
     private Camera camera;
@@ -93,35 +93,19 @@ public class Test extends BasicGame {
             {
                 if(packet.isAttack())
                 {
+                    PacketCommand command = new DamagePlayerPacketCommand();
+                    command.execute(packet, players, map, camera);
                     player.setHP(packet.getHP());
                 }
                 else if(packet.isEnemy())
                 {
-                    if(enemies.containsKey(packet.getId()))
-                    {
-                        Enemy temp = enemies.get(packet.getId());
-                        temp.setRel_y(packet.getY());
-                        temp.setRel_x(packet.getX());
-                        enemies.replace(packet.getId(), temp);
-                    }
-                    else
-                    {
-                        enemies.put(packet.getId(), new Zombie(10, map, packet.getX(), packet.getY(), camera));
-                    }
+                    PacketCommand command = new CharacterMovePacketCommand();
+                    command.execute(packet, enemies, map, camera);
                 }
                 else
                 {
-                    if(players.containsKey(packet.getId()))
-                    {
-                        Player temp = players.get(packet.getId());
-                        temp.setRel_y(packet.getY());
-                        temp.setRel_x(packet.getX());
-                        players.replace(packet.getId(), temp);
-                    }
-                    else
-                    {
-                        players.put(packet.getId(), new Player(10, map, packet.getX(), packet.getY()));
-                    }
+                    PacketCommand command = new PlayerMovePacketCommand();
+                    command.execute(packet, players, map, camera);
                 }
             }
         } catch (IOException e) {
@@ -146,12 +130,12 @@ public class Test extends BasicGame {
     public void render(GameContainer container, Graphics g) throws SlickException {
         map.drawMap(g, camera);
 
-        for(Player p: players.values())
+        for(Character p: players.values())
         {
             p.drawCharacter(g);
         }
 
-        for(Enemy e: enemies.values())
+        for(Character e: enemies.values())
         {
             e.drawCharacter(g);
         }
