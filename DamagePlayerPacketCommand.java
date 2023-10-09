@@ -1,8 +1,12 @@
 import java.util.HashMap;
 
-public class DamagePlayerPacketCommand implements PacketCommand{
+public class DamagePlayerPacketCommand extends PacketCommand{
+    DamagePlayerPacketCommand(Packet packet, HashMap<Integer, Character> characters, Map map, Camera camera) {
+        super(packet, characters, map, camera);
+    }
+
     @Override
-    public void execute(Packet packet, HashMap<Integer, Character> characters, Map map, Camera camera) {
+     void execute() {
         if(characters.containsKey(packet.getId()))
         {
             Character temp = characters.get(packet.getId());

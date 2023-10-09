@@ -22,6 +22,7 @@ public class Test extends BasicGame {
     private Player player;
     private Camera camera;
     public boolean MyTurn = true;
+    private CommandInvoker invoker;
 
     public Test() {
         super("Game");
@@ -48,6 +49,7 @@ public class Test extends BasicGame {
             map = (Map) in.readObject();
             player = (Player) in.readObject();
             camera = new Camera(container, player);
+            invoker = new CommandInvoker();
 
             new Thread(this::Send).start();
             new Thread(this::Receive).start();
@@ -88,25 +90,35 @@ public class Test extends BasicGame {
 
     public void Receive() {
         Packet packet;
+        PacketCommand command;
         try{
             while((packet = (Packet)in.readObject()) != null)
             {
                 if(packet.isAttack())
                 {
-                    PacketCommand command = new DamagePlayerPacketCommand();
-                    command.execute(packet, players, map, camera);
-                    player.setHP(packet.getHP());
+                    invoker.setCommand(new DamagePlayerPacketCommand(packet, players, map, camera));
                 }
                 else if(packet.isEnemy())
                 {
-                    PacketCommand command = new CharacterMovePacketCommand();
-                    command.execute(packet, enemies, map, camera);
+                    invoker.setCommand(new CharacterMovePacketCommand(packet, enemies, map, camera));
                 }
                 else
                 {
-                    PacketCommand command = new PlayerMovePacketCommand();
-                    command.execute(packet, players, map, camera);
+                    invoker.setCommand(new PlayerMovePacketCommand(packet, players, map, camera));
                 }
+
+                invoker.invoke();
+
+                if(invoker.getCommand() instanceof CharacterMovePacketCommand)
+                {
+                    enemies = invoker.getResults();
+                }
+                else
+                {
+                    players = invoker.getResults();
+                    player.setHP(players.get(player.id).getHP());
+                }
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

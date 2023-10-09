@@ -1,9 +1,13 @@
 import java.util.HashMap;
 
-public class CharacterMovePacketCommand implements PacketCommand{
+public class CharacterMovePacketCommand extends PacketCommand{
+
+    CharacterMovePacketCommand(Packet packet, HashMap<Integer, Character> characters, Map map, Camera camera) {
+        super(packet, characters, map, camera);
+    }
 
     @Override
-    public void execute(Packet packet, HashMap<Integer, Character> characters, Map map, Camera camera) {
+    void execute() {
         if(characters.containsKey(packet.getId()))
         {
             Character temp = characters.get(packet.getId());
