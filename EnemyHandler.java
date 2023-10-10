@@ -1,3 +1,4 @@
+import Tile.FieryTile;
 import org.lwjgl.Sys;
 
 import java.io.IOException;
@@ -53,6 +54,9 @@ public class EnemyHandler implements Runnable
                         Server.broadcastPacket(packet);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    }
+                    if (Server.map.getTileByLoc(enemyModel.getRel_x(), enemyModel.getRel_y()).getClass() == FieryTile.class) {
+                        enemyModel.damageCharacter();
                     }
                 }
 

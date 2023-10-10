@@ -1,4 +1,4 @@
-import Tile.Tile;
+import Tile.*;
 import org.newdawn.slick.*;
 
 import java.io.IOException;

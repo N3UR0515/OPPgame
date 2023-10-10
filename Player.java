@@ -1,4 +1,5 @@
 import Tile.*;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -195,12 +196,14 @@ public class Player extends Character implements Serializable {
 
     @Override
     public void drawCharacter(Graphics g)
-    {
-        getRealLoc();
-        triangle.setCenterX(x);
-        triangle.setCenterY(y);
-        g.setColor(org.newdawn.slick.Color.red);
-        g.fill(triangle);
+    {   // Checks if player is NOT on a hiding tile. If true - draws player
+        if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
+            getRealLoc();
+            triangle.setCenterX(x);
+            triangle.setCenterY(y);
+            g.setColor(org.newdawn.slick.Color.red);
+            g.fill(triangle);
+        }
     }
 
     public void drawHealth(Graphics g) {
