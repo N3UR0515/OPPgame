@@ -125,18 +125,20 @@ class ClientHandler implements Runnable {
         try
         {
             Packet packet;
+            PacketBuilder builder;
             if((packet = (Packet) in.readObject()) != null)
             {
                 Turnline turnline = Turnline.getInstance();
                 if(turnline.getCharacter() instanceof Player && turnline.getCharacter().id == clientId)
                 {
-                    if(!packet.isAttack)
+                    if(!packet.isAttack())
                     {
-                        playerModel.setRel_x(packet.x);
-                        playerModel.setRel_y(packet.y);
+                        playerModel.setRel_x(packet.getX());
+                        playerModel.setRel_y(packet.getY());
 
-
-                        Packet outPacket = new Packet(clientId, packet.x, packet.y, false);
+                        builder = new ChangeOfPlayerPositionPacketBuilder();
+                        PacketDirector.constructChangeOfPlayerPositonPacket(builder, playerModel);
+                        Packet outPacket = builder.getPacket();
                         Server.broadcastPacket(outPacket);
                     }
                     else
@@ -144,7 +146,7 @@ class ClientHandler implements Runnable {
                         for(EnemyHandler enemy : Server.enemies)
                         {
                             Enemy e = enemy.enemyModel;
-                            if(e.rel_y == packet.y && e.rel_x == packet.x)
+                            if(e.rel_y == packet.getY() && e.rel_x == packet.getX())
                             {
                                 enemy.enemyModel.damageCharacter();
                                 System.out.println(enemy.enemyModel.getHP());
@@ -159,12 +161,15 @@ class ClientHandler implements Runnable {
                         for(ClientHandler client : Server.clients)
                         {
                             Player p = client.playerModel;
-                            if(p.rel_y == packet.y && p.rel_x == packet.x)
+                            if(p.rel_y == packet.getY() && p.rel_x == packet.getX())
                             {
                                 client.playerModel.damageCharacter();
-                                Packet pa = new Packet(-1, -1, -1, false);
-                                pa.isAttack = true;
-                                pa.HP = client.playerModel.getHP();
+                                builder = new DamagePlayerPacketBuilder();
+                                PacketDirector.constructDamagePlayerPacket(builder, client.playerModel);
+                                Packet pa = builder.getPacket();
+                                /*Packet pa = new Packet(-1, -1, -1, false);
+                                pa.setAttack(true);
+                                pa.setHP(client.playerModel.getHP());*/
                                 client.sendPacket(pa);
                                 if(client.playerModel.getHP() <= 0)
                                 {
