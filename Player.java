@@ -26,29 +26,37 @@ public class Player extends Character implements Serializable {
     {
         Input input = container.getInput();
 
-        if(input.isMousePressed(0))
+        if(input.isMousePressed(0)) // Checking for left mouse button
         {
             int mouseX = input.getMouseX();
-            int mouseY = input.getMouseY();
+            int mouseY = input.getMouseY(); // X and Y of the mouse
 
-            if(mouseX - x < 30 && mouseY - y < 30)
+            int range = Tile.getSize() * 3;  // Tile.getSize() gets half the size of a tile
+            // so the range includes the tile that the player is standing on and one tile to every side
+
+            if(mouseX - x < range && mouseY - y < range) // this is taking the relative distance from where player
+                // is drawn
             {
-                int coordX = (mouseX - x) / 16;
-                int coordY = (mouseY- y + 5) / 20;
+                /*int coordX = (mouseX - x) / 16; // calculates the tile difference in x axis of the player position
+                // and mouse position
+                // these were used in the earlier implementation
+                int coordY = (mouseY- y + 5) / 20;*/
 
-                int [][] directionsEven = {
+                int [][] directionsEven = { // directions of how to get to all the surrounding tiles
                         {0, 0}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
                 };
                 int[][] directionsOdd = {
                         {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
                 };
 
-                Tile tileShortDistance = null;
-                int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize();
+                Tile tileShortDistance = null; // will be searching for shortest distance between mouse and tiles
+                int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize(); // max possible value
 
                 int[][] directions ={};
 
-                if(map.getTileByLoc(rel_x, rel_y).id)
+                if(map.getTileByLoc(rel_x, rel_y).id) // depending if player is standing on odd or even tile
+                    // the ways to get to surrounding tiles changes
+                    // id shows if the tile is even or odd
                 {
                     directions = directionsEven;
                 }
@@ -63,6 +71,7 @@ public class Player extends Character implements Serializable {
                     int dy = dir[1];
 
                     if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
+                    // checking if the tile is not outside the map
                     {
                         Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
                         if(tile.getClass() != UnavailableTile.class)
@@ -70,10 +79,12 @@ public class Player extends Character implements Serializable {
                             if(tileShortDistance == null)
                             {
                                 tileShortDistance = tile;
-                                distance = tile.getDistance(mouseX, mouseY);
+                                distance = tile.getDistance(mouseX, mouseY); // calculation of distance between where the
+                                // drawn center of the tile is and where the mouse was clicked on screen
+                                // the real distance is used and not the relative one
                             } else if (tile.getDistance(mouseX, mouseY) < distance) {
                                 tileShortDistance = tile;
-                                distance = tile.getDistance(mouseX, mouseY);
+                                distance = tile.getDistance(mouseX, mouseY); // the tile that is drawn closest to the mouse wins
                             }
                         }
                     }
@@ -83,13 +94,13 @@ public class Player extends Character implements Serializable {
                 System.out.println(tileShortDistance.getTrel_x());
                 System.out.println(tileShortDistance.getTrel_y());
                 attackTile = tileShortDistance;
-                return true;
+                return true; // attack happened
             }
         }
 
 
 
-        return false;
+        return false; // attack didn't happen
     }
 
     @Override
