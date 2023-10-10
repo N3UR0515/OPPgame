@@ -16,14 +16,15 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("Server is running and listening on port " + PORT);
 
             map = new Map(100, 100);
 
             int clientId = 1; // Initialize a unique identifier for clients
 
             enemies.add(new EnemyHandler(0));
+
+            ServerSocket serverSocket = new ServerSocket(PORT);
+            System.out.println("Server is running and listening on port " + PORT);
 
             new Thread(Server::Turns).start();
 

@@ -1,13 +1,11 @@
-import org.lwjgl.Sys;
+import Tile.Tile;
 import org.newdawn.slick.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Test extends BasicGame {
     private static final String SERVER_IP = "localhost";

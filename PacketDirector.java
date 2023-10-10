@@ -1,3 +1,5 @@
+import Tile.*;
+
 public class PacketDirector {
     public static void constructChangeOfEnemyPositionPacket(PacketBuilder builder, Enemy enemy)
     {
