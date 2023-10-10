@@ -1,19 +1,15 @@
-import org.lwjgl.Sys;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Polygon;
 
-import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-
 public class Player extends Character implements Serializable {
     private Tile attackTile = null;
-
+    private PlayerStrategy playerStrategy;
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
         super(HP, map, rel_x, rel_y);
+        this.playerStrategy = super.getStrategy();
     }
 
     public void endAttack()
@@ -24,76 +20,77 @@ public class Player extends Character implements Serializable {
     {
         return attackTile;
     }
+    public void setAttackTile(Tile tile) { this.attackTile = tile;}
 
-    private boolean attack(GameContainer container)
-    {
-        Input input = container.getInput();
-
-        if(input.isMousePressed(0))
-        {
-            int mouseX = input.getMouseX();
-            int mouseY = input.getMouseY();
-
-            if(mouseX - x < 30 && mouseY - y < 30)
-            {
-                int coordX = (mouseX - x) / 16;
-                int coordY = (mouseY- y + 5) / 20;
-
-                int [][] directionsEven = {
-                        {0, 0}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-                };
-                int[][] directionsOdd = {
-                        {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-                };
-
-                Tile tileShortDistance = null;
-                int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize();
-
-                int[][] directions ={};
-
-                if(map.getTileByLoc(rel_x, rel_y).id)
-                {
-                    directions = directionsEven;
-                }
-                else
-                {
-                    directions = directionsOdd;
-                }
-
-                for(int[] dir : directions)
-                {
-                    int dx = dir[0];
-                    int dy = dir[1];
-
-                    if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
-                    {
-                        Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
-                        if(tile.isAvailable())
-                        {
-                            if(tileShortDistance == null)
-                            {
-                                tileShortDistance = tile;
-                                distance = tile.getDistance(mouseX, mouseY);
-                            } else if (tile.getDistance(mouseX, mouseY) < distance) {
-                                tileShortDistance = tile;
-                                distance = tile.getDistance(mouseX, mouseY);
-                            }
-                        }
-                    }
-                }
-
-                assert tileShortDistance != null;
-                System.out.println(tileShortDistance.getTrel_x());
-                System.out.println(tileShortDistance.getTrel_y());
-                attackTile = tileShortDistance;
-                return true;
-            }
-        }
-
-
-
-        return false;
-    }
+//    private boolean attack(GameContainer container)
+//    {
+//        Input input = container.getInput();
+//
+//        if(input.isMousePressed(0))
+//        {
+//            int mouseX = input.getMouseX();
+//            int mouseY = input.getMouseY();
+//
+//            if(mouseX - x < 30 && mouseY - y < 30)
+//            {
+//                int coordX = (mouseX - x) / 16;
+//                int coordY = (mouseY- y + 5) / 20;
+//
+//                int [][] directionsEven = {
+//                        {0, 0}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+//                };
+//                int[][] directionsOdd = {
+//                        {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+//                };
+//
+//                Tile tileShortDistance = null;
+//                int distance = map.getRows() * Tile.getSize() * map.getCols() * Tile.getSize();
+//
+//                int[][] directions ={};
+//
+//                if(map.getTileByLoc(rel_x, rel_y).id)
+//                {
+//                    directions = directionsEven;
+//                }
+//                else
+//                {
+//                    directions = directionsOdd;
+//                }
+//
+//                for(int[] dir : directions)
+//                {
+//                    int dx = dir[0];
+//                    int dy = dir[1];
+//
+//                    if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
+//                    {
+//                        Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
+//                        if(tile.isAvailable())
+//                        {
+//                            if(tileShortDistance == null)
+//                            {
+//                                tileShortDistance = tile;
+//                                distance = tile.getDistance(mouseX, mouseY);
+//                            } else if (tile.getDistance(mouseX, mouseY) < distance) {
+//                                tileShortDistance = tile;
+//                                distance = tile.getDistance(mouseX, mouseY);
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                assert tileShortDistance != null;
+//                System.out.println(tileShortDistance.getTrel_x());
+//                System.out.println(tileShortDistance.getTrel_y());
+//                attackTile = tileShortDistance;
+//                return true;
+//            }
+//        }
+//
+//
+//
+//        return false;
+//    }
 
     @Override
     public boolean updateCharacter(GameContainer container) {
@@ -188,7 +185,14 @@ public class Player extends Character implements Serializable {
                 isMovingLeft ||
                 isMovingUp ||
                 isMovingRight ||
-                attack(container);
+                playerStrategy.attack(container, x, y, rel_x, rel_y, map, this);
+        // cia kvietimas attack playerStrategy virsuj sukuriant player reik random sukurt viena is tipu
+        // ir kviest metoda pagal ta tipa, kad pats kvietimas butu abstraktus, atack metodo cia isvis nereik
+        // sukuriamas virsuj random objektas ir is jo kvieciam.
+
+        // Sukurt playerStrategy interface su attack ir visi player paveldi tai.
+        // Sukurt random klases pasirinkima
+        // ima sarasa ir is dabartinio laiko sugeneruoja skaiciu kuris is saraso tipas
     }
 
     @Override

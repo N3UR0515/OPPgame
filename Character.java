@@ -3,6 +3,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Character implements Serializable {
     protected int x;
@@ -101,4 +102,30 @@ public abstract class Character implements Serializable {
     }
 
     public abstract void drawCharacter(Graphics g);
+    public PlayerStrategy getStrategy(){
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int rand = random.nextInt(1, 10);
+        switch (rand){
+            case 1: {
+                return new MobileDoc();
+            } case 2: {
+                return new Priest();
+            } case 3: {
+                return new Traumatologist();
+            } case 4: {
+                return new CamoExpert();
+            } case 5: {
+                return new Recon();
+            } case 6: {
+                return new Thief();
+            } case 7: {
+                return new Infantry();
+            } case 8: {
+                return new MachineGunner();
+            } case 9: {
+                return new TankDriver();
+            }
+        }
+        return new MobileDoc();
+    }
 }
