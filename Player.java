@@ -1,12 +1,9 @@
-import org.lwjgl.Sys;
+import Tile.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Polygon;
 
-import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Player extends Character implements Serializable {
     private Tile attackTile = null;
@@ -68,7 +65,7 @@ public class Player extends Character implements Serializable {
                     if (rel_x + dx >= 0 && rel_x + dx < map.getCols() && rel_y + dy >= 0 && rel_y + dy < map.getRows())
                     {
                         Tile tile = map.getTileByLoc(rel_x + dx, rel_y + dy);
-                        if(tile.isAvailable())
+                        if(tile.getClass() != UnavailableTile.class)
                         {
                             if(tileShortDistance == null)
                             {
@@ -171,7 +168,7 @@ public class Player extends Character implements Serializable {
         }
 
         //Check if moving to an unavailable tile. If so - do not move
-        if (!map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y).isAvailable()) {
+        if (map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y).getClass() == UnavailableTile.class) {
             return false;
         }
         //Moving to an available tile

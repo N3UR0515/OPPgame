@@ -1,7 +1,8 @@
+import Tile.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Polygon;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -186,7 +187,7 @@ public abstract class Enemy extends Character {
 
             if (x + dx >= 0 && x + dx < map.getCols() && y + dy >= 0 && y + dy < map.getRows()) {
                 Tile neighbor = map.getTileByLoc(x + dx, y + dy);
-                if (neighbor.isAvailable()){
+                if (neighbor.getClass() != UnavailableTile.class){
                     neighbors.add(neighbor);
                 }
             }

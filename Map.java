@@ -1,15 +1,18 @@
+import Tile.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import java.util.*;
 import java.io.Serializable;
 
 public class Map implements Serializable {
-    private Tile[] tiles;
-    private int cols;
-    private int rows;
+    private final Tile[] tiles;
+    private final int cols;
+    private final int rows;
+    private final TileFactory factory;
     public Map(int cols, int rows)
     {
-        int initTileCount = 109;
+        factory = new TileFactory();
+        int initTileCount = 109, hiderTileCount = 65;
         this.cols = cols;
         this.rows = rows;
         tiles = new Tile[cols * rows];
@@ -18,7 +21,7 @@ public class Map implements Serializable {
         Random rand = new Random();
 
         //Setting 0;0 tile as starter one
-        tiles[0] = new Tile(true, Tile.getSize(), Tile.getSize(), 0, 0, Color.white, true, true);
+        tiles[0] =  factory.createTile(0, true, 0, 0);
         roomCenters.add("0_0");
         coordSave.add("0_0");
 
@@ -33,14 +36,14 @@ public class Map implements Serializable {
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                createTile(tempRow, tempCol, true, true);
+                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, true, tempRow, tempCol);
             } else {
                 if (tiles[tempCol * rows + tempRow] != null) {
                     i--;
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                createTile(tempRow, tempCol, true, false);
+                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, false, tempRow, tempCol);
             }
         }
 
@@ -54,14 +57,14 @@ public class Map implements Serializable {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-                    createTile(row, col, false, true);
+                    tiles[col * this.rows + row] = factory.createTile(-1, true, row, col);
                 }
                 else
                 {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-                    createTile(row, col, false, false);
+                    tiles[col * this.rows + row] = factory.createTile(-1, false, row, col);
                 }
 
             }
@@ -82,7 +85,7 @@ public class Map implements Serializable {
             }
         }
 
-        //Generating rooms
+        //Getting tiles for rooms
         ArrayList<Tile> roomTiles = new ArrayList<>(); //After all getAreaTiles() calls this will be filled with room tiles. Duplicates will be here
         for (String center : roomCenters) {
             getAreaTiles(roomTiles, 4, getTileByLoc(decryptCol(center), decryptRow(center)));
@@ -91,10 +94,84 @@ public class Map implements Serializable {
         Set<Tile> set = new LinkedHashSet<>(roomTiles);
         roomTiles.clear();
         roomTiles.addAll(set);
-
+        //Generating rooms
         for (Tile tile : roomTiles){
             if (isUnavailable(tile)) {
-                createTile(tile.getTrel_y(), tile.getTrel_x(), true, tile.id);
+                tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = factory.createTile(0, tile.id, tile.getTrel_y(), tile.getTrel_x());
+            }
+        }
+
+        //Generating hiding tiles
+        for (int i = 0; i < hiderTileCount; i++){
+            int tempRow = rand.nextInt(rows);
+            int tempCol = rand.nextInt(cols);
+            if (tempCol % 2 == 0){
+                if (tiles[tempCol * rows + tempRow].getClass() != RegularTile.class) {
+                    i--;
+                    continue;
+                } else {
+                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, true, tempRow, tempCol);
+                }
+            } else {
+                if (tiles[tempCol * rows + tempRow].getClass() != RegularTile.class) {
+                    i--;
+                    continue;
+                } else {
+                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, false, tempRow, tempCol);
+                }
+            }
+        }
+
+        //Generating fiery lines
+        this.generateFieryLines();
+    }
+
+    private void generateFieryLines() {
+        int fieryLineCount = 25;
+        Random rand = new Random();
+        int[][] directionsId = {
+                {-1, -1}, {0, -1}, {1, -1}, {1, 0}, {0, 1}, {-1, 0}
+        };
+        int[][] directionsNotId = {
+                {-1, 0}, {0, -1}, {1, 0}, {-1, 1}, {1, 1} , {0, 1}
+        };
+        for (int i = 0; i < fieryLineCount; i++){
+            int tempRow = rand.nextInt(rows);
+            int tempCol = rand.nextInt(cols);
+            int length = 4 + rand.nextInt(17);
+            int direction = rand.nextInt(6);
+            for (int j = 0; j < length; j++){
+                //decide whether to curve line
+                int toCurve = rand.nextInt(11);
+                if (toCurve == 0) {
+                    if (direction == 0) {
+                        direction = 5;
+                    } else {
+                        direction--;
+                    }
+                } else if (toCurve == 10) {
+                    if (direction == 5) {
+                        direction = 0;
+                    } else {
+                        direction++;
+                    }
+                }
+
+                //make tile fiery
+                if (tiles[tempCol * this.rows + tempRow].id) {
+                    tempCol += directionsId[direction][0];
+                    tempRow += directionsId[direction][1];
+                } else {
+                    tempCol += directionsNotId[direction][0];
+                    tempRow += directionsNotId[direction][1];
+                }
+                if (tempCol >= 0 && tempCol < this.cols && tempRow >= 0 && tempRow < this.rows){
+                    if (!isUnavailable(tiles[tempCol * this.rows + tempRow])){
+                        tiles[tempCol * this.rows + tempRow] = factory.createTile(2, tiles[tempCol * this.rows + tempRow].id, tempRow, tempCol);
+                    }
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -116,7 +193,7 @@ public class Map implements Serializable {
             if (isCloseToTile(tileToFind, currentTile)) {
                 Random RNG = new Random();
                 int decisionMaker = RNG.nextInt(4);
-                paintPath(prec, currentTile, decisionMaker == 3);
+                paintPath(prec, currentTile, decisionMaker == 3, RNG);
                 return;
             }
 
@@ -189,25 +266,34 @@ public class Map implements Serializable {
         }
     }
 
-    private void paintPath(Tile[] prec, Tile currentTile, boolean isWide) {
+    private void paintPath(Tile[] prec, Tile currentTile, boolean isWide, Random rng) {
+        boolean isFiery = isWide && rng.nextInt(6) == 5;
         while (prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] != currentTile) {
             if (isWide) {
                 ArrayList<Tile> neighbors = getNeighbors(currentTile);
                 for (Tile n : neighbors){
                     if (isUnavailable(n)) {
-                        createTile(n.getTrel_y(), n.getTrel_x(),true, n.id);
+                        if (isFiery && rng.nextInt(16) == 4) {
+                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(2, n.id, n.getTrel_y(), n.getTrel_x());
+                        } else {
+                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(0, n.id, n.getTrel_y(), n.getTrel_x());
+                        }
                     }
                 }
             }
             if (isUnavailable(currentTile)) {
-                createTile(currentTile.getTrel_y(), currentTile.getTrel_x(), true, currentTile.id);
+                if (isFiery && rng.nextInt(16) == 4){
+                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(2, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x());
+                } else {
+                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(0, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x());
+                }
             }
             currentTile = prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()];
         }
     }
 
     private boolean isUnavailable(Tile tile) {
-        return !tile.isAvailable();
+        return tile.getClass() == UnavailableTile.class;
     }
 
     private boolean isCloseToTile(Tile destination, Tile currentTile) {
@@ -245,28 +331,12 @@ public class Map implements Serializable {
 
     public void drawMap(Graphics g, Camera camera) {
         for (Tile tile : tiles) {
-            if (tile.isAvailable()){
+            if (tile.getClass() != UnavailableTile.class){
                 tile.setX(tile.getX() + camera.cameraX);
                 tile.setY(tile.getY() + camera.cameraY);
                 tile.draw(g);
             }
         }
-    }
-
-    private void createTile(int row, int column, boolean isWhite, boolean isID) {
-        Color color;
-        if (isWhite) {
-            color = Color.white;
-        } else {
-            color = Color.black;
-        }
-        tiles[column * this.rows + row] =
-                new Tile(isID,Tile.getSize() + column * Tile.getSize() + (int)(Tile.getSize()/1.5) * column,
-                        isID? Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row : 2 * Tile.getSize() + row * Tile.getSize() + Tile.getSize() * row,
-                        column, row,
-                        color,
-                        true,
-                        isWhite);
     }
 
     public int getRows()

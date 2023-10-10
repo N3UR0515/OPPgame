@@ -1,10 +1,12 @@
+package Tile;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
 
-public class Tile implements Serializable {
+public abstract class Tile implements Serializable {
     private static int size = 10;
     public boolean id;
     private int x;             // X-coordinate of the tile
@@ -12,22 +14,18 @@ public class Tile implements Serializable {
     private int trel_x;
     private int trel_y;
     private Color texture;    // Texture or color of the tile
-    private boolean isVisible; // Visibility status of the tile
-    private boolean isAvailable; // Availability status of the tile
 
-    // Constructor to initialize a Tile object
-    public Tile(boolean id, int x, int y, int tx, int ty, Color texture, boolean isVisible, boolean isAvailable) {
+    // Constructor to initialize a Tile.Tile object
+    public Tile(boolean id, int x, int y, int tx, int ty, Color texture) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.trel_x = tx;
         this.trel_y = ty;
         this.texture = texture;
-        this.isVisible = isVisible;
-        this.isAvailable = isAvailable;
     }
 
-    // Getters and setters for the Tile attributes
+    // Getters and setters for the Tile.Tile attributes
     public int getX() {
         return x;
     }
@@ -52,22 +50,6 @@ public class Tile implements Serializable {
         this.texture = texture;
     }
 
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
-
     public int getTrel_x()
     {
         return trel_x;
@@ -89,10 +71,8 @@ public class Tile implements Serializable {
     }
 
     public void draw(Graphics g) {
-        if (isVisible) {
-            g.setColor(texture);
-            g.fill(createHexagon(x, y, size));
-        }
+        g.setColor(texture);
+        g.fill(createHexagon(x, y, size));
     }
 
     private Polygon createHexagon(float centerX, float centerY, int size) {
