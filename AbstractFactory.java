@@ -1,5 +1,4 @@
-import Player.PlayerType;
 
 public abstract class AbstractFactory {
-    abstract PlayerType getPlayerType(String playerType);
+    abstract Zombie getZombie(String playerType);
 }
