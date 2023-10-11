@@ -1,12 +1,9 @@
 public class FactoryProducer {
-    public static AbstractFactory getFactory(String factory) {
-        if(factory.equalsIgnoreCase("Soldier")){
-            return new SoldierFactory();
-        } else if (factory.equalsIgnoreCase("Medic")) {
-            return new MedicFactory();
-        } else if (factory.equalsIgnoreCase("Scout")) {
-            return new ScoutFactory();
+    public static AbstractFactory getFactory(Boolean isMutant) {
+        if(isMutant){
+            return new MutantZombieFactory();
+        } else {
+            return new ZombieFactory();
         }
-        return null;
     }
 }
