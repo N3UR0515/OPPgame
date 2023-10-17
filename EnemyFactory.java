@@ -2,7 +2,7 @@ public class EnemyFactory {
     public EnemyFactory() {}
     public Enemy createEnemy(int key, int x, int y){
         if (key < 3) {
-            return new Zombie(8, Server.map, x, y);
+            return new ZombieOld(8, Server.map, x, y);
         } else if (key < 6) {
             return new Werewolf(6, Server.map, x, y);
         } else if (key < 9) {

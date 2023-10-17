@@ -8,7 +8,7 @@ import java.io.Serializable;
 public abstract class Character implements Serializable {
     protected int x;
     protected  int y;
-    protected  int rel_x;
+    protected int rel_x;
     protected int rel_y;
     protected int HP;
     protected final Polygon triangle;
@@ -57,7 +57,7 @@ public abstract class Character implements Serializable {
     public int getX()
     {
         return x;
-    };
+    }
     public int getY() {
         return y;
     }
