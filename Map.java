@@ -293,7 +293,7 @@ public class Map implements Serializable {
     }
 
     private boolean isUnavailable(Tile tile) {
-        return tile.getClass() == UnavailableTile.class;
+        return tile.getClass()== UnavailableTile.class;
     }
 
     private boolean isCloseToTile(Tile destination, Tile currentTile) {
