@@ -1,3 +1,4 @@
+import Tile.FieryTile;
 import org.lwjgl.Sys;
 
 import java.io.IOException;
@@ -179,7 +180,14 @@ class ClientHandler implements Runnable {
                             }
                         }
                     }
-
+                    //Checking if player is on a fiery tile. If yes - send damage packet to that player
+                    if (Server.map.getTileByLoc(playerModel.getRel_x(), playerModel.getRel_y()).getClass() == FieryTile.class){
+                        playerModel.damageCharacter();
+                        PacketBuilder dmgBuilder = new DamagePlayerPacketBuilder();
+                        PacketDirector.constructDamagePlayerPacket(dmgBuilder, playerModel);
+                        Packet toSend = dmgBuilder.getPacket();
+                        sendPacket(toSend);
+                    }
                     if(Server.enemies.get(0).enemyModel.getHP() > 0)
                         turnline.Add(Server.enemies.get(0).enemyModel);
                     turnline.Next();

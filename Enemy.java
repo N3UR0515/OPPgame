@@ -40,11 +40,14 @@ public abstract class Enemy extends Character {
     }
 
     public void drawCharacter(Graphics g) {
-        this.getRealLoc();
-        this.triangle.setCenterX((float)this.x);
-        this.triangle.setCenterY((float)this.y);
-        g.setColor(Color.blue);
-        g.fill(this.triangle);
+        // Checks if enemy is NOT on a hiding tile. If true - draws enemy
+        if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
+            this.getRealLoc();
+            this.triangle.setCenterX((float)this.x);
+            this.triangle.setCenterY((float)this.y);
+            g.setColor(Color.blue);
+            g.fill(this.triangle);
+        }
     }
 
     protected boolean checkDistance(Player player, Tile tile) {

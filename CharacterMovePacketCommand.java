@@ -17,7 +17,8 @@ public class CharacterMovePacketCommand extends PacketCommand{
         }
         else
         {
-            characters.put(packet.getId(), new Zombie(10, map, packet.getX(), packet.getY(), camera));
+            characters.put(packet.getId(), new Enemy(10, map, packet.getX(), packet.getY(), camera) {
+            });
         }
     }
 }
