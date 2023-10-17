@@ -1,5 +1,4 @@
 import Tile.*;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import java.util.*;
 import java.io.Serializable;
@@ -9,6 +8,7 @@ public class Map implements Serializable {
     private final int cols;
     private final int rows;
     private final TileFactory factory;
+    private final Area[] areas;
     public Map(int cols, int rows)
     {
         factory = new TileFactory();
@@ -16,6 +16,7 @@ public class Map implements Serializable {
         this.cols = cols;
         this.rows = rows;
         tiles = new Tile[cols * rows];
+        areas = new Area[10];
         ArrayList<String> coordSave = new ArrayList<>();
         ArrayList<String>  roomCenters = new ArrayList<>();
         Random rand = new Random();
@@ -90,10 +91,12 @@ public class Map implements Serializable {
         for (String center : roomCenters) {
             getAreaTiles(roomTiles, 4, getTileByLoc(decryptCol(center), decryptRow(center)));
         }
-        //Removing duplicates
+
+        //Removing duplicates from room tiles
         Set<Tile> set = new LinkedHashSet<>(roomTiles);
         roomTiles.clear();
         roomTiles.addAll(set);
+
         //Generating rooms
         for (Tile tile : roomTiles){
             if (isUnavailable(tile)) {
@@ -124,6 +127,7 @@ public class Map implements Serializable {
 
         //Generating fiery lines
         this.generateFieryLines();
+
     }
 
     private void generateFieryLines() {
@@ -174,6 +178,47 @@ public class Map implements Serializable {
                 }
             }
         }
+    }
+
+    //get areas for which specific coordinate (row and column) belongs to
+    public List<Area> getAreas(int row, int  column){
+        //Some tiles belong to few coordinates, so a list to get them all
+        List<Area> temp = new ArrayList<Area>();
+        if (column < 57) {
+            if (row < 27) {
+                temp.add(areas[0]);
+            }
+            if (row > 12 && row < 47) {
+                temp.add(areas[2]);
+            }
+            if (row > 32 && row < 67) {
+                temp.add(areas[4]);
+            }
+            if (row > 52 && row < 87) {
+                temp.add(areas[6]);
+            }
+            if (row > 72) {
+                temp.add(areas[8]);
+            }
+        }
+        if (column > 42){
+            if (row < 27) {
+                temp.add(areas[1]);
+            }
+            if (row > 12 && row < 47) {
+                temp.add(areas[3]);
+            }
+            if (row > 32 && row < 67) {
+                temp.add(areas[5]);
+            }
+            if (row > 52 && row < 87) {
+                temp.add(areas[7]);
+            }
+            if (row > 72) {
+                temp.add(areas[9]);
+            }
+        }
+        return temp;
     }
 
     private void BFS(String start, String end){
@@ -256,6 +301,7 @@ public class Map implements Serializable {
         return neighbors;
     }
 
+    //Not to be confused with "viewport" areas. For this method, area means getting tiles around one specific tile
     private void getAreaTiles(ArrayList<Tile> list, int depth, Tile currentTile) {
         ArrayList<Tile> temp = getNeighbors(currentTile);
         list.addAll(temp);

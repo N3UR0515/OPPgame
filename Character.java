@@ -4,6 +4,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Character implements Serializable {
     protected int x;
@@ -14,6 +16,7 @@ public abstract class Character implements Serializable {
     protected final Polygon triangle;
     protected Map map;
     protected Camera camera;
+    protected List<Area> areas = new ArrayList<>(4);
     public int id = 0;
 
     public Character(int HP, Map map, int rel_x, int rel_y)
@@ -51,8 +54,22 @@ public abstract class Character implements Serializable {
         triangle.addPoint(x + 5 + camera.cameraX, y + 5 + camera.cameraY); // Bottom-right vertex
     }
 
+    public void addArea(Area area) {
+        if (!this.areas.contains(area)) {
+            this.areas.add(area);
+        }
+    }
+
+    public void removeArea(Area area) {
+        this.areas.remove(area);
+    }
+
     public abstract boolean updateCharacter(GameContainer container);
     public abstract void updateCharacter(Character character);
+
+    public List<Area> getAreas() {
+        return areas;
+    }
 
     public int getX()
     {
