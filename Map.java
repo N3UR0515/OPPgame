@@ -17,6 +17,9 @@ public class Map implements Serializable {
         this.rows = rows;
         tiles = new Tile[cols * rows];
         areas = new Area[10];
+        for (int i = 0; i < 10;  i++){
+            areas[i] = new Area();
+        }
         ArrayList<String> coordSave = new ArrayList<>();
         ArrayList<String>  roomCenters = new ArrayList<>();
         Random rand = new Random();
@@ -183,9 +186,10 @@ public class Map implements Serializable {
     //get areas for which specific coordinate (row and column) belongs to
     public List<Area> getAreas(int row, int  column){
         //Some tiles belong to few coordinates, so a list to get them all
-        List<Area> temp = new ArrayList<Area>();
+        List<Area> temp = new ArrayList<>();
         if (column < 57) {
             if (row < 27) {
+//                System.out.println(areas[0] + " 55555");
                 temp.add(areas[0]);
             }
             if (row > 12 && row < 47) {
@@ -218,6 +222,10 @@ public class Map implements Serializable {
                 temp.add(areas[9]);
             }
         }
+//        System.out.println(temp);
+//        for (Area a : temp) {
+//            System.out.println(a);
+//        }
         return temp;
     }
 

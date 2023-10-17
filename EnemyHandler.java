@@ -4,32 +4,48 @@ import org.lwjgl.Sys;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class EnemyHandler implements Runnable
+public class EnemyHandler extends CharacterHandler
 {
-    public int enemyId;
-    public Enemy enemyModel;
 
     public EnemyHandler(int enemyId) throws IOException {
-        this.enemyId = enemyId;
+        this.characterId = enemyId;
         Random rng = new Random();
         EnemyFactory factory = new EnemyFactory();
-        enemyModel = factory.createEnemy(rng.nextInt(15), 0, 5);
-        enemyModel.id = enemyId;
-        Turnline.getInstance().Add(enemyModel);
+        characterModel = factory.createEnemy(11, 0, 5);
+        characterModel.id = enemyId;
+        Turnline.getInstance().Add(characterModel);
     }
     @Override
     public void run() {
+        Turnline turnline = Turnline.getInstance();
+        synchronized (turnline)
         {
-            Turnline turnline = Turnline.getInstance();
-            if ( turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == enemyId)
+//            Turnline turnline = Turnline.getInstance();
+            if ( turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == characterId)
             {
-                turnline.Remove(enemyModel);
+//                turnline.Remove(characterModel);
+                turnline.Next();
                 PacketBuilder builder;
                 if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
                 {
-                    enemyModel.updateCharacter((Player)turnline.getCharacter());
+                    System.out.println("HP = "+ characterModel.getHP());
+
+                    characterModel.updateCharacter((Player)turnline.getCharacter());
+
+                    List<Area> newAreas = Server.map.getAreas(characterModel.getY(), characterModel.getX());
+                    List<Area> oldOnes = new ArrayList<>(this.areas);
+                    System.out.println(this.areas.size() + " areas");
+                    oldOnes.removeAll(newAreas);
+                    for (Area area : oldOnes){
+                        area.removeCharacter(this);
+                    }
+                    for (Area area : newAreas){
+                        area.addCharacter(this);
+                    }
 
                     builder = new DamagePlayerPacketBuilder();
                     PacketDirector.constructDamagePlayerPacket(builder, (Player)turnline.getCharacter());
@@ -47,7 +63,7 @@ public class EnemyHandler implements Runnable
                         turnline.Remove(turnline.getCharacter());
 
                     builder = new ChangeOfEnemyPositionPacketBuilder();
-                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, enemyModel);
+                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);
 
                     Packet packet = builder.getPacket();
                     try {
@@ -56,11 +72,12 @@ public class EnemyHandler implements Runnable
                         throw new RuntimeException(e);
                     }
                 }
-                if (Server.map.getTileByLoc(enemyModel.getRel_x(), enemyModel.getRel_y()).getClass() == FieryTile.class) {
-                    enemyModel.damageCharacter();
+                if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
+                    characterModel.damageCharacter();
                 }
             }
         }
-
     }
+    @Override
+    public void sendPacket(Packet packet) throws IOException {}
 }

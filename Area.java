@@ -1,12 +1,14 @@
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Area {
-    private final List<Character> characters = new ArrayList<>();
+public class Area implements Serializable {
+    private final List<CharacterHandler> characters = new ArrayList<>();
 
     public Area() {}
 
-    public void addCharacter(Character character) {
+    public void addCharacter(CharacterHandler character) {
         if (!characters.contains(character)) {
             characters.add(character);
             character.addArea(this);
@@ -14,17 +16,29 @@ public class Area {
 
     }
 
-    public void removeCharacter(Character character) {
+    public void removeCharacter(CharacterHandler character) {
         boolean hasRemoved = characters.remove(character);
         if (hasRemoved) {
             character.removeArea(this);
         }
     }
 
-    public void sendAttack(int x, int y) {
-        for (Character c : characters) {
-            if (c.getRel_x() == x && c.getRel_y() == y){
-                c.damageCharacter();
+    public void sendAttack(int x, int y) throws IOException {
+        for (CharacterHandler handler : characters) {
+            System.out.println(handler.characterModel.id + "ID");
+            if (handler.characterModel.getRel_x() == x && handler.characterModel.getRel_y() == y){
+                System.out.println("Hello");
+                handler.characterModel.damageCharacter();
+                if (handler instanceof ClientHandler) {
+                    PacketBuilder builder = new DamagePlayerPacketBuilder();
+                    PacketDirector.constructDamagePlayerPacket(builder, (Player) handler.characterModel);
+                    Packet pa = builder.getPacket();
+                    handler.sendPacket(pa);
+                }
+                if(handler.characterModel.getHP() <= 0){
+                    Turnline turnline = Turnline.getInstance();
+                    turnline.Remove(handler.characterModel);
+                }
             }
         }
     }
