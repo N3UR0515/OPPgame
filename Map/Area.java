@@ -39,9 +39,9 @@ public class Area implements Serializable {
 
     public void sendAttack(int x, int y) throws IOException {
         for (CharacterHandler handler : characters) {
-            System.out.println(handler.characterModel.id + "ID");
+            //System.out.println(handler.characterModel.id + "ID");
             if (handler.characterModel.getRel_x() == x && handler.characterModel.getRel_y() == y){
-                System.out.println("Hello");
+                //System.out.println("Hello");
                 handler.characterModel.damageCharacter();
                 if (handler instanceof ClientHandler) {
                     PacketBuilder builder = new DamagePlayerPacketBuilder();
