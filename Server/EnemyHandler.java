@@ -97,6 +97,8 @@ public class EnemyHandler extends CharacterHandler
                 }
                 if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
                     characterModel.damageCharacter();
+                    if(characterModel.getHP() < 0)
+                        characterModel.setHP(0);
                 }
             }
         }
