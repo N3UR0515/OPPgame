@@ -197,7 +197,7 @@ public abstract class Enemy extends Character {
 
             if (x + dx >= 0 && x + dx < map.getCols() && y + dy >= 0 && y + dy < map.getRows()) {
                 Tile neighbor = map.getTileByLoc(x + dx, y + dy);
-                if (neighbor.getClass() != UnavailableTile.class){
+                if (neighbor.getClass() != UnavailableTile.class && neighbor.getOnTile() == null){
                     neighbors.add(neighbor);
                 }
             }

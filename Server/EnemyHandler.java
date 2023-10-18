@@ -44,7 +44,11 @@ public class EnemyHandler extends CharacterHandler
                     //System.out.println("HP = "+ characterModel.getHP());
 
                     if(!Server.clients.isEmpty())
+                    {
+                        Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(null);
                         characterModel.updateCharacter(Server.clients.get(0).characterModel);
+                        Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
+                    }
 
                     List<Area> newAreas = Server.map.getAreas(characterModel.getY(), characterModel.getX());
                     List<Area> oldOnes = new ArrayList<>(this.areas);
@@ -97,8 +101,8 @@ public class EnemyHandler extends CharacterHandler
                 }
                 if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
                     characterModel.damageCharacter();
-                    if(characterModel.getHP() < 0)
-                        characterModel.setHP(-1);
+                    if(characterModel.getHP() <= 0)
+                        turnline.Remove(characterModel);
                 }
             }
         }

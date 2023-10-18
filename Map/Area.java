@@ -43,6 +43,7 @@ public class Area implements Serializable {
             if (handler.characterModel.getRel_x() == x && handler.characterModel.getRel_y() == y){
                 //System.out.println("Hello");
                 handler.characterModel.damageCharacter();
+                System.out.println(handler.characterModel.id + " HP:" + handler.characterModel.getHP());
                 if (handler instanceof ClientHandler) {
                     PacketBuilder builder = new DamagePlayerPacketBuilder();
                     PacketDirector.constructDamagePlayerPacket(builder, (Player) handler.characterModel);

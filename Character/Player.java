@@ -217,6 +217,7 @@ public class Player extends Character implements Serializable {
             triangle.setCenterY(y);
             g.setColor(org.newdawn.slick.Color.red);
             g.fill(triangle);
+            g.drawOval(x, y, 5, 5);
         }
     }
 

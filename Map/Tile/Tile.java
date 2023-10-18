@@ -3,6 +3,7 @@ package Map.Tile;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
+import Character.Character;
 
 import java.io.Serializable;
 
@@ -14,6 +15,7 @@ public abstract class Tile implements Serializable {
     private int trel_x;
     private int trel_y;
     private Color texture;    // Texture or color of the tile
+    private Character onTile = null;
 
     // Constructor to initialize a Map.Tile.Map.Tile object
     public Tile(boolean id, int x, int y, int tx, int ty, Color texture) {
@@ -86,5 +88,13 @@ public abstract class Tile implements Serializable {
         }
 
         return hexagon;
+    }
+
+    public Character getOnTile() {
+        return onTile;
+    }
+
+    public void setOnTile(Character onTile) {
+        this.onTile = onTile;
     }
 }
