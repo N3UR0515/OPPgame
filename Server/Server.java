@@ -92,8 +92,8 @@ public class Server {
             if(turnline.getCharacter() != null)
             {
                 Character character = turnline.getCharacter();
-                System.out.println(character.id);
-                System.out.println(character.getHP() + " HP");
+                //System.out.println(character.id);
+                //System.out.println(character.getHP() + " HP");
                 if(character instanceof Player)
                 {
                     for(ClientHandler client : clients)

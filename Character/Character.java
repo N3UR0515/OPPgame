@@ -88,6 +88,8 @@ public abstract class Character implements Serializable {
 
     public void damageCharacter() {
         HP--;
+        if(HP < 0)
+            HP = 0;
     }
 
     protected void getRealLoc() {
