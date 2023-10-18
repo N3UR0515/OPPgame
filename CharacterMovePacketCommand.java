@@ -1,3 +1,5 @@
+import org.newdawn.slick.Color;
+
 import java.util.HashMap;
 
 public class CharacterMovePacketCommand extends PacketCommand{
@@ -14,6 +16,9 @@ public class CharacterMovePacketCommand extends PacketCommand{
             temp.setRel_y(packet.getY());
             temp.setRel_x(packet.getX());
             characters.replace(packet.getId(), temp);
+
+            if(packet.getHP() <= 0)
+                map.getTileByLoc(packet.getX(), packet.getY()).setTexture(Color.red);
         }
         else
         {

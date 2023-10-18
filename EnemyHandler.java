@@ -15,7 +15,7 @@ public class EnemyHandler extends CharacterHandler
         this.characterId = enemyId;
         Random rng = new Random();
         EnemyFactory factory = new EnemyFactory();
-        characterModel = factory.createEnemy(11, 0, 5);
+        characterModel = factory.createEnemy(11, rng.nextInt(100), rng.nextInt(100));
         characterModel.id = enemyId;
         Turnline.getInstance().Add(characterModel);
     }
@@ -30,47 +30,61 @@ public class EnemyHandler extends CharacterHandler
 //                turnline.Remove(characterModel);
                 turnline.Next();
                 PacketBuilder builder;
-                if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
+                //if(turnline.getCharacter() != null && turnline.getCharacter() instanceof Player)
                 {
-                    System.out.println("HP = "+ characterModel.getHP());
+                    //System.out.println("HP = "+ characterModel.getHP());
 
-                    characterModel.updateCharacter((Player)turnline.getCharacter());
+                    if(!Server.clients.isEmpty())
+                        characterModel.updateCharacter(Server.clients.get(0).characterModel);
 
                     List<Area> newAreas = Server.map.getAreas(characterModel.getY(), characterModel.getX());
                     List<Area> oldOnes = new ArrayList<>(this.areas);
-                    System.out.println(this.areas.size() + " areas");
-                    oldOnes.removeAll(newAreas);
+                   // System.out.println(this.areas.size() + " areas");
+                    this.areas.removeAll(oldOnes);
+                    this.areas.addAll(newAreas);
+                    for(Area area : this.areas)
+                        area.addCharacter(this);
+                    /*oldOnes.removeAll(newAreas);
                     for (Area area : oldOnes){
                         area.removeCharacter(this);
                     }
                     for (Area area : newAreas){
                         area.addCharacter(this);
-                    }
+                    }*/
+                    if(!Server.clients.isEmpty())
+                    {
+                        builder = new DamagePlayerPacketBuilder();
+                        PacketDirector.constructDamagePlayerPacket(builder, (Player) Server.clients.get(0).characterModel);
+                        Packet p = builder.getPacket();
+                        try {
+                            if(!Server.clients.isEmpty())
+                                Server.clients.get(0).sendPacket(p);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
 
-                    builder = new DamagePlayerPacketBuilder();
+                        if(Server.clients.get(0).characterModel.getHP() <= 0)
+                            turnline.Remove(Server.clients.get(0).characterModel);
+
+                        builder = new ChangeOfEnemyPositionPacketBuilder();
+                        PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);
+
+                        Packet packet = builder.getPacket();
+                        try {
+                            Server.broadcastPacket(packet);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                   /* builder = new DamagePlayerPacketBuilder();
                     PacketDirector.constructDamagePlayerPacket(builder, (Player)turnline.getCharacter());
                     Packet p = builder.getPacket();
                     /*Packet p = new Packet(-1, -1, -1, true);
                     p.setAttack(true);
                     p.setHP(turnline.getCharacter().getHP());*/
-                    try {
-                        Server.clients.get(0).sendPacket(p);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
 
-                    if(turnline.getCharacter().getHP() <= 0)
-                        turnline.Remove(turnline.getCharacter());
 
-                    builder = new ChangeOfEnemyPositionPacketBuilder();
-                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);
 
-                    Packet packet = builder.getPacket();
-                    try {
-                        Server.broadcastPacket(packet);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
                 if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
                     characterModel.damageCharacter();

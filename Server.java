@@ -29,6 +29,18 @@ public class Server {
             }
             enemies.add(temp);
 
+
+            int random =30;
+            for (int i = 0; i < random;i++){
+                EnemyHandler temp1 = new EnemyHandler(i+100);
+                List<Area> areas1 = Server.map.getAreas(temp1.characterModel.rel_y, temp1.characterModel.rel_x);
+                for(Area area : areas1){
+                    area.addCharacter(temp1);
+                }
+                enemies.add(temp1);
+            }
+
+
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server is running and listening on port " + PORT);
 

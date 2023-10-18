@@ -3,7 +3,7 @@ import Tile.*;
 public class PacketDirector {
     public static void constructChangeOfEnemyPositionPacket(PacketBuilder builder, Enemy enemy)
     {
-        builder.setId(enemy.id).setX(enemy.getRel_x()).setY(enemy.getRel_y());
+        builder.setId(enemy.id).setX(enemy.getRel_x()).setY(enemy.getRel_y()).setHP(enemy.getHP());
     }
     public static void constructChangeOfPlayerPositonPacket(PacketBuilder builder, Player player)
     {
