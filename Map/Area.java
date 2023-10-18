@@ -52,11 +52,14 @@ public class Area implements Serializable {
                 }
                 if(handler.characterModel.getHP() <= 0){
                     Turnline turnline = Turnline.getInstance();
+
                     Server.map.getTileByLoc(handler.characterModel.getRel_x(), handler.characterModel.getRel_y()).setTexture(Color.red);
                     PacketBuilder builder = new ChangeOfEnemyPositionPacketBuilder();
                     PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) handler.characterModel);
                     Server.broadcastPacket(builder.getPacket());
-                    turnline.Remove(handler.characterModel);
+                    synchronized (turnline) {
+                        turnline.Remove(handler.characterModel);
+                    }
                 }
             }
         }

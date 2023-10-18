@@ -55,6 +55,8 @@ public class EnemyHandler extends CharacterHandler
                    // System.out.println(this.areas.size() + " areas");
                     this.areas.removeAll(oldOnes);
                     this.areas.addAll(newAreas);
+                    /*for(Area area: oldOnes)
+                        area.removeCharacter(this);*/
                     for(Area area : this.areas)
                         area.addCharacter(this);
                     /*oldOnes.removeAll(newAreas);

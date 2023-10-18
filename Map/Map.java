@@ -187,7 +187,7 @@ public class Map implements Serializable {
     }
 
     //get areas for which specific coordinate (row and column) belongs to
-    public List<Area> getAreas(int row, int  column){
+    public List<Area> getAreas(int row, int column){
         //Some tiles belong to few coordinates, so a list to get them all
         List<Area> temp = new ArrayList<>();
         if (column < 57) {
@@ -225,6 +225,9 @@ public class Map implements Serializable {
                 temp.add(areas[9]);
             }
         }
+
+        //for(int i = 0; i < 10; i++)
+            //temp.add(areas[i]);
 //        System.out.println(temp);
 //        for (Map.Area a : temp) {
 //            System.out.println(a);

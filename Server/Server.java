@@ -42,7 +42,7 @@ public class Server {
             enemies.add(temp);
 
 
-            int random =10;
+            int random =30;
             for (int i = 0; i < random;i++){
                 EnemyHandler temp1 = new EnemyHandler(i+100);
                 List<Area> areas1 = Server.map.getAreas(temp1.characterModel.getRel_y(), temp1.characterModel.getRel_x());

@@ -53,13 +53,14 @@ public class ClientHandler extends CharacterHandler {
                             characterModel.setRel_y(packet.getY());
                             List<Area> newAreas = Server.map.getAreas(packet.getY(), packet.getX());
                             List<Area> oldOnes = new ArrayList<>(this.areas);
-                            oldOnes.removeAll(newAreas);
-                            for (Area area : oldOnes) {
-                                area.removeCharacter(this);
-                            }
-                            for (Area area : newAreas) {
+                            this.areas.removeAll(oldOnes);
+                            this.areas.addAll(newAreas);
+                           /* for(Area area: oldOnes)
+                                area.removeCharacter(this);*/
+                            for(Area area : this.areas)
                                 area.addCharacter(this);
-                            }
+
+
 
                             builder = new ChangeOfPlayerPositionPacketBuilder();
                             PacketDirector.constructChangeOfPlayerPositonPacket(builder, (Player) characterModel);
