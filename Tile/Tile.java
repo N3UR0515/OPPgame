@@ -1,9 +1,9 @@
 package Tile;
-
+import PickUp.PickUp;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
-
+import PickUp.PickUpStore;
 import java.io.Serializable;
 
 public abstract class Tile implements Serializable {
@@ -14,15 +14,27 @@ public abstract class Tile implements Serializable {
     private int trel_x;
     private int trel_y;
     private Color texture;    // Texture or color of the tile
+    private PickUp pickUp = null;
+    private Color borderTexture;
 
     // Constructor to initialize a Tile.Tile object
-    public Tile(boolean id, int x, int y, int tx, int ty, Color texture) {
+    public Tile(boolean id, int x, int y, int tx, int ty, Color texture, String pickUp) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.trel_x = tx;
         this.trel_y = ty;
         this.texture = texture;
+        if (pickUp != ""){
+            this.pickUp = PickUpStore.getPickUp(pickUp);
+            if (pickUp == "Key") {
+                borderTexture = Color.yellow;
+            } else if(pickUp == "Heal") {
+                borderTexture = Color.red;
+            }
+        } else {
+            borderTexture = Color.black;
+        }
     }
 
     // Getters and setters for the Tile.Tile attributes
@@ -73,6 +85,9 @@ public abstract class Tile implements Serializable {
     public void draw(Graphics g) {
         g.setColor(texture);
         g.fill(createHexagon(x, y, size));
+        g.setColor(borderTexture);
+        g.draw(createHexagon(x, y, size));
+
     }
 
     private Polygon createHexagon(float centerX, float centerY, int size) {
@@ -84,7 +99,6 @@ public abstract class Tile implements Serializable {
             float yOffset = size * (float) Math.sin(angle);
             hexagon.addPoint(centerX + xOffset, centerY + yOffset);
         }
-
         return hexagon;
     }
 }
