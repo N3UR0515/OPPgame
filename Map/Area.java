@@ -37,12 +37,15 @@ public class Area implements Serializable {
         }
     }
 
-    public void sendAttack(int x, int y) throws IOException {
+    public void sendAttack(int x, int y, List<CharacterHandler> damagedOnes) throws IOException {
         for (CharacterHandler handler : characters) {
+            if(damagedOnes.contains(handler))
+                break;
             //System.out.println(handler.characterModel.id + "ID");
             if (handler.characterModel.getRel_x() == x && handler.characterModel.getRel_y() == y){
                 //System.out.println("Hello");
                 handler.characterModel.damageCharacter();
+                damagedOnes.add(handler);
                 System.out.println(handler.characterModel.id + " HP:" + handler.characterModel.getHP());
                 if (handler instanceof ClientHandler) {
                     PacketBuilder builder = new DamagePlayerPacketBuilder();

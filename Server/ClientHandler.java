@@ -57,8 +57,12 @@ public class ClientHandler extends CharacterHandler {
                             this.areas.addAll(newAreas);
                            /* for(Area area: oldOnes)
                                 area.removeCharacter(this);*/
+                            System.out.println("-----");
                             for(Area area : this.areas)
+                            {
                                 area.addCharacter(this);
+                                System.out.println(area);
+                            }
 
 
 
@@ -68,8 +72,9 @@ public class ClientHandler extends CharacterHandler {
                             Server.broadcastPacket(outPacket);
                         } else {
                             List<Area> areas = Server.map.getAreas(packet.getY(), packet.getX());
+                            List<CharacterHandler> damagedOnes = new ArrayList<>();
                             for (Area area : areas) {
-                                area.sendAttack(packet.getX(), packet.getY());
+                                area.sendAttack(packet.getX(), packet.getY(), damagedOnes);
                             }
 
 //                        for(Server.EnemyHandler enemy : Server.Server.enemies)//area

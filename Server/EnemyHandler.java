@@ -50,7 +50,7 @@ public class EnemyHandler extends CharacterHandler
                         Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
                     }
 
-                    List<Area> newAreas = Server.map.getAreas(characterModel.getY(), characterModel.getX());
+                    List<Area> newAreas = Server.map.getAreas(characterModel.getRel_y(), characterModel.getRel_x());
                     List<Area> oldOnes = new ArrayList<>(this.areas);
                    // System.out.println(this.areas.size() + " areas");
                     this.areas.removeAll(oldOnes);
