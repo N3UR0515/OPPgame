@@ -8,9 +8,11 @@ import Packet.Builder.DamagePlayerPacketBuilder;
 import Packet.Builder.PacketBuilder;
 import Packet.Packet;
 import Map.Tile.FieryTile;
+import Map.Tile.UnavailableTile;
 import Packet.*;
 import Character.Player;
 import Character.Character;
+import org.lwjgl.Sys;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +26,11 @@ public class EnemyHandler extends CharacterHandler
         this.characterId = enemyId;
         Random rng = new Random();
         EnemyFactory factory = new EnemyFactory();
+        int x, y;
+        do {
+            x = rng.nextInt(100);
+            y = rng.nextInt(100);
+        } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
         characterModel = factory.createEnemy(11, rng.nextInt(100), rng.nextInt(100));
         characterModel.id = enemyId;
         Turnline.getInstance().Add(characterModel);
@@ -50,7 +57,7 @@ public class EnemyHandler extends CharacterHandler
                         Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
                     }
 
-                    List<Area> newAreas = Server.map.getAreas(characterModel.getRel_y(), characterModel.getRel_x());
+                    List<Area> newAreas = Server.getAreas(characterModel.getRel_y(), characterModel.getRel_x());
                     List<Area> oldOnes = new ArrayList<>(this.areas);
                    // System.out.println(this.areas.size() + " areas");
                     this.areas.removeAll(oldOnes);

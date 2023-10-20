@@ -11,7 +11,6 @@ public class Map implements Serializable {
     private final int cols;
     private final int rows;
     private final TileFactory factory;
-    private final Area[] areas;
     public Map(int cols, int rows)
     {
         factory = new TileFactory();
@@ -19,10 +18,6 @@ public class Map implements Serializable {
         this.cols = cols;
         this.rows = rows;
         tiles = new Tile[cols * rows];
-        areas = new Area[10];
-        for (int i = 0; i < 10;  i++){
-            areas[i] = new Area();
-        }
         ArrayList<String> coordSave = new ArrayList<>();
         ArrayList<String>  roomCenters = new ArrayList<>();
         Random rand = new Random();
@@ -184,55 +179,6 @@ public class Map implements Serializable {
                 }
             }
         }
-    }
-
-    //get areas for which specific coordinate (row and column) belongs to
-    public List<Area> getAreas(int row, int column){
-        //Some tiles belong to few coordinates, so a list to get them all
-        List<Area> temp = new ArrayList<>();
-        if (column < 57) {
-            if (row < 27) {
-//                System.out.println(areas[0] + " 55555");
-                temp.add(areas[0]);
-            }
-            if (row > 12 && row < 47) {
-                temp.add(areas[2]);
-            }
-            if (row > 32 && row < 67) {
-                temp.add(areas[4]);
-            }
-            if (row > 52 && row < 87) {
-                temp.add(areas[6]);
-            }
-            if (row > 72) {
-                temp.add(areas[8]);
-            }
-        }
-        if (column > 42){
-            if (row < 27) {
-                temp.add(areas[1]);
-            }
-            if (row > 12 && row < 47) {
-                temp.add(areas[3]);
-            }
-            if (row > 32 && row < 67) {
-                temp.add(areas[5]);
-            }
-            if (row > 52 && row < 87) {
-                temp.add(areas[7]);
-            }
-            if (row > 72) {
-                temp.add(areas[9]);
-            }
-        }
-
-        //for(int i = 0; i < 10; i++)
-            //temp.add(areas[i]);
-//        System.out.println(temp);
-//        for (Map.Area a : temp) {
-//            System.out.println(a);
-//        }
-        return temp;
     }
 
     private void BFS(String start, String end){

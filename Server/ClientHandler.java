@@ -51,7 +51,7 @@ public class ClientHandler extends CharacterHandler {
                         if (!packet.isAttack()) {
                             characterModel.setRel_x(packet.getX());
                             characterModel.setRel_y(packet.getY());
-                            List<Area> newAreas = Server.map.getAreas(packet.getY(), packet.getX());
+                            List<Area> newAreas = Server.getAreas(packet.getY(), packet.getX());
                             List<Area> oldOnes = new ArrayList<>(this.areas);
                             this.areas.removeAll(oldOnes);
                             this.areas.addAll(newAreas);
@@ -71,7 +71,7 @@ public class ClientHandler extends CharacterHandler {
                             Packet outPacket = builder.getPacket();
                             Server.broadcastPacket(outPacket);
                         } else {
-                            List<Area> areas = Server.map.getAreas(packet.getY(), packet.getX());
+                            List<Area> areas = Server.getAreas(packet.getY(), packet.getX());
                             List<CharacterHandler> damagedOnes = new ArrayList<>();
                             for (Area area : areas) {
                                 area.sendAttack(packet.getX(), packet.getY(), damagedOnes);
