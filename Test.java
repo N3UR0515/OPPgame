@@ -62,7 +62,8 @@ public class Test extends BasicGame {
             camera = new Camera(container, player);
             invoker = new CommandInvoker();
 
-            new Thread(this::Send).start();
+            //new Thread(this::Send).start();
+            Send();
             new Thread(this::Receive).start();
         }catch (IOException e) {
             e.printStackTrace();

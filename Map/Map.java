@@ -11,6 +11,14 @@ public class Map implements Serializable {
     private final int cols;
     private final int rows;
     private final TileFactory factory;
+
+    private Map(Tile[] tiles, int cols, int rows)
+    {
+        this.tiles = tiles;
+        this.cols = cols;
+        this.rows = rows;
+        factory = new TileFactory();
+    }
     public Map(int cols, int rows)
     {
         factory = new TileFactory();
@@ -367,5 +375,10 @@ public class Map implements Serializable {
 
     public int getTileCount(){
         return this.tiles.length;
+    }
+
+    public Map copy()
+    {
+        return new Map(this.tiles.clone(), cols, rows);
     }
 }

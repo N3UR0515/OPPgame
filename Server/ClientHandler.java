@@ -23,14 +23,14 @@ public class ClientHandler extends CharacterHandler {
     public ClientHandler(Socket clientSocket, int clientId) {
         this.characterId = clientId;
         try {
-            characterModel = new Player(10, Server.map, 0, 0);
+            characterModel = new Player(100, Server.map, 0, 0);
             characterModel.id = clientId;
             Turnline.getInstance().Add(characterModel);
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
 
-            out.writeObject(Server.map);
+            out.writeObject(Server.initMap);
             out.writeObject(characterModel);
 
         } catch (IOException e) {
@@ -49,19 +49,21 @@ public class ClientHandler extends CharacterHandler {
 //                Server.Turnline turnline = Server.Turnline.getInstance();
                     if (turnline.getCharacter() instanceof Player && turnline.getCharacter().id == characterId) {
                         if (!packet.isAttack()) {
+                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(null);
                             characterModel.setRel_x(packet.getX());
                             characterModel.setRel_y(packet.getY());
+                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
                             List<Area> newAreas = Server.getAreas(packet.getY(), packet.getX());
                             List<Area> oldOnes = new ArrayList<>(this.areas);
                             this.areas.removeAll(oldOnes);
                             this.areas.addAll(newAreas);
                            /* for(Area area: oldOnes)
                                 area.removeCharacter(this);*/
-                            System.out.println("-----");
+                            //System.out.println("-----");
                             for(Area area : this.areas)
                             {
                                 area.addCharacter(this);
-                                System.out.println(area);
+                                //System.out.println(area);
                             }
 
 

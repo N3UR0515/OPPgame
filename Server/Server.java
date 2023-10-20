@@ -30,12 +30,14 @@ public class Server {
     public static HashMap<Integer, ClientHandler> clients = new HashMap<>();
     public static HashMap<Integer, EnemyHandler> enemies = new HashMap<>();
     public static Map map;
+    public static Map initMap;
     private static Area[] areas;
 
     public static void main(String[] args) {
         try {
 
             map = new Map(100, 100);
+            initMap = map.copy();
 
             areas = new Area[10];
             for (int i = 0; i < 10;  i++){
@@ -103,7 +105,7 @@ public class Server {
             if(turnline.getCharacter() != null)
             {
                 Character character = turnline.getCharacter();
-                System.out.println(character.id);
+                //System.out.println(character.id);
                 //System.out.println(character.getHP() + " HP");
                 if(character instanceof Player && clients.get(character.id) != null)
                 {

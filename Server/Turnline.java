@@ -21,7 +21,7 @@ public class Turnline {
     {
         synchronized (this)
         {
-            if(!characterTurns.isEmpty())
+            if(!characterTurns.isEmpty() && characterTurns.contains(character))
             {
                 characterTurns.removeIf(c -> c.equals(character));
             }

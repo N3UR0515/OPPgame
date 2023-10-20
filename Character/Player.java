@@ -181,8 +181,12 @@ public class Player extends Character implements Serializable {
             tempRel_y++;
         }
 
+        boolean Attack = attack(container);
+
         //Check if moving to an unavailable tile. If so - do not move
-        if (map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y).getClass() == UnavailableTile.class) {
+        Tile tempTile = map.getTileByLoc(rel_x + tempRel_x, rel_y + tempRel_y);
+        if (tempTile.getClass() == UnavailableTile.class ||
+                (tempTile.getOnTile() != null && !Attack)) {
             return false;
         }
         //Moving to an available tile
@@ -191,15 +195,15 @@ public class Player extends Character implements Serializable {
             rel_y += tempRel_y;
         }
 
-        getRealLoc();
+        /*getRealLoc();
         triangle.setCenterX(x);
-        triangle.setCenterY(y);
+        triangle.setCenterY(y);*/
 
         return isMovingDown ||
                 isMovingLeft ||
                 isMovingUp ||
                 isMovingRight ||
-                attack(container);
+                Attack;
     }
 
     @Override
@@ -210,11 +214,11 @@ public class Player extends Character implements Serializable {
     @Override
     public void drawCharacter(Graphics g)
     {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
         // Checks if player is NOT on a hiding tile. If true - draws player
         if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
-            getRealLoc();
-            triangle.setCenterX(x);
-            triangle.setCenterY(y);
             g.setColor(org.newdawn.slick.Color.red);
             g.fill(triangle);
             g.drawOval(x, y, 5, 5);

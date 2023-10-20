@@ -57,6 +57,7 @@ public class Area implements Serializable {
                     Turnline turnline = Turnline.getInstance();
 
                     Server.map.getTileByLoc(handler.characterModel.getRel_x(), handler.characterModel.getRel_y()).setTexture(Color.red);
+                    Server.map.getTileByLoc(handler.characterModel.getRel_x(), handler.characterModel.getRel_y()).setOnTile(null);
                     PacketBuilder builder = new ChangeOfEnemyPositionPacketBuilder();
                     PacketDirector.constructChangeOfEnemyPositionPacket(builder, handler.characterModel);
                     Server.broadcastPacket(builder.getPacket());
