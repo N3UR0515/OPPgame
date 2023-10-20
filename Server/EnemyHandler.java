@@ -31,7 +31,7 @@ public class EnemyHandler extends CharacterHandler
             x = rng.nextInt(100);
             y = rng.nextInt(100);
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
-        characterModel = factory.createEnemy(11, rng.nextInt(100), rng.nextInt(100));
+        characterModel = factory.createEnemy(11, x, y);
         characterModel.id = enemyId;
         Turnline.getInstance().Add(characterModel);
     }
@@ -53,7 +53,7 @@ public class EnemyHandler extends CharacterHandler
                     if(!Server.clients.isEmpty())
                     {
                         Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(null);
-                        characterModel.updateCharacter(Server.clients.get(0).characterModel);
+                        characterModel.updateCharacter(Server.clients.get(1).characterModel);
                         Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
                     }
 
@@ -76,17 +76,17 @@ public class EnemyHandler extends CharacterHandler
                     if(!Server.clients.isEmpty())
                     {
                         builder = new DamagePlayerPacketBuilder();
-                        PacketDirector.constructDamagePlayerPacket(builder, (Player) Server.clients.get(0).characterModel);
+                        PacketDirector.constructDamagePlayerPacket(builder, (Player) Server.clients.get(1).characterModel);
                         Packet p = builder.getPacket();
                         try {
                             if(!Server.clients.isEmpty())
-                                Server.clients.get(0).sendPacket(p);
+                                Server.clients.get(1).sendPacket(p);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
 
-                        if(Server.clients.get(0).characterModel.getHP() <= 0)
-                            turnline.Remove(Server.clients.get(0).characterModel);
+                        if(Server.clients.get(1).characterModel.getHP() <= 0)
+                            turnline.Remove(Server.clients.get(1).characterModel);
 
                         builder = new ChangeOfEnemyPositionPacketBuilder();
                         PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);

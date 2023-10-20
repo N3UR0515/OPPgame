@@ -19,12 +19,16 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Server {
     private static final int PORT = 12345;
-    public static List<ClientHandler> clients = new ArrayList<>();
-    public static List<EnemyHandler> enemies = new ArrayList<>();
+    //public static List<ClientHandler> clients = new ArrayList<>();
+    //public static List<EnemyHandler> enemies = new ArrayList<>();
+
+    public static HashMap<Integer, ClientHandler> clients = new HashMap<>();
+    public static HashMap<Integer, EnemyHandler> enemies = new HashMap<>();
     public static Map map;
     private static Area[] areas;
 
@@ -45,7 +49,7 @@ public class Server {
             for (Area area : areas){
                 area.addCharacter(temp);
             }
-            enemies.add(temp);
+            enemies.put(temp.characterId, temp);
 
 
             int random =30;
@@ -55,7 +59,7 @@ public class Server {
                 for(Area area : areas1){
                     area.addCharacter(temp1);
                 }
-                enemies.add(temp1);
+                enemies.put(temp1.characterId, temp1);
             }
 
 
@@ -74,7 +78,8 @@ public class Server {
                 for (Area area : areas){
                     area.addCharacter(clientHandler);
                 }
-                clients.add(clientHandler);
+
+                clients.put(clientHandler.characterId, clientHandler);
 
 
                 clientId++;
@@ -98,29 +103,15 @@ public class Server {
             if(turnline.getCharacter() != null)
             {
                 Character character = turnline.getCharacter();
-                //System.out.println(character.id);
+                System.out.println(character.id);
                 //System.out.println(character.getHP() + " HP");
-                if(character instanceof Player)
+                if(character instanceof Player && clients.get(character.id) != null)
                 {
-                    for(ClientHandler client : clients)
-                    {
-                        if(client.characterId == character.id)
-                        {
-                            client.run();
-                            break;
-                        }
-                    }
+                    clients.get(character.id).run();
                 }
-                else if(character instanceof Enemy)
+                else if(character instanceof Enemy && enemies.get(character.id) != null)
                 {
-                    for(EnemyHandler enemy : enemies)
-                    {
-                        if(enemy.characterId == character.id)
-                        {
-                            enemy.run();
-                            break;
-                        }
-                    }
+                    enemies.get(character.id).run();
                 }
             }
 
@@ -128,7 +119,7 @@ public class Server {
     }
 
     public static void broadcastPacket(Packet packet) throws IOException {
-        for(ClientHandler client : clients)
+        for(ClientHandler client : clients.values())
         {
             client.sendPacket(packet);
         }

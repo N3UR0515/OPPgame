@@ -23,7 +23,7 @@ public class ClientHandler extends CharacterHandler {
     public ClientHandler(Socket clientSocket, int clientId) {
         this.characterId = clientId;
         try {
-            characterModel = new Player(100, Server.map, 0, 0);
+            characterModel = new Player(10, Server.map, 0, 0);
             characterModel.id = clientId;
             Turnline.getInstance().Add(characterModel);
 

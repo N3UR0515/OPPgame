@@ -58,7 +58,7 @@ public class Area implements Serializable {
 
                     Server.map.getTileByLoc(handler.characterModel.getRel_x(), handler.characterModel.getRel_y()).setTexture(Color.red);
                     PacketBuilder builder = new ChangeOfEnemyPositionPacketBuilder();
-                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) handler.characterModel);
+                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, handler.characterModel);
                     Server.broadcastPacket(builder.getPacket());
                     synchronized (turnline) {
                         turnline.Remove(handler.characterModel);

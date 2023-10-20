@@ -1,16 +1,17 @@
 package Packet;
 
 import Character.Enemies.Enemy;
+import Character.Character;
 import Packet.Builder.PacketBuilder;
 import Character.*;
 import Map.Tile.*;
 
 public class PacketDirector {
-    public static void constructChangeOfEnemyPositionPacket(PacketBuilder builder, Enemy enemy)
+    public static void constructChangeOfEnemyPositionPacket(PacketBuilder builder, Character enemy)
     {
         builder.setId(enemy.id).setX(enemy.getRel_x()).setY(enemy.getRel_y()).setHP(enemy.getHP());
     }
-    public static void constructChangeOfPlayerPositonPacket(PacketBuilder builder, Player player)
+    public static void constructChangeOfPlayerPositonPacket(PacketBuilder builder, Character player)
     {
         builder.setId(player.id).setX(player.getRel_x()).setY(player.getRel_y());
     }
