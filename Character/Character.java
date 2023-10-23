@@ -2,11 +2,15 @@ package Character;
 
 import Map.Tile.Tile;
 import Map.Map;
+import PickUp.*;
+import org.lwjgl.Sys;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Character implements Serializable {
     protected int x;
@@ -17,7 +21,7 @@ public abstract class Character implements Serializable {
     protected final Polygon triangle;
     protected Map map;
     protected Camera camera;
-
+    private List<PickUp> effectsList = new ArrayList<>();
     public int id = 0;
 
     public Character(int HP, Map map, int rel_x, int rel_y)
@@ -54,7 +58,23 @@ public abstract class Character implements Serializable {
         triangle.addPoint(x - 5 + camera.cameraX, y + 5 + camera.cameraY); // Bottom-left vertex
         triangle.addPoint(x + 5 + camera.cameraX, y + 5 + camera.cameraY); // Bottom-right vertex
     }
-
+    public void UseAndDeleteEffect(String effect) {
+        synchronized (effectsList) {
+            effectsList.add(PickUpStore.getPickUp(effect));
+            for (PickUp pick : effectsList) {
+                if (pick.getPickupCode().equals(effect)) {
+                    if (effect.equals("Heal")) {
+                        this.setHP(10);
+                        effectsList.remove(pick);
+                        break;
+                    } else {
+                        //ToDo Kazkas raktui
+                        effectsList.remove(pick);
+                    }
+                }
+            }
+        }
+    }
     public abstract boolean updateCharacter(GameContainer container);
     public abstract void updateCharacter(Character character);
 

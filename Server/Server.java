@@ -54,7 +54,7 @@ public class Server {
             enemies.put(temp.characterId, temp);
 
 
-            int random =30;
+            int random =1;
             for (int i = 0; i < random;i++){
                 EnemyHandler temp1 = new EnemyHandler(i+100);
                 List<Area> areas1 = getAreas(temp1.characterModel.getRel_y(), temp1.characterModel.getRel_x());
@@ -109,11 +109,15 @@ public class Server {
                 //System.out.println(character.getHP() + " HP");
                 if(character instanceof Player && clients.get(character.id) != null)
                 {
-                    clients.get(character.id).run();
+                    synchronized (turnline) {
+                        clients.get(character.id).run();
+                    }
                 }
                 else if(character instanceof Enemy && enemies.get(character.id) != null)
                 {
-                    enemies.get(character.id).run();
+                    synchronized (turnline) {
+                        enemies.get(character.id).run();
+                    }
                 }
             }
 

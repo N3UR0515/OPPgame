@@ -2,14 +2,18 @@ package Character;
 
 import Map.Tile.*;
 import Map.Map;
+import PickUp.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Character implements Serializable {
     private Tile attackTile = null;
+
 
     public Player(int HP, Map map, int rel_x, int rel_y)
     {
@@ -24,6 +28,7 @@ public class Player extends Character implements Serializable {
     {
         return attackTile;
     }
+
 
     private boolean attack(GameContainer container)
     {

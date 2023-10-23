@@ -2,12 +2,14 @@ package Server;
 
 import Map.Area;
 import Map.Tile.FieryTile;
+import Map.Tile.Tile;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.DamagePlayerPacketBuilder;
 import Packet.Builder.PacketBuilder;
 import Packet.Packet;
 import Character.Player;
 import Packet.PacketDirector;
+import org.lwjgl.Sys;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,7 +25,7 @@ public class ClientHandler extends CharacterHandler {
     public ClientHandler(Socket clientSocket, int clientId) {
         this.characterId = clientId;
         try {
-            characterModel = new Player(100, Server.map, 0, 0);
+            characterModel = new Player(10, Server.map, 0, 0);
             characterModel.id = clientId;
             Turnline.getInstance().Add(characterModel);
 
@@ -119,6 +121,16 @@ public class ClientHandler extends CharacterHandler {
                             PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
                             Packet toSend = dmgBuilder.getPacket();
                             sendPacket(toSend);
+                        }
+                        Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
+                        if (tile.getPickUp() != null) {
+                            System.out.println(tile.getPickUp().getPickupCode());
+                            characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
+                            PacketBuilder dmgBuilder = new DamagePlayerPacketBuilder();
+                            PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
+                            Packet toSend = dmgBuilder.getPacket();
+                            sendPacket(toSend);
+                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setPickUp(null);
                         }
 //                    if(Server.Server.enemies.get(0).characterModel.getHP() > 0){
 //                        turnline.Add(Server.Server.enemies.get(0).characterModel);

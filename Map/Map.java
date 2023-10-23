@@ -31,7 +31,7 @@ public class Map implements Serializable {
         Random rand = new Random();
 
         //Setting 0;0 tile as starter one
-        tiles[0] =  factory.createTile(0, true, 0, 0);
+        tiles[0] =  factory.createTile(0, true, 0, 0, "");
         roomCenters.add("0_0");
         coordSave.add("0_0");
 
@@ -46,14 +46,14 @@ public class Map implements Serializable {
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, true, tempRow, tempCol);
+                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, true, tempRow, tempCol, "");
             } else {
                 if (tiles[tempCol * rows + tempRow] != null) {
                     i--;
                     continue;
                 }
                 coordSave.add(tempCol + "_" + tempRow);
-                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, false, tempRow, tempCol);
+                tiles[tempCol * this.rows + tempRow] = factory.createTile(0, false, tempRow, tempCol, "");
             }
         }
 
@@ -67,14 +67,14 @@ public class Map implements Serializable {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-                    tiles[col * this.rows + row] = factory.createTile(-1, true, row, col);
+                    tiles[col * this.rows + row] = factory.createTile(-1, true, row, col, "");
                 }
                 else
                 {
                     if (tiles[col * rows + row] != null) {
                         continue;
                     }
-                    tiles[col * this.rows + row] = factory.createTile(-1, false, row, col);
+                    tiles[col * this.rows + row] = factory.createTile(-1, false, row, col, "");
                 }
 
             }
@@ -109,7 +109,7 @@ public class Map implements Serializable {
         //Generating rooms
         for (Tile tile : roomTiles){
             if (isUnavailable(tile)) {
-                tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = factory.createTile(0, tile.id, tile.getTrel_y(), tile.getTrel_x());
+                tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = factory.createTile(0, tile.id, tile.getTrel_y(), tile.getTrel_x(), "Heal");
             }
         }
 
@@ -122,14 +122,14 @@ public class Map implements Serializable {
                     i--;
                     continue;
                 } else {
-                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, true, tempRow, tempCol);
+                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, true, tempRow, tempCol, "");
                 }
             } else {
                 if (tiles[tempCol * rows + tempRow].getClass() != RegularTile.class) {
                     i--;
                     continue;
                 } else {
-                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, false, tempRow, tempCol);
+                    tiles[tempCol * this.rows + tempRow] = factory.createTile(1, false, tempRow, tempCol, "");
                 }
             }
         }
@@ -180,7 +180,7 @@ public class Map implements Serializable {
                 }
                 if (tempCol >= 0 && tempCol < this.cols && tempRow >= 0 && tempRow < this.rows){
                     if (!isUnavailable(tiles[tempCol * this.rows + tempRow])){
-                        tiles[tempCol * this.rows + tempRow] = factory.createTile(2, tiles[tempCol * this.rows + tempRow].id, tempRow, tempCol);
+                        tiles[tempCol * this.rows + tempRow] = factory.createTile(2, tiles[tempCol * this.rows + tempRow].id, tempRow, tempCol, "");
                     }
                 } else {
                     break;
@@ -288,18 +288,18 @@ public class Map implements Serializable {
                 for (Tile n : neighbors){
                     if (isUnavailable(n)) {
                         if (isFiery && rng.nextInt(16) == 4) {
-                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(2, n.id, n.getTrel_y(), n.getTrel_x());
+                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(2, n.id, n.getTrel_y(), n.getTrel_x(), "");
                         } else {
-                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(0, n.id, n.getTrel_y(), n.getTrel_x());
+                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(0, n.id, n.getTrel_y(), n.getTrel_x(), "");
                         }
                     }
                 }
             }
             if (isUnavailable(currentTile)) {
                 if (isFiery && rng.nextInt(16) == 4){
-                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(2, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x());
+                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(2, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x(), "");
                 } else {
-                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(0, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x());
+                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(0, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x(), "");
                 }
             }
             currentTile = prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()];

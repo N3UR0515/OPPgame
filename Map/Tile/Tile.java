@@ -4,8 +4,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
 import Character.Character;
-
+import PickUp.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 public abstract class Tile implements Serializable {
     private static int size = 10;
@@ -17,14 +18,36 @@ public abstract class Tile implements Serializable {
     private Color texture;    // Texture or color of the tile
     private Character onTile = null;
 
+    public PickUp getPickUp() {
+        return pickUp;
+    }
+
+    public void setPickUp(PickUp pickUp) {
+        this.pickUp = pickUp;
+    }
+
+    private PickUp pickUp = null;
+    private Color borderTexture;
+
+
     // Constructor to initialize a Map.Tile.Map.Tile object
-    public Tile(boolean id, int x, int y, int tx, int ty, Color texture) {
+    public Tile(boolean id, int x, int y, int tx, int ty, Color texture, String pickUp) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.trel_x = tx;
         this.trel_y = ty;
         this.texture = texture;
+        if (!Objects.equals(pickUp, "")){
+            this.pickUp = PickUpStore.getPickUp(pickUp);
+            if (Objects.equals(pickUp, "Key")) {
+                borderTexture = Color.yellow;
+            } else if(Objects.equals(pickUp, "Heal")) {
+                borderTexture = Color.red;
+            }
+        } else {
+            borderTexture = Color.black;
+        }
     }
 
     // Getters and setters for the Map.Tile.Map.Tile attributes
@@ -75,6 +98,8 @@ public abstract class Tile implements Serializable {
     public void draw(Graphics g) {
         g.setColor(texture);
         g.fill(createHexagon(x, y, size));
+        g.setColor(borderTexture);
+        g.draw(createHexagon(x, y, size));
     }
 
     private Polygon createHexagon(float centerX, float centerY, int size) {
