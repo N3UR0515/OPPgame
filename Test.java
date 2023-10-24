@@ -1,5 +1,16 @@
-import Tile.*;
+import Map.Map;
+import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
+import Packet.Builder.PacketBuilder;
+import Packet.Builder.PlayerAttackPacketBuilder;
+import Packet.*;
+import Map.Tile.*;
+import Packet.Command.CharacterMovePacketCommand;
+import Packet.Command.DamagePlayerPacketCommand;
+import Packet.Command.PacketCommand;
+import Packet.Command.PlayerMovePacketCommand;
 import org.newdawn.slick.*;
+import Character.*;
+import Character.Character;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,8 +25,10 @@ public class Test extends BasicGame {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private HashMap<Integer, Character> players = new HashMap<>();
-    private HashMap<Integer, Character> enemies = new HashMap<>();
+    //private HashMap<Integer, Character> players = new HashMap<>();
+    //private HashMap<Integer, Character> enemies = new HashMap<>();
+
+    private HashMap<Integer, Character> characters = new HashMap<>();
     private Map map;
     private Player player;
     private Camera camera;
@@ -49,7 +62,8 @@ public class Test extends BasicGame {
             camera = new Camera(container, player);
             invoker = new CommandInvoker();
 
-            new Thread(this::Send).start();
+            //new Thread(this::Send).start();
+            Send();
             new Thread(this::Receive).start();
         }catch (IOException e) {
             e.printStackTrace();
@@ -94,28 +108,22 @@ public class Test extends BasicGame {
             {
                 if(packet.isAttack())
                 {
-                    invoker.setCommand(new DamagePlayerPacketCommand(packet, players, map, camera));
+                    invoker.setCommand(new DamagePlayerPacketCommand(packet, characters, map, camera));
                 }
                 else if(packet.isEnemy())
                 {
-                    invoker.setCommand(new CharacterMovePacketCommand(packet, enemies, map, camera));
+                    invoker.setCommand(new CharacterMovePacketCommand(packet, characters, map, camera));
                 }
                 else
                 {
-                    invoker.setCommand(new PlayerMovePacketCommand(packet, players, map, camera));
+                    invoker.setCommand(new PlayerMovePacketCommand(packet, characters, map, camera));
                 }
 
                 invoker.invoke();
 
-                if(invoker.getCommand() instanceof CharacterMovePacketCommand)
-                {
-                    enemies = invoker.getResults();
-                }
-                else
-                {
-                    players = invoker.getResults();
-                    player.setHP(players.get(player.id).getHP());
-                }
+                characters = invoker.getResults();
+                if(characters.get(player.id) != null)
+                    player.setHP(characters.get(player.id).getHP());
 
             }
         } catch (IOException e) {
@@ -140,15 +148,8 @@ public class Test extends BasicGame {
     public void render(GameContainer container, Graphics g) throws SlickException {
         map.drawMap(g, camera);
 
-        for(Character p: players.values())
-        {
-            p.drawCharacter(g);
-        }
-
-        for(Character e: enemies.values())
-        {
-            e.drawCharacter(g);
-        }
+        for(Character c : characters.values())
+            c.drawCharacter(g);
 
         player.drawCharacter(g);
         player.drawHealth(g);
