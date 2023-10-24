@@ -19,18 +19,21 @@ public class Turnline {
     }
     public synchronized void Remove(Character character)
     {
-        synchronized (this)
+        //synchronized (this)
         {
             if(!characterTurns.isEmpty() && characterTurns.contains(character))
             {
-                characterTurns.removeIf(c -> c.equals(character));
+                synchronized(characterTurns)
+                {
+                    characterTurns.removeIf(c -> c.equals(character));
+                }
             }
         }
 
     }
     public synchronized void Next()
     {
-        synchronized (this)
+        //synchronized (this)
         {
             if(!characterTurns.isEmpty())
             {
@@ -41,9 +44,9 @@ public class Turnline {
 
 
     }
-    public Character getCharacter()
+    public synchronized Character getCharacter()
     {
-        synchronized (this)
+        //synchronized (this)
         {
             if(!characterTurns.isEmpty())
             {

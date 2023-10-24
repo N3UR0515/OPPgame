@@ -5,6 +5,7 @@ import Map.Tile.FieryTile;
 import Map.Tile.Tile;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.DamagePlayerPacketBuilder;
+import Packet.Builder.HealthPickUpSetPacketBuilder;
 import Packet.Builder.PacketBuilder;
 import Packet.Packet;
 import Character.Player;
@@ -33,7 +34,15 @@ public class ClientHandler extends CharacterHandler {
             in = new ObjectInputStream(clientSocket.getInputStream());
 
             out.writeObject(Server.initMap);
-            out.writeObject(characterModel);
+            out.writeObject(clientId);
+
+            for(Tile tile : Server.tiles)// the pickups on tiles are on separate generation to ease up on the sending time
+            {
+                PacketBuilder builder = new HealthPickUpSetPacketBuilder();
+                PacketDirector.constructSetHealthPickupPacket(builder, tile);
+                sendPacket(builder.getPacket());
+            }
+            //out.writeObject(characterModel);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,7 +52,8 @@ public class ClientHandler extends CharacterHandler {
     @Override
     public void run() {
         Turnline turnline = Turnline.getInstance();
-        synchronized (turnline) {
+        //synchronized (turnline)
+            {
             try {
                 Packet packet;
                 PacketBuilder builder;
@@ -114,15 +124,15 @@ public class ClientHandler extends CharacterHandler {
 //                            }
 //                        }
                         }
+                        Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
                         //Checking if player is on a fiery tile. If yes - send damage packet to that player
-                        if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
+                        if (tile.getClass() == FieryTile.class) {
                             characterModel.damageCharacter();
                             PacketBuilder dmgBuilder = new DamagePlayerPacketBuilder();
                             PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
                             Packet toSend = dmgBuilder.getPacket();
                             sendPacket(toSend);
                         }
-                        Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
                         if (tile.getPickUp() != null) {
                             System.out.println(tile.getPickUp().getPickupCode());
                             characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
@@ -130,6 +140,10 @@ public class ClientHandler extends CharacterHandler {
                             PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
                             Packet toSend = dmgBuilder.getPacket();
                             sendPacket(toSend);
+
+                            builder = new HealthPickUpSetPacketBuilder();
+                            PacketDirector.constructSetHealthPickupPacket(builder, tile);
+                            Server.broadcastPacket(builder.getPacket());
                             Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setPickUp(null);
                         }
 //                    if(Server.Server.enemies.get(0).characterModel.getHP() > 0){

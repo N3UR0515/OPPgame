@@ -23,4 +23,8 @@ public class PacketDirector {
     {
         builder.setX(tile.getTrel_x()).setY(tile.getTrel_y());
     }
+    public static void constructSetHealthPickupPacket(PacketBuilder builder, Tile tile)
+    {
+        builder.setX(tile.getTrel_x()).setY(tile.getTrel_y());
+    }
 }

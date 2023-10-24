@@ -4,10 +4,8 @@ import Packet.Builder.PacketBuilder;
 import Packet.Builder.PlayerAttackPacketBuilder;
 import Packet.*;
 import Map.Tile.*;
-import Packet.Command.CharacterMovePacketCommand;
-import Packet.Command.DamagePlayerPacketCommand;
-import Packet.Command.PacketCommand;
-import Packet.Command.PlayerMovePacketCommand;
+import Packet.Command.*;
+import PickUp.PickUpStore;
 import org.newdawn.slick.*;
 import Character.*;
 import Character.Character;
@@ -58,7 +56,10 @@ public class Test extends BasicGame {
             in = new ObjectInputStream(socket.getInputStream());
 
             map = (Map) in.readObject();
-            player = (Player) in.readObject();
+            //player = (Player) in.readObject();
+            int id = (int) in.readObject();
+            player = new Player(10, map, 0, 0);
+            player.id = id;
             camera = new Camera(container, player);
             invoker = new CommandInvoker();
 
@@ -114,14 +115,18 @@ public class Test extends BasicGame {
                 {
                     invoker.setCommand(new CharacterMovePacketCommand(packet, characters, map, camera));
                 }
+                else if(packet.isSetHealth())
+                {
+                    invoker.setCommand(new MapTileUpdateCommand(packet, characters, map, camera));
+                }
                 else
                 {
                     invoker.setCommand(new PlayerMovePacketCommand(packet, characters, map, camera));
                 }
-
                 invoker.invoke();
 
-                characters = invoker.getResults();
+
+                //characters = invoker.getResults();
                 if(characters.get(player.id) != null)
                     player.setHP(characters.get(player.id).getHP());
 
@@ -141,6 +146,10 @@ public class Test extends BasicGame {
                 new Thread(this::Send).start();
                 MyTurn = false;
             };
+            if(container.getInput().isKeyPressed(Input.KEY_P))
+                invoker.undo();
+            if(container.getInput().isKeyPressed(Input.KEY_R))
+                invoker.redo();
 
         camera.updateCamera(container);
     }

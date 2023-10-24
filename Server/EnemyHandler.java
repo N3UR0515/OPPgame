@@ -38,7 +38,7 @@ public class EnemyHandler extends CharacterHandler
     @Override
     public void run() {
         Turnline turnline = Turnline.getInstance();
-        synchronized (turnline)
+        //synchronized (turnline)
         {
 //            Server.Turnline turnline = Server.Turnline.getInstance();
             if ( turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == characterId)
@@ -110,9 +110,9 @@ public class EnemyHandler extends CharacterHandler
                 }
                 if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
                     characterModel.damageCharacter();
-                    if(characterModel.getHP() <= 0)
-                        turnline.Remove(characterModel);
                 }
+                if(characterModel.getHP() <= 0)
+                    turnline.Remove(characterModel);
             }
         }
     }

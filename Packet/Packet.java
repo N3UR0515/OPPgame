@@ -8,6 +8,7 @@ public class Packet implements Serializable {
     private int y;
     private boolean isEnemy;
     private boolean isAttack;
+    private boolean setHealth;
     private int HP = -10;
 
     public Packet()
@@ -66,5 +67,14 @@ public class Packet implements Serializable {
 
     public int getHP() {
         return HP;
+    }
+
+    public boolean isSetHealth() {
+        return setHealth;
+    }
+
+    public Packet setSetHealth(boolean setHealth) {
+        this.setHealth = setHealth;
+        return this;
     }
 }

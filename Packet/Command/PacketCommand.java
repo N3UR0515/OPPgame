@@ -23,7 +23,9 @@ public abstract class PacketCommand {
 
     public HashMap<Integer, Character> getResults()
     {
-        return characters;
+        if(characters != null)
+            return characters;
+        return new HashMap<Integer, Character>();
     }
 
     public abstract void execute();

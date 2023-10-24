@@ -2,6 +2,8 @@ package Map;
 
 import Map.Tile.*;
 import Character.Camera;
+import PickUp.PickUpHeal;
+import PickUp.PickUpStore;
 import org.newdawn.slick.Graphics;
 import java.util.*;
 import java.io.Serializable;
@@ -109,7 +111,7 @@ public class Map implements Serializable {
         //Generating rooms
         for (Tile tile : roomTiles){
             if (isUnavailable(tile)) {
-                tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = factory.createTile(0, tile.id, tile.getTrel_y(), tile.getTrel_x(), "Heal");
+                tiles[tile.getTrel_x() * this.rows + tile.getTrel_y()] = factory.createTile(0, tile.id, tile.getTrel_y(), tile.getTrel_x(), "");
             }
         }
 
@@ -136,7 +138,14 @@ public class Map implements Serializable {
 
         //Generating fiery lines
         this.generateFieryLines();
+    }
 
+    public List<Tile> generateHealthTiles()
+    {
+        List<Tile> tilesWithPickups = new ArrayList<>();
+        getTileByLoc(0, 1).setPickUp(PickUpStore.getPickUp("Heal"));
+        tilesWithPickups.add(getTileByLoc(0, 1));
+        return tilesWithPickups;
     }
 
     private void generateFieryLines() {
@@ -379,6 +388,11 @@ public class Map implements Serializable {
 
     public Map copy()
     {
-        return new Map(this.tiles.clone(), cols, rows);
+        Tile[] tilesCopy = new Tile[cols * rows];
+        for(int i = 0; i < cols*rows; i++)
+        {
+            tilesCopy[i] = tiles[i].copy();
+        }
+        return new Map(tilesCopy, cols, rows);
     }
 }

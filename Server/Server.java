@@ -2,8 +2,10 @@ package Server;
 
 import Map.Map;
 import Map.Area;
+import Map.Tile.Tile;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.DamagePlayerPacketBuilder;
+import Packet.Builder.HealthPickUpSetPacketBuilder;
 import Packet.Builder.PacketBuilder;
 import Packet.Packet;
 import Map.Tile.FieryTile;
@@ -32,12 +34,14 @@ public class Server {
     public static Map map;
     public static Map initMap;
     private static Area[] areas;
+    public static List<Tile> tiles;
 
     public static void main(String[] args) {
         try {
 
             map = new Map(100, 100);
             initMap = map.copy();
+            tiles = map.generateHealthTiles();
 
             areas = new Area[10];
             for (int i = 0; i < 10;  i++){

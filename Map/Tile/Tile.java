@@ -1,5 +1,6 @@
 package Map.Tile;
 
+import org.lwjgl.Sys;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Polygon;
@@ -23,6 +24,7 @@ public abstract class Tile implements Serializable {
     }
 
     public void setPickUp(PickUp pickUp) {
+        System.out.println("hello");
         this.pickUp = pickUp;
     }
 
@@ -40,13 +42,6 @@ public abstract class Tile implements Serializable {
         this.texture = texture;
         if (!Objects.equals(pickUp, "")){
             this.pickUp = PickUpStore.getPickUp(pickUp);
-            if (Objects.equals(pickUp, "Key")) {
-                borderTexture = Color.yellow;
-            } else if(Objects.equals(pickUp, "Heal")) {
-                borderTexture = Color.red;
-            }
-        } else {
-            borderTexture = Color.black;
         }
     }
 
@@ -96,10 +91,20 @@ public abstract class Tile implements Serializable {
     }
 
     public void draw(Graphics g) {
+        /*if (Objects.equals(pickUp.getPickupCode(), "Key")) {
+            borderTexture = Color.yellow;
+        } else if(Objects.equals(pickUp.getPickupCode(), "Heal")) {
+            borderTexture = Color.red;
+        }*/
         g.setColor(texture);
         g.fill(createHexagon(x, y, size));
-        g.setColor(borderTexture);
-        g.draw(createHexagon(x, y, size));
+        if(pickUp != null && pickUp.getPickupCode().equals("Heal"))
+        {
+            borderTexture = Color.red;
+            g.setColor(borderTexture);
+            g.draw(createHexagon(x, y, size));
+        }
+
     }
 
     private Polygon createHexagon(float centerX, float centerY, int size) {
@@ -122,4 +127,6 @@ public abstract class Tile implements Serializable {
     public void setOnTile(Character onTile) {
         this.onTile = onTile;
     }
+
+    public abstract Tile copy();
 }
