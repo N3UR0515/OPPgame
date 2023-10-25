@@ -40,7 +40,7 @@ public class Test extends BasicGame {
     public static void main(String[] arguments) {
         try {
             AppGameContainer app = new AppGameContainer(new Test());
-            app.setDisplayMode(800, 600, false);
+            app.setDisplayMode(640, 480, true);
             app.setShowFPS(true);
             app.setVSync(true);
             app.start();

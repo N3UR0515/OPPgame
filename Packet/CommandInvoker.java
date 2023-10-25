@@ -48,7 +48,10 @@ public class CommandInvoker {
     public void invoke()
     {
         while(!redoCommands.empty())
+        {
+            redoCommands.peek().execute();
             commandHistory.push(redoCommands.pop());
+        }
         packetCommand = packetCommandQueue.remove();
         if(packetCommand != null)
         {
