@@ -1,5 +1,7 @@
 package Server;
 
+import Artifact.MagicStaff;
+import Artifact.WarmQuartz;
 import Map.Area;
 import Map.Tile.FieryTile;
 import Map.Tile.Tile;
@@ -18,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ClientHandler extends CharacterHandler {
     private ObjectOutputStream out;
@@ -27,6 +30,16 @@ public class ClientHandler extends CharacterHandler {
         this.characterId = clientId;
         try {
             characterModel = new Player(10, Server.map, 0, 0);
+
+            //Decide which artifact to assign to player.
+            //Later on make this players choice
+            Random rng = new Random();
+            if (rng.nextInt(2) == 0) {
+                characterModel.setArtifact(new MagicStaff());
+            } else {
+                characterModel.setArtifact(new WarmQuartz());
+            }
+
             characterModel.id = clientId;
             Turnline.getInstance().Add(characterModel);
 
@@ -67,6 +80,9 @@ public class ClientHandler extends CharacterHandler {
                             Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
                             List<Area> newAreas = Server.getAreas(packet.getY(), packet.getX());
                             List<Area> oldOnes = new ArrayList<>(this.areas);
+                            for (int i = 0; i < this.areas.size(); i++){
+                                this.areas.get(i).removeCharacter(this);
+                            }
                             this.areas.removeAll(oldOnes);
                             this.areas.addAll(newAreas);
                            /* for(Area area: oldOnes)
@@ -133,6 +149,7 @@ public class ClientHandler extends CharacterHandler {
                             Packet toSend = dmgBuilder.getPacket();
                             sendPacket(toSend);
                         }
+                        characterModel.rollArtifactEffect();
                         if (tile.getPickUp() != null) {
                             System.out.println(tile.getPickUp().getPickupCode());
                             characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
