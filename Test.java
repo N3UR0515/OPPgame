@@ -15,6 +15,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
+//xpzbwvhmfftufnfmoe@cazlp.com
+//j2_qjotH7g1Ug36h
 
 public class Test extends BasicGame {
     private static final String SERVER_IP = "localhost";
@@ -40,7 +42,7 @@ public class Test extends BasicGame {
     public static void main(String[] arguments) {
         try {
             AppGameContainer app = new AppGameContainer(new Test());
-            app.setDisplayMode(640, 480, true);
+            app.setDisplayMode(640, 480, false);
             app.setShowFPS(true);
             app.setVSync(true);
             app.start();
@@ -123,12 +125,7 @@ public class Test extends BasicGame {
                 {
                     invoker.setCommand(new PlayerMovePacketCommand(packet, characters, map, camera));
                 }
-                invoker.invoke();
 
-
-                //characters = invoker.getResults();
-                if(characters.get(player.id) != null)
-                    player.setHP(characters.get(player.id).getHP());
 
             }
         } catch (IOException e) {
@@ -136,6 +133,8 @@ public class Test extends BasicGame {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+
     }
 
 
@@ -146,10 +145,16 @@ public class Test extends BasicGame {
                 new Thread(this::Send).start();
                 MyTurn = false;
             };
+
+            invoker.invoke();
+            if(characters.get(player.id) != null)
+                player.setHP(characters.get(player.id).getHP());
             if(container.getInput().isKeyPressed(Input.KEY_P))
                 invoker.undo();
             if(container.getInput().isKeyPressed(Input.KEY_R))
                 invoker.redo();
+
+
 
         camera.updateCamera(container);
     }

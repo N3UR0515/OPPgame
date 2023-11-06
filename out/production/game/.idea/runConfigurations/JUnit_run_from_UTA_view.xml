@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JUnit run from UTA view" type="JUnit" factoryName="JUnit">
+    <module name="game" />
+    <option name="PACKAGE_NAME" value="Character" />
+    <option name="MAIN_CLASS_NAME" value="Character.CameraTest" />
+    <option name="METHOD_NAME" value="testUpdateCamera" />
+    <option name="TEST_OBJECT" value="method" />
+    <RunnerSettings jtest.executionsettings.utaEnabled="true" jtest.executionsettings.coverageEnabled="true" jtest.executionsettings.coveragePaneActive="true" RunnerId="Jtest">
+      <module name="game" />
+      <option name="PACKAGE_NAME" value="Character" />
+      <option name="MAIN_CLASS_NAME" value="Character.CameraTest" />
+      <option name="METHOD_NAME" value="testUpdateCamera" />
+      <option name="TEST_OBJECT" value="method" />
+    </RunnerSettings>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
