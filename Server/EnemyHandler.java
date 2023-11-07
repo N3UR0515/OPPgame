@@ -1,7 +1,9 @@
 package Server;
 
+import AbstractFactory.EnemyFactory;
+import AbstractFactory.MonsterFactory;
+import AbstractFactory.MutantFactory;
 import Character.Enemies.Enemy;
-import Character.Enemies.EnemyFactory;
 import Map.Area;
 import Packet.Builder.ChangeOfEnemyPositionPacketBuilder;
 import Packet.Builder.DamagePlayerPacketBuilder;
@@ -21,17 +23,29 @@ import java.util.Random;
 
 public class EnemyHandler extends CharacterHandler
 {
-
+    protected EnemyFactory factory;
     public EnemyHandler(int enemyId) throws IOException {
         this.characterId = enemyId;
         Random rng = new Random();
-        EnemyFactory factory = new EnemyFactory();
+
+        String enemyType = "";
+        int randomIndex = rng.nextInt(2);
+
+        if (rng.nextBoolean())
+        {
+            factory = new MutantFactory();
+            enemyType = (randomIndex == 0) ? "SPITTER" : "BOMBER";
+        } else {
+            factory = new MonsterFactory();
+            enemyType = (randomIndex == 0) ? "CRAWLING" : "WALKING";
+        }
+
         int x, y;
         do {
             x = rng.nextInt(100);
             y = rng.nextInt(100);
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
-        characterModel = factory.createEnemy(11, x, y);
+        characterModel = factory.GetEnemy(enemyType, x, y);
         characterModel.id = enemyId;
         Turnline.getInstance().Add(characterModel);
     }

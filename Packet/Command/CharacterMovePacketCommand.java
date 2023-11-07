@@ -1,7 +1,5 @@
 package Packet.Command;
 
-import Character.Enemies.Enemy;
-import Character.Enemies.ZombieOld;
 import Map.Map;
 import Packet.Packet;
 import org.newdawn.slick.Color;
