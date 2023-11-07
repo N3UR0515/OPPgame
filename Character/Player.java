@@ -217,7 +217,7 @@ public class Player extends Character implements Serializable {
     }
 
     @Override
-    public void drawCharacter(Graphics g)
+    public void drawCharacter(Graphics g, int xx, int yy, int HP)
     {
         getRealLoc();
         triangle.setCenterX(x);
@@ -229,20 +229,4 @@ public class Player extends Character implements Serializable {
             g.drawOval(x, y, 5, 5);
         }
     }
-
-    public void drawHealth(Graphics g) {
-        int outerBoxX = 50;
-        int outerBoxY = 50;
-        int outerBoxWidth = 100;
-        int outerBoxHeight = 20;
-
-        int innerBoxWidth = (int) ((double) HP / 10 * outerBoxWidth);
-
-        g.setColor(org.newdawn.slick.Color.red);
-        g.fillRect(outerBoxX, outerBoxY, outerBoxWidth, outerBoxHeight);
-
-        g.setColor(org.newdawn.slick.Color.green);
-        g.fillRect(outerBoxX, outerBoxY, innerBoxWidth, outerBoxHeight);
-    }
-
 }
