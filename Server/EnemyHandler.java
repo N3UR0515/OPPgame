@@ -32,15 +32,15 @@ public class EnemyHandler extends CharacterHandler
         Random rng = new Random();
 
         String enemyType = "";
-        int randomIndex = rng.nextInt(2);
+        int randomIndex = rng.nextInt(3);
 
         if (rng.nextBoolean())
         {
             factory = new MutantFactory();
-            enemyType = (randomIndex == 0) ? "SPITTER" : "BOMBER";
+            enemyType =  (randomIndex == 0) ? "SPITTER" : (randomIndex == 1) ? "BOMBER" : "OTHER_TYPE";;
         } else {
             factory = new MonsterFactory();
-            enemyType = (randomIndex == 0) ? "CRAWLING" : "WALKING";
+            enemyType = (randomIndex == 0) ? "CRAWLING" : (randomIndex == 1) ?  "WALKING" : "OTHER_TYPE";
         }
 
         int x, y;
