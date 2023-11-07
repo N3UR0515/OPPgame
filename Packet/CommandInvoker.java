@@ -20,19 +20,21 @@ public class CommandInvoker {
     public void setCommand(PacketCommand command)
     {
         if(command != null)
-            packetCommandQueue.offer(command);
-        /*if(packetCommand != null)
-            commandHistory.push(this.packetCommand);
-        this.packetCommand = command;*/
+            packetCommandQueue.add(command);
     }
 
     public void undo()
     {
+        packetCommand.undo();
         if(!commandHistory.empty())
+        {
             packetCommand = commandHistory.pop();
-        if(packetCommand != null) {
-            packetCommand.execute();
-            redoCommands.push(packetCommand);
+            if(packetCommand != null) {
+                System.out.println(packetCommand);
+                packetCommand.execute();
+                redoCommands.push(packetCommand);
+        }
+
         }
     }
     public void redo()
@@ -47,13 +49,22 @@ public class CommandInvoker {
 
     public void invoke()
     {
-        while(!redoCommands.empty())
-            commandHistory.push(redoCommands.pop());
-        packetCommand = packetCommandQueue.remove();
-        if(packetCommand != null)
+        if(!packetCommandQueue.isEmpty())
         {
-            packetCommand.execute();
-            commandHistory.push(packetCommand);
+            while(!redoCommands.empty())
+            {
+                redoCommands.peek().execute();
+                commandHistory.push(redoCommands.pop());
+            }
+
+            packetCommand = packetCommandQueue.remove();
+
+            if(packetCommand != null)
+            {
+                packetCommand.execute();
+                commandHistory.push(packetCommand);
+            }
+
         }
     }
 

@@ -25,4 +25,9 @@ public class DamagePlayerPacketCommand extends PacketCommand {
             characters.put(packet.getId(), new Player(10, map, packet.getX(), packet.getY()));
         }
     }
+
+    @Override
+    public void undo() {
+
+    }
 }

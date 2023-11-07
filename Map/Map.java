@@ -9,12 +9,12 @@ import java.util.*;
 import java.io.Serializable;
 
 public class Map implements Serializable {
-    private final Tile[] tiles;
-    private final int cols;
-    private final int rows;
-    private final TileFactory factory;
+    protected final Tile[] tiles;
+    protected final int cols;
+    protected final int rows;
+    protected final TileFactory factory;
 
-    private Map(Tile[] tiles, int cols, int rows)
+    protected Map(Tile[] tiles, int cols, int rows)
     {
         this.tiles = tiles;
         this.cols = cols;
@@ -148,7 +148,7 @@ public class Map implements Serializable {
         return tilesWithPickups;
     }
 
-    private void generateFieryLines() {
+    protected void generateFieryLines() {
         int fieryLineCount = 25;
         Random rand = new Random();
         int[][] directionsId = {
@@ -198,7 +198,7 @@ public class Map implements Serializable {
         }
     }
 
-    private void BFS(String start, String end){
+    protected void BFS(String start, String end){
         ArrayList<Tile> closedList = new ArrayList<>();
         Queue<Tile> openQueue = new LinkedList<>();
         Tile[] prec = new Tile[this.tiles.length];
@@ -233,17 +233,17 @@ public class Map implements Serializable {
         }
     }
 
-    private int decryptCol(String coordinate){
+    protected int decryptCol(String coordinate){
         int split = coordinate.indexOf("_");
         return Integer.parseInt(coordinate.substring(0, split));
     }
 
-    private int decryptRow(String coordinate){
+    protected int decryptRow(String coordinate){
         int split = coordinate.indexOf("_");
         return Integer.parseInt(coordinate.substring(split+1));
     }
 
-    private ArrayList<Tile> getNeighbors(Tile tile) {
+    protected ArrayList<Tile> getNeighbors(Tile tile) {
         ArrayList<Tile> neighbors = new ArrayList<>();
 
         int x = tile.getTrel_x();
@@ -279,7 +279,7 @@ public class Map implements Serializable {
     }
 
     //Not to be confused with "viewport" areas. For this method, area means getting tiles around one specific tile
-    private void getAreaTiles(ArrayList<Tile> list, int depth, Tile currentTile) {
+    protected void getAreaTiles(ArrayList<Tile> list, int depth, Tile currentTile) {
         ArrayList<Tile> temp = getNeighbors(currentTile);
         list.addAll(temp);
         if (depth > 0) {
@@ -289,7 +289,7 @@ public class Map implements Serializable {
         }
     }
 
-    private void paintPath(Tile[] prec, Tile currentTile, boolean isWide, Random rng) {
+    protected void paintPath(Tile[] prec, Tile currentTile, boolean isWide, Random rng) {
         boolean isFiery = isWide && rng.nextInt(6) == 5;
         while (prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] != currentTile) {
             if (isWide) {
@@ -315,11 +315,11 @@ public class Map implements Serializable {
         }
     }
 
-    private boolean isUnavailable(Tile tile) {
+    protected boolean isUnavailable(Tile tile) {
         return tile.getClass()== UnavailableTile.class;
     }
 
-    private boolean isCloseToTile(Tile destination, Tile currentTile) {
+    protected boolean isCloseToTile(Tile destination, Tile currentTile) {
         int destX = destination.getTrel_x();
         int destY = destination.getTrel_y();
 

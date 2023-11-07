@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<tracer id="junit" runId="&lt;no id&gt;">
+  <classes>
+    <class id="1" name="org.junit.Test" flags="9729" src="Test.java"></class>
+    <class id="2" name="junit.framework.ComparisonFailure" flags="33" src="ComparisonFailure.java"></class>
+    <class id="3" name="junit.framework.AssertionFailedError" flags="33" src="AssertionFailedError.java"></class>
+    <class id="4" name="com.intellij.junit4.JUnit4IdeaTestRunner" flags="33" src="JUnit4IdeaTestRunner.java"></class>
+    <class id="5" name="org.junit.runner.notification.RunListener" flags="33" src="RunListener.java"></class>
+    <class id="6" name="com.intellij.junit4.JUnit4TestListener" flags="33" src="JUnit4TestListener.java"></class>
+    <class id="7" name="com.intellij.junit4.JUnit4IdeaTestRunner$MyCustomRunListenerWrapper" flags="32" src="JUnit4IdeaTestRunner.java"></class>
+    <class id="8" name="junit.textui.TestRunner" flags="33" src="TestRunner.java"></class>
+    <class id="9" name="junit.runner.BaseTestRunner" flags="1057" src="BaseTestRunner.java"></class>
+    <class id="10" name="junit.framework.TestListener" flags="1537" src="TestListener.java"></class>
+    <class id="11" name="junit.framework.Test" flags="1537" src="Test.java"></class>
+    <class id="12" name="junit.framework.TestResult" flags="33" src="TestResult.java"></class>
+    <class id="13" name="junit.textui.ResultPrinter" flags="33" src="ResultPrinter.java"></class>
+    <class id="14" name="com.intellij.junit4.JUnitTestTreeNodeManager" flags="1537" src="JUnitTestTreeNodeManager.java"></class>
+  </classes>
+  <methods>
+    <method id="1" classId="2" name="&lt;init&gt;" desc="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" flags="1" line="23"></method>
+    <method id="2" classId="2" name="getMessage" desc="()Ljava/lang/String;" flags="1" line="36"></method>
+    <method id="3" classId="2" name="getActual" desc="()Ljava/lang/String;" flags="1" line="45"></method>
+    <method id="4" classId="2" name="getExpected" desc="()Ljava/lang/String;" flags="1" line="54"></method>
+    <method id="5" classId="3" name="&lt;init&gt;" desc="()V" flags="1" line="13"></method>
+    <method id="6" classId="4" name="&lt;init&gt;" desc="()V" flags="1" line="34"></method>
+    <method id="7" classId="5" name="&lt;init&gt;" desc="()V" flags="1" line="52"></method>
+    <method id="8" classId="6" name="&lt;init&gt;" desc="()V" flags="1" line="36"></method>
+    <method id="9" classId="6" name="&lt;init&gt;" desc="(Ljava/io/PrintStream;)V" flags="1" line="39"></method>
+    <method id="10" classId="7" name="&lt;init&gt;" desc="(Lcom/intellij/rt/execution/junit/IDEAJUnitListener;Ljava/lang/String;)V" flags="0" line="186"></method>
+    <method id="11" classId="7" name="testStarted" desc="(Lorg/junit/runner/Description;)V" flags="1" line="193"></method>
+    <method id="12" classId="7" name="testFailure" desc="(Lorg/junit/runner/notification/Failure;)V" flags="1" line="199"></method>
+    <method id="13" classId="8" name="&lt;init&gt;" desc="()V" flags="1" line="41"></method>
+    <method id="14" classId="8" name="&lt;init&gt;" desc="(Ljava/io/PrintStream;)V" flags="1" line="48"></method>
+    <method id="15" classId="8" name="&lt;init&gt;" desc="(Ljunit/textui/ResultPrinter;)V" flags="1" line="54"></method>
+    <method id="16" classId="8" name="run" desc="(Ljava/lang/Class;)V" flags="9" line="62"></method>
+    <method id="17" classId="8" name="run" desc="(Ljunit/framework/Test;)Ljunit/framework/TestResult;" flags="9" line="76"></method>
+    <method id="18" classId="8" name="runAndWait" desc="(Ljunit/framework/Test;)V" flags="9" line="85"></method>
+    <method id="19" classId="8" name="testFailed" desc="(ILjunit/framework/Test;Ljava/lang/Throwable;)V" flags="1" line="91"></method>
+    <method id="20" classId="8" name="testStarted" desc="(Ljava/lang/String;)V" flags="1" line="95"></method>
+    <method id="21" classId="8" name="testEnded" desc="(Ljava/lang/String;)V" flags="1" line="99"></method>
+    <method id="22" classId="8" name="createTestResult" desc="()Ljunit/framework/TestResult;" flags="4" line="105"></method>
+    <method id="23" classId="8" name="doRun" desc="(Ljunit/framework/Test;)Ljunit/framework/TestResult;" flags="1" line="109"></method>
+    <method id="24" classId="8" name="doRun" desc="(Ljunit/framework/Test;Z)Ljunit/framework/TestResult;" flags="1" line="113"></method>
+    <method id="25" classId="9" name="&lt;init&gt;" desc="()V" flags="1" line="29"></method>
+    <method id="26" classId="12" name="&lt;init&gt;" desc="()V" flags="1" line="24"></method>
+    <method id="27" classId="13" name="&lt;init&gt;" desc="(Ljava/io/PrintStream;)V" flags="1" line="18"></method>
+    <method id="28" classId="14" name="&lt;clinit&gt;" desc="()V" flags="8" line="16"></method>
+    <method id="29" classId="15" name="&lt;init&gt;" desc="(Ljava/lang/String;Ljava/lang/String;)V" flags="1" line="63"></method>
+    <method id="30" classId="16" name="createSuiteDescription" desc="(Ljava/lang/String;[Ljava/lang/annotation/Annotation;)Lorg/junit/runner/Description;" flags="137" line="45"></method>
+    <method id="31" classId="16" name="createSuiteDescription" desc="(Ljava/lang/String;Ljava/io/Serializable;[Ljava/lang/annotation/Annotation;)Lorg/junit/runner/Description;" flags="137" line="58"></method>
+    <method id="32" classId="16" name="createTestDescription" desc="(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/annotation/Annotation;)Lorg/junit/runner/Description;" flags="137" line="73"></method>
+    <method id="33" classId="16" name="createTestDescription" desc="(Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/annotation/Annotation;)Lorg/junit/runner/Description;" flags="137" line="86"></method>
+  </methods>
+  <messages>
+    <message>UTA agent was not able to read its configuration for certain period of time.
+
+See the console or the log files for more details.</message>
+    <message>No calls were registered during tests run.</message>
+  </messages>
+</tracer>

@@ -1,6 +1,7 @@
 package Character;
 
 import CharacterDecorator.UIElement;
+import Artifact.Artifact;
 import Map.Tile.Tile;
 import Map.Map;
 import PickUp.*;
@@ -19,6 +20,8 @@ public abstract class Character implements UIElement, Serializable {
     protected int rel_x;
     protected int rel_y;
     protected int HP;
+    protected Artifact artifact;
+    protected final int maxHP;
     protected final Polygon triangle;
     protected Map map;
     protected Camera camera;
@@ -28,6 +31,7 @@ public abstract class Character implements UIElement, Serializable {
     public Character(int HP, Map map, int rel_x, int rel_y)
     {
         this.HP = HP;
+        this.maxHP = HP;
         this.map = map;
         this.rel_x = rel_x;
         this.rel_y = rel_y;
@@ -45,6 +49,7 @@ public abstract class Character implements UIElement, Serializable {
     public Character(int HP, Map map, int rel_x, int rel_y, Camera camera)
     {
         this.HP = HP;
+        this.maxHP = HP;
         this.map = map;
         this.rel_x = rel_x;
         this.rel_y = rel_y;
@@ -79,6 +84,16 @@ public abstract class Character implements UIElement, Serializable {
     public abstract boolean updateCharacter(GameContainer container);
     public abstract void updateCharacter(Character character);
 
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void rollArtifactEffect(){
+        if (this.artifact != null) {
+            this.artifact.rollForEffect(this, this.maxHP);
+        }
+    }
+
     public int getX()
     {
         return x;
@@ -93,6 +108,10 @@ public abstract class Character implements UIElement, Serializable {
 
     public int getRel_y() {
         return rel_y;
+    }
+
+    public void setArtifact(Artifact artifact) {
+        this.artifact = artifact;
     }
 
     public void setRel_x(int x) {

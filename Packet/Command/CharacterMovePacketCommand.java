@@ -3,6 +3,9 @@ package Packet.Command;
 import Character.Enemies.Enemy;
 import Character.Enemies.ZombieOld;
 import Map.Map;
+import Map.Tile.FieryTile;
+import Map.Tile.HiderTile;
+import Map.Tile.Tile;
 import Packet.Packet;
 import org.newdawn.slick.Color;
 import Character.*;
@@ -38,6 +41,21 @@ public class CharacterMovePacketCommand extends PacketCommand {
         {
             characters.put(packet.getId(), new ZombieOld(10, map, packet.getX(), packet.getY(), camera));
             map.getTileByLoc(packet.getX(), packet.getY()).setOnTile(characters.get(packet.getId()));
+        }
+    }
+
+    @Override
+    public void undo() {
+        if(packet.getHP() <= 0)
+        {
+            Tile tile = map.getTileByLoc(packet.getX(), packet.getY());
+            if( tile instanceof FieryTile)
+                tile.setTexture(Color.yellow);
+            else if(tile instanceof HiderTile)
+                tile.setTexture(Color.gray);
+            else
+                tile.setTexture(Color.white);
+
         }
     }
 }

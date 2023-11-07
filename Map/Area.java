@@ -10,6 +10,7 @@ import Character.Character;
 import Server.CharacterHandler;
 import Server.*;
 import Character.*;
+import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class Area implements Serializable {
 
     }
 
-    public void removeCharacter(CharacterHandler character) {
+    public synchronized void removeCharacter(CharacterHandler character) {
         boolean hasRemoved = characters.remove(character);
         if (hasRemoved) {
             character.removeArea(this);
