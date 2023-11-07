@@ -30,4 +30,9 @@ public class PlayerMovePacketCommand extends PacketCommand {
             //map.getTileByLoc(packet.getX(), packet.getY()).setOnTile(characters.get(packet.getId()));
         }
     }
+
+    @Override
+    public void undo() {
+
+    }
 }

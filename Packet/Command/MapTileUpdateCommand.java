@@ -26,4 +26,8 @@ public class MapTileUpdateCommand extends PacketCommand{
             tile.setPickUp(null);
         }
     }
+
+    @Override
+    public void undo() {
+    }
 }

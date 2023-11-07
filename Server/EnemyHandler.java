@@ -1,8 +1,11 @@
 package Server;
 
+
 import AbstractFactory.EnemyFactory;
 import AbstractFactory.MonsterFactory;
 import AbstractFactory.MutantFactory;
+import Artifact.MagicStaff;
+import Artifact.WarmQuartz;
 import Character.Enemies.Enemy;
 import Map.Area;
 import Packet.Builder.ChangeOfEnemyPositionPacketBuilder;
@@ -45,7 +48,17 @@ public class EnemyHandler extends CharacterHandler
             x = rng.nextInt(100);
             y = rng.nextInt(100);
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
+
         characterModel = factory.GetEnemy(enemyType, x, y);
+        
+        //Randomly decide whether to assign artifact, and if yes - which one
+        int artifactRoll = rng.nextInt(8);
+        if (artifactRoll == 2 || artifactRoll == 3) {
+            characterModel.setArtifact(new WarmQuartz());
+        } else if (artifactRoll == 1) {
+            characterModel.setArtifact(new MagicStaff());
+        }
+
         characterModel.id = enemyId;
         Turnline.getInstance().Add(characterModel);
     }
@@ -73,11 +86,13 @@ public class EnemyHandler extends CharacterHandler
 
                     List<Area> newAreas = Server.getAreas(characterModel.getRel_y(), characterModel.getRel_x());
                     List<Area> oldOnes = new ArrayList<>(this.areas);
-                   // System.out.println(this.areas.size() + " areas");
+                    for (int i = 0; i < this.areas.size(); i++){
+                        this.areas.get(i).removeCharacter(this);
+                    }
                     this.areas.removeAll(oldOnes);
                     this.areas.addAll(newAreas);
-                    /*for(Area area: oldOnes)
-                        area.removeCharacter(this);*/
+                    /**/
+//                    System.out.println();
                     for(Area area : this.areas)
                         area.addCharacter(this);
                     /*oldOnes.removeAll(newAreas);
@@ -125,6 +140,7 @@ public class EnemyHandler extends CharacterHandler
                 if (Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).getClass() == FieryTile.class) {
                     characterModel.damageCharacter();
                 }
+                characterModel.rollArtifactEffect();
                 if(characterModel.getHP() <= 0)
                     turnline.Remove(characterModel);
             }

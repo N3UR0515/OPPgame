@@ -29,4 +29,6 @@ public abstract class PacketCommand {
     }
 
     public abstract void execute();
+
+    public abstract void undo();
 }
