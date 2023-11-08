@@ -5,17 +5,12 @@ import java.io.IOException;
 public class WAVPlayer {
     private Clip clip;
 
-    void playAudio(String audioFile) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-        File soundFile = new File(audioFile);
-        if (soundFile.exists()) {
+    void playAudio(File soundFile) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
         AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
-
         clip = AudioSystem.getClip();
         clip.open(audioIn);
         clip.start();
-        }else {
-            System.out.println("File not found: " + audioFile);
-        }
+
     }
 
     void stopAudio() {
