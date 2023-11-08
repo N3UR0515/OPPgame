@@ -3,21 +3,15 @@ package Server;
 import Map.Map;
 import Map.Area;
 import Map.Tile.Tile;
-import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
-import Packet.Builder.DamagePlayerPacketBuilder;
-import Packet.Builder.HealthPickUpSetPacketBuilder;
-import Packet.Builder.PacketBuilder;
 import Packet.Packet;
-import Map.Tile.FieryTile;
 import Character.Character;
 import Character.Player;
 import Character.Enemies.Enemy;
-import Packet.PacketDirector;
-import org.lwjgl.Sys;
+import Server.MusicAdapter.WAVPlayer;
+import Server.MusicAdapter.WAVPlayerAdapter;
+import Server.MusicAdapter.MusicPlayer;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -38,6 +32,8 @@ public class Server {
 
     public static void main(String[] args) {
         try {
+            MusicPlayer player = new WAVPlayerAdapter(new WAVPlayer());
+            player.playIntroMusic("introMusic.wav");
 
             map = new Map(100, 100);
             initMap = map.copy();
