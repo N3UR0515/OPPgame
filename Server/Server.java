@@ -29,11 +29,11 @@ public class Server {
     public static Map initMap;
     private static Area[] areas;
     public static List<Tile> tiles;
+    public static MusicPlayer player;
 
     public static void main(String[] args) {
         try {
-            MusicPlayer player = new WAVPlayerAdapter(new WAVPlayer());
-            player.playIntroMusic("introMusic.wav");
+            player = new WAVPlayerAdapter(new WAVPlayer());
 
             map = new Map(100, 100);
             initMap = map.copy();

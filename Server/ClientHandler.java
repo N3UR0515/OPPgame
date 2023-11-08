@@ -71,6 +71,7 @@ public class ClientHandler extends CharacterHandler {
                 Packet packet;
                 PacketBuilder builder;
                 if ((packet = (Packet) in.readObject()) != null) {
+                    Server.player.playIntroMusic("introMusic.wav");
 //                Server.Turnline turnline = Server.Turnline.getInstance();
                     if (turnline.getCharacter() instanceof Player && turnline.getCharacter().id == characterId) {
                         if (!packet.isAttack()) {

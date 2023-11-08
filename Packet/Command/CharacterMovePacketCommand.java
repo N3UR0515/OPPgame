@@ -1,10 +1,12 @@
 package Packet.Command;
 
+import AbstractFactory.Monster.Walker;
 import Map.Map;
 import Map.Tile.FieryTile;
 import Map.Tile.HiderTile;
 import Map.Tile.Tile;
 import Packet.Packet;
+import Server.Server;
 import org.newdawn.slick.Color;
 import Character.*;
 import Character.Character;
@@ -37,7 +39,7 @@ public class CharacterMovePacketCommand extends PacketCommand {
         }
         else
         {
-            characters.put(packet.getId(), new ZombieOld(10, map, packet.getX(), packet.getY(), camera));
+            characters.put(packet.getId(), new Walker(8, map, packet.getX(), packet.getY()));
             map.getTileByLoc(packet.getX(), packet.getY()).setOnTile(characters.get(packet.getId()));
         }
     }
