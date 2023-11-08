@@ -1,5 +1,6 @@
 package Character.Enemies;
 
+import AbstractFactory.EnemyFactory;
 import Character.Character;
 import Character.Camera;
 import Character.Player;
@@ -15,15 +16,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Enemy extends Character {
-
-    public Enemy(int HP, Map map, int rel_x, int rel_y, Camera camera)
-    {
-        super(HP, map, rel_x, rel_y, camera);
-    }
-    public Enemy(int HP, Map map, int rel_x, int rel_y)
-    {
+    public Enemy(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
     }
+    public Enemy(int HP, Map map, int rel_x, int rel_y, Camera camera) {
+        super(HP, map, rel_x, rel_y, camera);
+    }
+
 
     @Override
     public boolean updateCharacter(GameContainer container) {

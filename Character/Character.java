@@ -44,7 +44,6 @@ public abstract class Character implements Serializable {
         triangle.addPoint(x -5, y + 5);
         triangle.addPoint(x + 5, y +5);
     }
-
     public Character(int HP, Map map, int rel_x, int rel_y, Camera camera)
     {
         this.HP = HP;
