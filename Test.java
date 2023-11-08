@@ -1,3 +1,6 @@
+import CharacterDecorator.CharacterWithHealthBar;
+import CharacterDecorator.CharacterWithLowHP;
+import CharacterDecorator.UIElement;
 import Map.Map;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.PacketBuilder;
@@ -161,11 +164,18 @@ public class Test extends BasicGame {
 
     public void render(GameContainer container, Graphics g) throws SlickException {
         map.drawMap(g, camera);
+        UIElement element;
 
-        for(Character c : characters.values())
-            c.drawCharacter(g);
+        for(Character c : characters.values()) {
+            element = c;
+            element.drawCharacter(g, 0, 0, 10);
+        }
 
-        player.drawCharacter(g);
-        player.drawHealth(g);
+        element = player;
+        element = new CharacterWithHealthBar(player);
+        if (player.getHP()<3){
+            element = new CharacterWithLowHP(element);
+        }
+        element.drawCharacter(g, 0, 0, 10);
     }
 }

@@ -1,5 +1,6 @@
 package Character;
 
+import CharacterDecorator.UIElement;
 import Artifact.Artifact;
 import Map.Tile.Tile;
 import Map.Map;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Character implements Serializable {
+public abstract class Character implements UIElement, Serializable {
     protected int x;
     protected  int y;
     protected int rel_x;
@@ -145,5 +146,5 @@ public abstract class Character implements Serializable {
         this.HP = health;
     }
 
-    public abstract void drawCharacter(Graphics g);
+    public abstract void drawCharacter(Graphics g, int x, int y, int HP);
 }
