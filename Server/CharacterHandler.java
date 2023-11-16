@@ -20,10 +20,6 @@ public abstract class CharacterHandler implements Runnable, Serializable {
         }
     }
 
-//    public List<Map.Area> getAreas() {
-//        return areas;
-//    }
-
     public void removeArea(Area area) {
         this.areas.remove(area);
     }

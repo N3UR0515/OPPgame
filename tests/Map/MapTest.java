@@ -1,6 +1,6 @@
 package Map;
 
-
+import Character.Player;
 import Character.Camera;
 import Map.Tile.FieryTile;
 import Map.Tile.Tile;
@@ -8,6 +8,7 @@ import PickUp.PickUp;
 import PickUp.PickUpHeal;
 import org.junit.Before;
 import org.junit.Test;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.ArrayList;
@@ -60,6 +61,28 @@ public class MapTest {
         List<Tile> result = underTest.generateHealthTiles();
         Tile testTile = underTest.getTileByLoc(0, 1);
         assertEquals(testTile, result.get(0));
+    }
+
+    @Test
+    public void testTileColoring() throws Throwable{
+        underTest.tiles[0] = underTest.factory.createTile(0, true, 0, 0, "Heal");
+        Tile tile = underTest.getTile(0);
+        tile.setTexture(Color.cyan);
+        assertEquals(tile.getTexture(), Color.cyan);
+    }
+
+    @Test
+    public void testCharacterOnTile() throws Throwable{
+        underTest.tiles[0] = underTest.factory.createTile(0, true, 0, 0, "Heal");
+        Tile tile = underTest.getTile(0);
+        Player character = new Player(10, underTest, 0,0);
+        tile.setOnTile(character);
+        assertEquals(tile.getOnTile(), character);
+    }
+
+    @Test
+    public void testDistanceCalculation() throws Throwable{
+        assertEquals(14, underTest.factory.createTile(0, true, 0, 0, "Heal").getDistance(20,20));
     }
 
     @Test
@@ -214,17 +237,28 @@ public class MapTest {
      * @author otsob
      * @see Map#drawMap(Graphics, Camera)
      */
-//    @Test(timeout = 5000)
-//    public void testDrawMap() throws Throwable {
-//        // UTA is unable to resolve the values required to create the requested test case.
-//        // A test case with default values has been created instead.
-//
-//        // When
-//        Graphics g = mock(Graphics.class);
-//        Camera camera = mock(Camera.class);
-//        underTest.drawMap(g, camera);
-//
-//    }
+    @Test(timeout = 60000)
+    public void testDrawMap() throws Throwable {
+        // UTA is unable to resolve the values required to create the requested test case.
+        // A test case with default values has been created instead.
+        underTest.generateHealthTiles();
+        Map map = underTest.copy();
+        // When
+        Graphics g = mock(Graphics.class);
+        Camera camera = mock(Camera.class);
+        underTest.drawMap(g, camera);
+        assertTrue(map.equals(underTest));
+
+    }
+
+    @Test
+    public void testPickUpCode() throws Throwable{
+        underTest.generateHealthTiles();
+        Tile tile = underTest.getTileByLoc(0, 1);
+        PickUp pickUp = tile.getPickUp();
+        String code = pickUp.getPickupCode();
+        assertEquals(code, "Heal");
+    }
 
     /**
      * Parasoft Jtest UTA: Test for copy()
@@ -281,6 +315,12 @@ public class MapTest {
 //        underTest.BFS(start, end);
 //
 //    }
+
+    @Test
+    public void testTileGenWithPickup() throws Throwable{
+
+        assertNotNull(underTest.factory.createTile(0, true, 0, 0, "Heal").getPickUp());
+    }
 
     /**
      * Parasoft Jtest UTA: Test for decryptCol(String)

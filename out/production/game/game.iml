@@ -33,7 +33,7 @@
     <orderEntry type="library" exported="" name="UTA Library: mockito-inline-4.11.0" level="application" />
     <orderEntry type="library" exported="" name="UTA Library: byte-buddy-agent-1.14.2" level="application" />
     <orderEntry type="library" exported="" name="UTA Library: mockito-junit-jupiter-4.11.0" level="application" />
-    <orderEntry type="library" exported="" name="junit-4.13.2" level="project" />
     <orderEntry type="library" exported="" name="hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" name="junit-4.13.2" level="project" />
   </component>
 </module>
