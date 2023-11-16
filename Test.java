@@ -168,7 +168,7 @@ public class Test extends BasicGame {
 
         for(Character c : characters.values()) {
             element = c;
-            element.drawCharacter(g, 0, 0, 10);
+            element.drawCharacter(g, 0, 0, c.getHP());
         }
 
         element = player;
@@ -176,6 +176,6 @@ public class Test extends BasicGame {
         if (player.getHP()<3){
             element = new CharacterWithLowHP(element);
         }
-        element.drawCharacter(g, 0, 0, 10);
+        element.drawCharacter(g, 0, 0, player.getHP());
     }
 }
