@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="GENERAL_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="slick" level="project" />
+    <orderEntry type="library" exported="" name="ibxm" level="project" />
+    <orderEntry type="library" exported="" name="windows" level="project" />
+    <orderEntry type="library" exported="" name="lwjgl" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="UTA Library: junit-4.13.2" level="application" />
+    <orderEntry type="library" exported="" scope="TEST" name="UTA Library: junit-jupiter-api-5.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-jupiter-engine-5.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-jupiter-migrationsupport-5.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-jupiter-params-5.9.2" level="application" />
+    <orderEntry type="library" exported="" scope="TEST" name="UTA Library: junit-platform-commons-1.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-platform-engine-1.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-platform-launcher-1.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-platform-runner-1.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-platform-suite-api-1.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: junit-vintage-engine-5.9.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: JUnitParams-1.1.1" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: hamcrest-2.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: objenesis-3.3" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: opentest4j-1.2.0" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: byte-buddy-1.14.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: mockito-core-4.11.0" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: apiguardian-api-1.1.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: mockito-inline-4.11.0" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: byte-buddy-agent-1.14.2" level="application" />
+    <orderEntry type="library" exported="" name="UTA Library: mockito-junit-jupiter-4.11.0" level="application" />
+    <orderEntry type="library" exported="" name="hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" name="junit-4.13.2" level="project" />
+  </component>
+</module>

@@ -27,7 +27,7 @@ public class Server {
     public static HashMap<Integer, EnemyHandler> enemies = new HashMap<>();
     public static Map map;
     public static Map initMap;
-    private static Area[] areas;
+    static Area[] areas;
     public static List<Tile> tiles;
     public static MusicPlayer player;
 

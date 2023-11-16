@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Area implements Serializable {
-    private final List<CharacterHandler> characters = new ArrayList<>();
+    protected final List<CharacterHandler> characters = new ArrayList<>();
 
     public Area() {}
 
