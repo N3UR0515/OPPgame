@@ -4,8 +4,7 @@ import java.io.Serializable;
 
 // Pickup class
 public abstract class PickUp implements Cloneable, Serializable {
-    String pickupCode;
-
+    protected String pickupCode;
 
     abstract PickUp addPickup();
 

@@ -6,6 +6,7 @@ import Map.Tile.FieryTile;
 import Map.Tile.Tile;
 import PickUp.PickUp;
 import PickUp.PickUpHeal;
+import PickUp.PickUpStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.newdawn.slick.Color;
@@ -253,11 +254,9 @@ public class MapTest {
 
     @Test
     public void testPickUpCode() throws Throwable{
-        underTest.generateHealthTiles();
-        Tile tile = underTest.getTileByLoc(0, 1);
-        PickUp pickUp = tile.getPickUp();
+        PickUp pickUp = PickUpStore.getPickUp("Heal");
         String code = pickUp.getPickupCode();
-        assertEquals(code, "Heal");
+        assertEquals("Heal", code);
     }
 
     /**
