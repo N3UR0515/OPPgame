@@ -395,4 +395,13 @@ public class Map implements Serializable {
         }
         return new Map(tilesCopy, cols, rows);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Map map = (Map) o;
+        return cols == map.cols && rows == map.rows;
+    }
+
 }
