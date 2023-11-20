@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.newdawn.slick.GameContainer;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -21,16 +21,16 @@ public class CameraTest {
     Map map;
     GameContainer container;
     Player player;
-    int playerX;
-    int playerY;
 
     @Before
     public void init() {
         map = new Map(100, 100);
         container = mock(GameContainer.class);
-        player = new Player(18, map, 4, 5);
-        playerX = player.getX();
-        playerY = player.getY();
+        player = mock(Player.class);
+        when(player.getX()).thenReturn(0);
+        when(player.getX()).thenReturn(0);
+        when(container.getWidth()).thenReturn(10);
+        when(container.getHeight()).thenReturn(10);
     }
 
     /**
@@ -41,11 +41,9 @@ public class CameraTest {
      */
     @Test
     public void testUpdateCamera() throws Throwable {
-        int expectedX = (int) (container.getWidth() / 2 - playerX);
-        int expectedY = (int) (container.getHeight() / 2 - playerY);
         Camera camera = new Camera(container, player);
-        assertEquals(expectedX, camera.getCameraX());
-        assertEquals(expectedY, camera.getCameraY());
+        assertEquals(5, camera.getCameraX());
+        assertEquals(5, camera.getCameraY());
     }
 
     /**
