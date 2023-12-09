@@ -2,6 +2,9 @@ package Server;
 
 import Artifact.MagicStaff;
 import Artifact.WarmQuartz;
+import Effects.BleedingOutEffect;
+import Effects.BurningEffect;
+import Effects.IgnitingEffect;
 import Map.Area;
 import Map.Tile.FieryTile;
 import Map.Tile.Tile;
@@ -25,22 +28,17 @@ import java.util.Random;
 public class ClientHandler extends CharacterHandler {
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private Packet packet;
 
     public ClientHandler(Socket clientSocket, int clientId) {
         this.characterId = clientId;
         try {
             characterModel = new Player(10, Server.map, 0, 0);
 
-            //Decide which artifact to assign to player.
-            //Later on make this players choice
-            Random rng = new Random();
-            if (rng.nextInt(2) == 0) {
-                characterModel.setArtifact(new MagicStaff());
-            } else {
-                characterModel.setArtifact(new WarmQuartz());
-            }
+            assignArtifact();
 
             characterModel.id = clientId;
+            characterModel.setEffects(new BleedingOutEffect());
             Turnline.getInstance().Add(characterModel);
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -63,125 +61,117 @@ public class ClientHandler extends CharacterHandler {
     }
 
     @Override
-    public void run() {
-        Turnline turnline = Turnline.getInstance();
-        //synchronized (turnline)
-            {
-            try {
-                Packet packet;
-                PacketBuilder builder;
-                if ((packet = (Packet) in.readObject()) != null) {
-                    Server.player.playIntroMusic("introMusic.wav");
-//                Server.Turnline turnline = Server.Turnline.getInstance();
-                    if (turnline.getCharacter() instanceof Player && turnline.getCharacter().id == characterId) {
-                        if (!packet.isAttack()) {
-                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(null);
-                            characterModel.setRel_x(packet.getX());
-                            characterModel.setRel_y(packet.getY());
-                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
-                            List<Area> newAreas = Server.getAreas(packet.getY(), packet.getX());
-                            List<Area> oldOnes = new ArrayList<>(this.areas);
-                            for (int i = 0; i < this.areas.size(); i++){
-                                this.areas.get(i).removeCharacter(this);
-                            }
-                            this.areas.removeAll(oldOnes);
-                            this.areas.addAll(newAreas);
-                           /* for(Area area: oldOnes)
-                                area.removeCharacter(this);*/
-                            //System.out.println("-----");
-                            for(Area area : this.areas)
-                            {
-                                area.addCharacter(this);
-                                //System.out.println(area);
-                            }
+    public void sendPacket(Packet packet) throws IOException {
+        out.writeObject(packet);
+        out.flush();
+    }
 
+    @Override
+    protected void move() {
+        try{
+            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(null);
+            characterModel.setRel_x(packet.getX());
+            characterModel.setRel_y(packet.getY());
+            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setOnTile(characterModel);
 
+            PacketBuilder builder;
+            builder = new ChangeOfPlayerPositionPacketBuilder();
+            PacketDirector.constructChangeOfPlayerPositonPacket(builder, (Player) characterModel);
+            Packet outPacket = builder.getPacket();
+            Server.broadcastPacket(outPacket);
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-                            builder = new ChangeOfPlayerPositionPacketBuilder();
-                            PacketDirector.constructChangeOfPlayerPositonPacket(builder, (Player) characterModel);
-                            Packet outPacket = builder.getPacket();
-                            Server.broadcastPacket(outPacket);
-                        } else {
-                            List<Area> areas = Server.getAreas(packet.getY(), packet.getX());
-                            List<CharacterHandler> damagedOnes = new ArrayList<>();
-                            for (Area area : areas) {
-                                area.sendAttack(packet.getX(), packet.getY(), damagedOnes);
-                            }
+    }
 
-//                        for(Server.EnemyHandler enemy : Server.Server.enemies)//area
-//                        {
-//                            Character.Character.Enemies.Enemy e = enemy.enemyModel;
-//                            if(e.rel_y == packet.getY() && e.rel_x == packet.getX())
-//                            {
-//                                enemy.enemyModel.damageCharacter();
-//                                System.out.println(enemy.enemyModel.getHP());
-//                                if(enemy.enemyModel.getHP() <= 0)
-//                                {
-//                                    turnline.Remove(enemy.enemyModel);
-//                                }
-//                                break;
-//                            }
-//                        }
-//
-//                        for(Server.ClientHandler client : Server.Server.clients)
-//                        {
-//                            Character.Player p = client.playerModel;
-//                            if(p.rel_y == packet.getY() && p.rel_x == packet.getX())
-//                            {
-//                                client.playerModel.damageCharacter();
-//                                builder = new Packet.Builder.DamagePlayerPacketBuilder();
-//                                Packet.PacketDirector.constructDamagePlayerPacket(builder, client.playerModel);
-//                                Packet.Packet pa = builder.getPacket();
-//                                client.sendPacket(pa);
-//                                if(client.playerModel.getHP() <= 0)
-//                                {
-//                                    turnline.Remove(client.playerModel);
-//                                }
-//                                break;
-//                            }
-//                        }
-                        }
-                        Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
-                        //Checking if player is on a fiery tile. If yes - send damage packet to that player
-                        if (tile.getClass() == FieryTile.class) {
-                            characterModel.damageCharacter();
-                            PacketBuilder dmgBuilder = new DamagePlayerPacketBuilder();
-                            PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
-                            Packet toSend = dmgBuilder.getPacket();
-                            sendPacket(toSend);
-                        }
-                        characterModel.rollArtifactEffect();
-                        if (tile.getPickUp() != null) {
-                            System.out.println(tile.getPickUp().getPickupCode());
-                            characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
-                            PacketBuilder dmgBuilder = new DamagePlayerPacketBuilder();
-                            PacketDirector.constructDamagePlayerPacket(dmgBuilder, (Player) characterModel);
-                            Packet toSend = dmgBuilder.getPacket();
-                            sendPacket(toSend);
-
-                            builder = new HealthPickUpSetPacketBuilder();
-                            PacketDirector.constructSetHealthPickupPacket(builder, tile);
-                            Server.broadcastPacket(builder.getPacket());
-                            Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y()).setPickUp(null);
-                        }
-//                    if(Server.Server.enemies.get(0).characterModel.getHP() > 0){
-//                        turnline.Add(Server.Server.enemies.get(0).characterModel);
-//                    }
-
-                        turnline.Next();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+    @Override
+    protected void attack() {
+        try
+        {
+            List<Area> areas = Server.getAreas(packet.getY(), packet.getX());
+            List<CharacterHandler> damagedOnes = new ArrayList<>();
+            for (Area area : areas) {
+                area.sendAttack(packet.getX(), packet.getY(), damagedOnes);
             }
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    protected void assignArtifact() {
+        //Decide which artifact to assign to player.
+        //Later on make this players choice
+        Random rng = new Random();
+        if (rng.nextInt(2) == 0) {
+            characterModel.setArtifact(new MagicStaff());
+        } else {
+            characterModel.setArtifact(new WarmQuartz());
         }
     }
 
     @Override
-    public void sendPacket(Packet packet) throws IOException {
-        out.writeObject(packet);
-        out.flush();
+    protected boolean checkForTurn() {
+        Turnline turnline = Turnline.getInstance();
+        return turnline.getCharacter() instanceof Player && turnline.getCharacter().id == characterId;
+    }
+
+    @Override
+    protected void receiveTileDamage() {
+        characterModel.damageCharacter();
+        try
+        {
+            damagePacket();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    protected void usePickUp() {
+        Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
+        characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
+        try
+        {
+            damagePacket();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    protected boolean checkForAttack() {
+        if(packet != null)
+            return packet.isAttack();
+        return false;
+    }
+
+    @Override
+    protected boolean checkForMove() {
+        try
+        {
+            packet = (Packet) in.readObject();
+            if(packet != null)
+                return !packet.isAttack();
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    @Override
+    protected void affectSelf() {
+        super.affectSelf();
+        try{
+            damagePacket();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

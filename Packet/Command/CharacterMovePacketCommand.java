@@ -1,6 +1,9 @@
 package Packet.Command;
 
 import AbstractFactory.Monster.Walker;
+import Effects.BleedingEffect;
+import Effects.GetHitEffect;
+import Effects.IgnitingEffect;
 import Map.Map;
 import Map.Tile.FieryTile;
 import Map.Tile.HiderTile;
@@ -39,7 +42,9 @@ public class CharacterMovePacketCommand extends PacketCommand {
         }
         else
         {
-            characters.put(packet.getId(), new Walker(8, map, packet.getX(), packet.getY()));
+            Character character = new Walker(8, map, packet.getX(), packet.getY());
+            character.setEffects(new IgnitingEffect(), new BleedingEffect(), new GetHitEffect());
+            characters.put(packet.getId(), character);
             map.getTileByLoc(packet.getX(), packet.getY()).setOnTile(characters.get(packet.getId()));
         }
     }

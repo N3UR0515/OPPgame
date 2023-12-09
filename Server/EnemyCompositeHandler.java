@@ -2,6 +2,8 @@ package Server;
 
 
 import AbstractFactory.EnemyFactory;
+import AbstractFactory.Monster.Walker;
+import AbstractFactory.Monster.Witch;
 import AbstractFactory.MonsterFactory;
 import AbstractFactory.MutantFactory;
 import Artifact.MagicStaff;
@@ -25,19 +27,21 @@ import org.lwjgl.Sys;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class EnemyHandler extends CharacterHandler
+public class EnemyCompositeHandler extends CharacterHandler
 {
     protected EnemyFactory factory;
-    protected EnemyCompositeHandler parent;
-    public EnemyHandler(int enemyId) throws IOException {
+    protected ArrayList<CharacterHandler> children;
+    public EnemyCompositeHandler(int enemyId) throws IOException {
         this.characterId = enemyId;
         Random rng = new Random();
+        children = new ArrayList<>();
 
         factory = new MutantFactory();
-        String enemyType = "";
+       /* String enemyType = "";
         int randomIndex = rng.nextInt(3);
 
         if (rng.nextBoolean())
@@ -47,26 +51,35 @@ public class EnemyHandler extends CharacterHandler
         } else {
             factory = new MonsterFactory();
             enemyType = (randomIndex == 0) ? "CRAWLING" : (randomIndex == 1) ?  "WALKING" : "OTHER_TYPE";
-        }
+        }*/
 
         int x, y;
         do {
-            x = 2;
-            y = 2;
+            x = 3;//rng.nextInt(100);
+            y = 3;//rng.nextInt(100);
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
 
-        characterModel = factory.GetEnemy(enemyType, x, y);
-        characterModel.setEffects(new IgnitingEffect() ,new BleedingOutEffect());
+        //characterModel = factory.GetEnemy(enemyType, x, y);
+        characterModel = factory.GetEnemy("WITCH", x, y);
 
         assignArtifact();
 
         characterModel.id = enemyId;
-        //Turnline.getInstance().Add(characterModel);
+        characterModel.setEffects(new BleedingOutEffect());
+        Turnline.getInstance().Add(characterModel);
     }
 
-    public void setParent(EnemyCompositeHandler enemyCompositeHandler)
+    public void add(CharacterHandler characterHandler)
     {
-        this.parent = enemyCompositeHandler;
+        children.add(characterHandler);
+    }
+    public void remove(CharacterHandler characterHandler)
+    {
+        children.remove(characterHandler);
+    }
+    public ArrayList<CharacterHandler> getChildren()
+    {
+        return children;
     }
 
     @Override
@@ -89,6 +102,32 @@ public class EnemyHandler extends CharacterHandler
                 Server.broadcastPacket(packet);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+
+            if(characterModel instanceof Witch)
+            {
+                for(Enemy child : ((Witch) characterModel).getChildren())
+                {
+                    builder = new ChangeOfEnemyPositionPacketBuilder();
+                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, child);
+
+                    packet = builder.getPacket();
+                    try {
+                        Server.broadcastPacket(packet);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            Iterator<CharacterHandler> iterator = children.iterator();
+            while(iterator.hasNext()) {
+                CharacterHandler child = iterator.next();
+                child.run();
+                if(child.characterModel.getHP() <= 0)
+                {
+                    iterator.remove();
+                }
             }
         }
     }
@@ -128,21 +167,19 @@ public class EnemyHandler extends CharacterHandler
     @Override
     protected boolean checkForTurn() {
         Turnline turnline = Turnline.getInstance();
-        return turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == parent.characterId;
-        //return true;
+        return turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == characterId;
     }
 
     @Override
     protected void receiveTileDamage() {
         characterModel.damageCharacter();
-        parent.characterModel.damageCharacter();
     }
 
     @Override
     protected void usePickUp() {
         Tile tile = Server.map.getTileByLoc(characterModel.getRel_x(), characterModel.getRel_y());
         if(tile.getPickUp() != null)
-            parent.characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
+            characterModel.UseAndDeleteEffect(tile.getPickUp().getPickupCode());
     }
 
     @Override
@@ -155,8 +192,4 @@ public class EnemyHandler extends CharacterHandler
         return true;
     }
 
-    @Override
-    protected void TurnlineNext() {
-        System.out.println("endofturn");
-    }
 }

@@ -24,7 +24,7 @@ public class Server {
     //public static List<EnemyHandler> enemies = new ArrayList<>();
 
     public static HashMap<Integer, ClientHandler> clients = new HashMap<>();
-    public static HashMap<Integer, EnemyHandler> enemies = new HashMap<>();
+    public static HashMap<Integer, CharacterHandler> enemies = new HashMap<>();
     public static Map map;
     public static Map initMap;
     static Area[] areas;
@@ -46,7 +46,7 @@ public class Server {
 
             int clientId = 1; // Initialize a unique identifier for clients
 
-            EnemyHandler temp = new EnemyHandler(0);
+            EnemyCompositeHandler temp = new EnemyCompositeHandler(2);
             List<Area> areas = getAreas(temp.characterModel.getRel_y(), temp.characterModel.getRel_x());
             for (Area area : areas){
                 area.addCharacter(temp);
@@ -61,6 +61,8 @@ public class Server {
                 for(Area area : areas1){
                     area.addCharacter(temp1);
                 }
+                temp.add(temp1);
+                temp1.setParent(temp);
                 enemies.put(temp1.characterId, temp1);
             }
 
