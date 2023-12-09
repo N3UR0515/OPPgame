@@ -3,6 +3,8 @@ package AbstractFactory.Monster;
 import AbstractFactory.EnemyFactory;
 import AbstractFactory.MonsterFactory;
 import Character.Enemies.Enemy;
+import FlyWeight.FlyWeightFactory;
+import FlyWeight.MonsterImage;
 import Map.Map;
 import Map.Tile.HiderTile;
 import Packet.Builder.ChangeOfEnemyPositionPacketBuilder;
@@ -18,9 +20,10 @@ import Packet.Packet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.newdawn.slick.SlickException;
 
 public class Witch extends Enemy {
-    private final ArrayList<Enemy> children;
+        private final ArrayList<Enemy> children;
     public Witch(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
         children = new ArrayList<>();
@@ -29,6 +32,14 @@ public class Witch extends Enemy {
         child.id = id + id*100;
         child.setParent(this);
         children.add(child);
+    }
+    @Override
+    public void createMonsterImage() {
+        try {
+            monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/witch.png");
+        } catch (SlickException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -103,10 +114,7 @@ public class Witch extends Enemy {
     public void drawCharacter(Graphics g, int x, int y, int HP) {
         if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
             this.getRealLoc();
-            this.triangle.setCenterX((float)this.x);
-            this.triangle.setCenterY((float)this.y);
-            g.setColor(Color.blue);
-            g.fill(this.triangle);
+            monsterImage.draw(g,this.x, this.y, this.HP);
         }
     }
 }

@@ -1,3 +1,4 @@
+import Character.Enemies.Enemy;
 import CharacterDecorator.CharacterWithHealthBar;
 import CharacterDecorator.CharacterWithLowHP;
 import CharacterDecorator.UIElement;
@@ -169,11 +170,20 @@ public class Test extends BasicGame {
         UIElement element;
 
         for(Character c : characters.values()) {
+            if(c instanceof Enemy)  {
+                element = c;
+                element.drawCharacter(g, 0, 0, c.getHP());
+            } else {
+                element = new CharacterWithHealthBar(player);
+                if (player.getHP()<3){
+                    element = new CharacterWithLowHP(element);
+                    element.drawCharacter(g, 0, 0, player.getHP());
+                }
+            }
             c.affectSelf();
             element = c;
             element.drawCharacter(g, 0, 0, c.getHP());
         }
-
         element = player;
         element = new CharacterWithHealthBar(player);
         if (player.getHP()<3){

@@ -5,6 +5,7 @@ import Character.Character;
 import Character.Camera;
 import Character.Player;
 
+import FlyWeight.MonsterImage;
 import Map.Tile.*;
 import Map.Map;
 import org.newdawn.slick.Color;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Enemy extends Character {
+    protected MonsterImage monsterImage;
     public Enemy(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
     }
@@ -41,12 +43,10 @@ public abstract class Enemy extends Character {
         // Checks if enemy is NOT on a hiding tile. If true - draws enemy
         if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
             this.getRealLoc();
-            this.triangle.setCenterX((float)this.x);
-            this.triangle.setCenterY((float)this.y);
-            g.setColor(Color.blue);
-            g.fill(this.triangle);
+            monsterImage.draw(g,this.x, this.y, this.HP);
         }
     }
+    public abstract void createMonsterImage();
 
     protected boolean checkDistance(Character player, Tile tile) {
         int prel_x = player.getRel_x();
