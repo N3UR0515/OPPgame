@@ -3,6 +3,7 @@ import CharacterDecorator.CharacterWithHealthBar;
 import CharacterDecorator.CharacterWithLowHP;
 import CharacterDecorator.UIElement;
 import Effects.*;
+import Logs.PacketSenderProxy;
 import Map.Map;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.PacketBuilder;
@@ -29,6 +30,7 @@ public class Test extends BasicGame {
 
     private Socket socket;
     private ObjectOutputStream out;
+    private PacketSenderProxy packetSenderProxy;
     private ObjectInputStream in;
     //private HashMap<Integer, Character> players = new HashMap<>();
     //private HashMap<Integer, Character> enemies = new HashMap<>();
@@ -61,6 +63,7 @@ public class Test extends BasicGame {
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
+            packetSenderProxy = new PacketSenderProxy(out);
             in = new ObjectInputStream(socket.getInputStream());
 
             map = (Map) in.readObject();
@@ -85,29 +88,23 @@ public class Test extends BasicGame {
     public void Send()
     {
         effect.affect(player);
-        try
+        Packet packet;
+        PacketBuilder builder;
+        if(player.getAttackTile() != null)
         {
-            Packet packet;
-            PacketBuilder builder;
-            if(player.getAttackTile() != null)
-            {
-                Tile tile = player.getAttackTile();
-                builder = new PlayerAttackPacketBuilder();
-                PacketDirector.constructPlayerAttackPacket(builder, tile);
-                packet = builder.getPacket();
-                player.endAttack();
-            }
-            else
-            {
-                builder = new ChangeOfPlayerPositionPacketBuilder();
-                PacketDirector.constructChangeOfPlayerPositonPacket(builder, player);
-                packet = builder.getPacket();
-            }
-            out.writeObject(packet);
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            Tile tile = player.getAttackTile();
+            builder = new PlayerAttackPacketBuilder();
+            PacketDirector.constructPlayerAttackPacket(builder, tile);
+            packet = builder.getPacket();
+            player.endAttack();
         }
+        else
+        {
+            builder = new ChangeOfPlayerPositionPacketBuilder();
+            PacketDirector.constructChangeOfPlayerPositonPacket(builder, player);
+            packet = builder.getPacket();
+        }
+        packetSenderProxy.sendPacket(packet);
     }
 
 
