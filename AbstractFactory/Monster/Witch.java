@@ -23,8 +23,7 @@ import java.util.Iterator;
 import org.newdawn.slick.SlickException;
 
 public class Witch extends Enemy {
-    public Witch(int HP, Map map, int rel_x, int rel_y){
-    private final ArrayList<Enemy> children;
+        private final ArrayList<Enemy> children;
     public Witch(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
         children = new ArrayList<>();
