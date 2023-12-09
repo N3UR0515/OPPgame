@@ -1,6 +1,8 @@
 package Packet.Command;
 
 import AbstractFactory.Monster.Walker;
+import AbstractFactory.MonsterFactory;
+import AbstractFactory.MutantFactory;
 import Effects.BleedingEffect;
 import Effects.GetHitEffect;
 import Effects.IgnitingEffect;
@@ -11,6 +13,7 @@ import Map.Tile.HiderTile;
 import Map.Tile.Tile;
 import Packet.Packet;
 import Server.Server;
+import org.junit.runner.manipulation.Ordering;
 import org.newdawn.slick.Color;
 import Character.*;
 import Character.Character;
@@ -46,7 +49,8 @@ public class CharacterMovePacketCommand extends PacketCommand {
             //Character character = new Walker(8, map, packet.getX(), packet.getY());
             //character.setEffects(new IgnitingEffect(), new BleedingEffect(), new GetHitEffect());
             //characters.put(packet.getId(), character);
-            Enemy enemy = new Walker(8, map, packet.getX(), packet.getY());
+            Enemy enemy = new MonsterFactory().GetEnemy(packet.getEnemyType(), packet.getX(), packet.getY(), map);
+            //Enemy enemy = new Walker(8, map, packet.getX(), packet.getY());
             enemy.setEffects(new IgnitingEffect(), new BleedingEffect(), new GetHitEffect());
             characters.put(packet.getId(), enemy);
             enemy.createMonsterImage();

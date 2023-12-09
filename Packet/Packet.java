@@ -10,6 +10,15 @@ public class Packet implements Serializable {
     private boolean isAttack;
     private boolean setHealth;
     private int HP = -10;
+    private String EnemyType;
+
+    public String getEnemyType() {
+        return EnemyType;
+    }
+
+    public void setEnemyType(String enemyType) {
+        EnemyType = enemyType;
+    }
 
     public Packet()
     {
