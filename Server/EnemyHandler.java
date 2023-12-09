@@ -32,22 +32,22 @@ public class EnemyHandler extends CharacterHandler
 {
     protected EnemyFactory factory;
     protected EnemyCompositeHandler parent;
+    String enemyType = "";
     public EnemyHandler(int enemyId) throws IOException {
         this.characterId = enemyId;
         Random rng = new Random();
 
         factory = new MutantFactory();
-        String enemyType = "";
         int randomIndex = rng.nextInt(3);
 
-        if (rng.nextBoolean())
-        {
+        /*if (rng.nextBoolean())
+        {*/
             factory = new MutantFactory();
             enemyType =  (randomIndex == 0) ? "SPITTER" : (randomIndex == 1) ? "BOMBER" : "OTHER_TYPE";;
-        } else {
+        /*} else {
             factory = new MonsterFactory();
             enemyType = (randomIndex == 0) ? "CRAWLING" : (randomIndex == 1) ?  "WALKING" : "OTHER_TYPE";
-        }
+        }*/
 
         int x, y;
         do {
@@ -55,7 +55,7 @@ public class EnemyHandler extends CharacterHandler
             y = 2;
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
 
-        characterModel = factory.GetEnemy(enemyType, x, y);
+        characterModel = factory.GetEnemy(enemyType, x, y, Server.map);
         characterModel.setEffects(new IgnitingEffect() ,new BleedingOutEffect());
 
         assignArtifact();
@@ -85,6 +85,7 @@ public class EnemyHandler extends CharacterHandler
             PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);
 
             Packet packet = builder.getPacket();
+            packet.setEnemyType(enemyType);
             try {
                 Server.broadcastPacket(packet);
             } catch (IOException e) {
@@ -100,6 +101,7 @@ public class EnemyHandler extends CharacterHandler
             builder = new DamagePlayerPacketBuilder();
             PacketDirector.constructDamagePlayerPacket(builder, (Player) Server.clients.get(1).characterModel);
             Packet p = builder.getPacket();
+            p.setEnemyType(enemyType);
             try {
                 if (!Server.clients.isEmpty())
                     Server.clients.get(1).sendPacket(p);

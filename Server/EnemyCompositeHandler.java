@@ -60,7 +60,7 @@ public class EnemyCompositeHandler extends CharacterHandler
         } while (Server.map.getTileByLoc(x, y).getClass() == UnavailableTile.class);
 
         //characterModel = factory.GetEnemy(enemyType, x, y);
-        characterModel = factory.GetEnemy("WITCH", x, y);
+        characterModel = factory.GetEnemy("WITCH", x, y, Server.map);
 
         assignArtifact();
 
@@ -98,26 +98,11 @@ public class EnemyCompositeHandler extends CharacterHandler
             PacketDirector.constructChangeOfEnemyPositionPacket(builder, (Enemy) characterModel);
 
             Packet packet = builder.getPacket();
+            packet.setEnemyType("WITCH");
             try {
                 Server.broadcastPacket(packet);
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
-
-            if(characterModel instanceof Witch)
-            {
-                for(Enemy child : ((Witch) characterModel).getChildren())
-                {
-                    builder = new ChangeOfEnemyPositionPacketBuilder();
-                    PacketDirector.constructChangeOfEnemyPositionPacket(builder, child);
-
-                    packet = builder.getPacket();
-                    try {
-                        Server.broadcastPacket(packet);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             }
 
             Iterator<CharacterHandler> iterator = children.iterator();
@@ -139,6 +124,7 @@ public class EnemyCompositeHandler extends CharacterHandler
             builder = new DamagePlayerPacketBuilder();
             PacketDirector.constructDamagePlayerPacket(builder, (Player) Server.clients.get(1).characterModel);
             Packet p = builder.getPacket();
+            p.setEnemyType("WITCH");
             try {
                 if (!Server.clients.isEmpty())
                     Server.clients.get(1).sendPacket(p);
