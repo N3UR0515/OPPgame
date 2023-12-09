@@ -1,6 +1,7 @@
 package Character;
 
 import CharacterDecorator.UIElement;
+import Effects.*;
 import Artifact.Artifact;
 import Map.Tile.Tile;
 import Map.Map;
@@ -27,6 +28,8 @@ public abstract class Character implements UIElement, Serializable {
     protected Camera camera;
     private List<PickUp> effectsList = new ArrayList<>();
     public int id = 0;
+
+    Effect effect;
 
     public Character(int HP, Map map, int rel_x, int rel_y)
     {
@@ -147,4 +150,18 @@ public abstract class Character implements UIElement, Serializable {
     }
 
     public abstract void drawCharacter(Graphics g, int x, int y, int HP);
+    public Map getMap()
+    {
+        return map;
+    }
+
+    public void setEffects(Effect... effects)
+    {
+        effect = Effect.link(new BurningEffect(), effects);
+    }
+
+    public void affectSelf()
+    {
+        effect.affect(this);
+    }
 }

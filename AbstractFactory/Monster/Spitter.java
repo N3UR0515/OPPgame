@@ -6,6 +6,8 @@ import FlyWeight.MonsterImage;
 import Map.Map;
 import Map.Tile.HiderTile;
 import org.newdawn.slick.Graphics;
+import Character.Character;
+import Character.Player;
 import org.newdawn.slick.SlickException;
 
 public class Spitter extends Enemy {
@@ -20,6 +22,22 @@ public class Spitter extends Enemy {
             monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/spitter.png");
         } catch (SlickException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateCharacter(Character character) {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
+
+        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
+        {
+            character.damageCharacter();
+        }
+        else
+        {
+            seekPlayer((Player) character);
         }
     }
 

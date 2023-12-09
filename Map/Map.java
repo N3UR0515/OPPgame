@@ -382,6 +382,8 @@ public class Map implements Serializable {
         return tiles[x * rows + y];
     }
 
+    public void replaceTile(int x, int y, Tile newTile) {tiles[x * rows + y] = newTile;}
+
     public int getTileCount(){
         return this.tiles.length;
     }

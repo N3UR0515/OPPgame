@@ -1,5 +1,8 @@
 package Packet.Command;
 
+import Effects.BleedingEffect;
+import Effects.GetHitEffect;
+import Effects.IgnitingEffect;
 import Map.Map;
 import Packet.Packet;
 import Character.*;
@@ -22,7 +25,9 @@ public class DamagePlayerPacketCommand extends PacketCommand {
         }
         else
         {
-            characters.put(packet.getId(), new Player(10, map, packet.getX(), packet.getY()));
+            Player player = new Player(10, map, packet.getX(), packet.getY());
+            player.setEffects(new BleedingEffect(), new GetHitEffect());
+            characters.put(packet.getId(), player);
         }
     }
 

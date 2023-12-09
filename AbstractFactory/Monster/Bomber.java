@@ -4,6 +4,8 @@ import Character.Enemies.Enemy;
 import FlyWeight.FlyWeightFactory;
 import FlyWeight.MonsterImage;
 import FlyWeight.SharedMonsterImage;
+import Character.Character;
+import Character.Player;
 import Map.Map;
 import Map.Tile.HiderTile;
 import org.newdawn.slick.Graphics;
@@ -24,6 +26,22 @@ public class Bomber extends Enemy {
             } catch (SlickException e) {
                 throw new RuntimeException(e);
             }
+    }
+
+    @Override
+    public void updateCharacter(Character character) {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
+
+        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
+        {
+            character.damageCharacter();
+        }
+        else
+        {
+            seekPlayer((Player) character);
+        }
     }
 
     @Override

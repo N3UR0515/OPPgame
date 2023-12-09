@@ -25,6 +25,11 @@ public abstract class Enemy extends Character {
         super(HP, map, rel_x, rel_y, camera);
     }
 
+    protected Enemy parent;
+    public void setParent(Enemy enemy)
+    {
+        this.parent = enemy;
+    }
 
     @Override
     public boolean updateCharacter(GameContainer container) {
@@ -32,20 +37,7 @@ public abstract class Enemy extends Character {
     }
 
     @Override
-    public void updateCharacter(Character character) {
-        getRealLoc();
-        triangle.setCenterX(x);
-        triangle.setCenterY(y);
-
-        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
-        {
-            character.damageCharacter();
-        }
-        else
-        {
-            seekPlayer((Player) character);
-        }
-    }
+    public abstract void updateCharacter(Character character);
 
     public void drawCharacter(Graphics g) {
         // Checks if enemy is NOT on a hiding tile. If true - draws enemy
@@ -56,38 +48,31 @@ public abstract class Enemy extends Character {
     }
     public abstract void createMonsterImage();
 
-    protected boolean checkDistance(Player player, Tile tile) {
+    protected boolean checkDistance(Character player, Tile tile) {
         int prel_x = player.getRel_x();
         int prel_y = player.getRel_y();
 
         if(tile.id)
         {
             //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()))
-            {
-                return true;
-            }
+            return (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y());
 
         }
         else
         {
             //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y()+1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()+1))
-            {
-                return true;
-            }
+            return (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y() + 1);
         }
-        return false;
         //return prel_x==tile.getTrel_x()&&prel_y==tile.getTrel_y();
     }
 
@@ -98,33 +83,26 @@ public abstract class Enemy extends Character {
         if(tile.id)
         {
             //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y() - 1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() +1 && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()))
-            {
-                return true;
-            }
+            return (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y());
         }
         else
         {
             //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-            if((prel_x == tile.getTrel_x() -1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() -1) ||
-                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y()+1) ||
-                    (prel_x == tile.getTrel_x()-1 && prel_y == tile.getTrel_y() + 1)||
-                    (prel_x == tile.getTrel_x()+1 && prel_y == tile.getTrel_y()+1))
-            {
-                return true;
-            }
+            return (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y()) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() - 1) ||
+                    (prel_x == tile.getTrel_x() && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() - 1 && prel_y == tile.getTrel_y() + 1) ||
+                    (prel_x == tile.getTrel_x() + 1 && prel_y == tile.getTrel_y() + 1);
         }
-        return false;
     }
 
-    protected void seekPlayer(Player player) {
+    protected void seekPlayer(Character player) {
         ArrayList<Tile> closedList = new ArrayList<>();
         Queue<Tile> openQueue = new LinkedList<>();
         Tile[] prec = new Tile[map.getTileCount()];
