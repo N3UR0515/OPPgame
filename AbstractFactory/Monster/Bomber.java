@@ -16,15 +16,14 @@ public class Bomber extends Enemy {
 
     public Bomber(int HP, Map map, int rel_x, int rel_y){
         super(HP, map, rel_x, rel_y);
-        monsterImage = createMonsterImage();
     }
     @Override
-    protected MonsterImage createMonsterImage() {
-        try {
-            return FlyWeightFactory.getMonsterImage("FlyWeight/Images/bomber.png");
-        } catch (SlickException e) {
-            throw new RuntimeException(e);
-        }
+    public void createMonsterImage() {
+            try {
+                monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/bomber.png");
+            } catch (SlickException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     @Override

@@ -11,13 +11,12 @@ import org.newdawn.slick.SlickException;
 public class Walker extends Enemy {
     public Walker(int HP, Map map, int rel_x, int rel_y){
         super(HP, map, rel_x, rel_y);
-        monsterImage = createMonsterImage();
     }
     @Override
-    protected MonsterImage createMonsterImage() {
+    public void createMonsterImage() {
 
         try {
-            return FlyWeightFactory.getMonsterImage("FlyWeight/Images/walker.png");
+            monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/walker.png");
         } catch (SlickException e) {
             throw new RuntimeException(e);
         }

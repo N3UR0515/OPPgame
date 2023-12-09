@@ -10,17 +10,14 @@ public class FlyWeightFactory {
     private static final HashMap<String, MonsterImage> monsterImageCache = new HashMap<>();
 
     public static MonsterImage getMonsterImage(String imagePath) throws SlickException {
-        //if (!GraphicsEnvironment.isHeadless()) {
             if (!monsterImageCache.containsKey(imagePath)) {
 
                 Image image = new Image(imagePath);
-                monsterImageCache.put(imagePath, new SharedMonsterImage(image));
+                Image resizedImage = image.getScaledCopy(20, 20);
+                monsterImageCache.put(imagePath, new SharedMonsterImage(resizedImage));
             }
 
 
             return monsterImageCache.get(imagePath);
-        //} else {
-        //    return null;
-        //}
     }
 }

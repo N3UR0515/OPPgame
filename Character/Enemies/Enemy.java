@@ -20,7 +20,6 @@ public abstract class Enemy extends Character {
     protected MonsterImage monsterImage;
     public Enemy(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
-        this.monsterImage = createMonsterImage();
     }
     public Enemy(int HP, Map map, int rel_x, int rel_y, Camera camera) {
         super(HP, map, rel_x, rel_y, camera);
@@ -55,7 +54,7 @@ public abstract class Enemy extends Character {
             monsterImage.draw(g,this.x, this.y, this.HP);
         }
     }
-    protected abstract MonsterImage createMonsterImage();
+    public abstract void createMonsterImage();
 
     protected boolean checkDistance(Player player, Tile tile) {
         int prel_x = player.getRel_x();

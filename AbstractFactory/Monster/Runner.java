@@ -12,13 +12,12 @@ public class Runner extends Enemy {
 
     public Runner(int HP, Map map, int rel_x, int rel_y){
         super(HP, map, rel_x, rel_y);
-        monsterImage = createMonsterImage();
     }
     @Override
-    protected MonsterImage createMonsterImage() {
+    public void createMonsterImage() {
 
         try {
-            return FlyWeightFactory.getMonsterImage("FlyWeight/Images/runner.png");
+            monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/runner.png");
         } catch (SlickException e) {
             throw new RuntimeException(e);
         }

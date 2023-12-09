@@ -11,12 +11,11 @@ import org.newdawn.slick.SlickException;
 public class Witch extends Enemy {
     public Witch(int HP, Map map, int rel_x, int rel_y){
         super(HP, map, rel_x, rel_y);
-        monsterImage = createMonsterImage();
     }
     @Override
-    protected MonsterImage createMonsterImage() {
+    public void createMonsterImage() {
         try {
-            return FlyWeightFactory.getMonsterImage("FlyWeight/Images/witch.png");
+            monsterImage = FlyWeightFactory.getMonsterImage("FlyWeight/Images/witch.png");
         } catch (SlickException e) {
             throw new RuntimeException(e);
         }

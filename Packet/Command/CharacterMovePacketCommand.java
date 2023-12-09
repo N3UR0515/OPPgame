@@ -1,6 +1,7 @@
 package Packet.Command;
 
 import AbstractFactory.Monster.Walker;
+import Character.Enemies.Enemy;
 import Map.Map;
 import Map.Tile.FieryTile;
 import Map.Tile.HiderTile;
@@ -39,7 +40,9 @@ public class CharacterMovePacketCommand extends PacketCommand {
         }
         else
         {
-            characters.put(packet.getId(), new Walker(8, map, packet.getX(), packet.getY()));
+            Enemy enemy = new Walker(8, map, packet.getX(), packet.getY());
+            characters.put(packet.getId(), enemy);
+            enemy.createMonsterImage();
             map.getTileByLoc(packet.getX(), packet.getY()).setOnTile(characters.get(packet.getId()));
         }
     }
