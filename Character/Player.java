@@ -229,4 +229,9 @@ public class Player extends Character implements Serializable {
             g.drawOval(x, y, 5, 5);
         }
     }
+
+    public Map getMap()
+    {
+        return map;
+    }
 }

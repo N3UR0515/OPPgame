@@ -5,11 +5,29 @@ import Map.Map;
 import Map.Tile.HiderTile;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import Character.Character;
+import Character.Player;
 
 public class Spitter extends Enemy {
 
     public Spitter(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
+    }
+
+    @Override
+    public void updateCharacter(Character character) {
+        getRealLoc();
+        triangle.setCenterX(x);
+        triangle.setCenterY(y);
+
+        if(checkDistance((Player) character, map.getTileByLoc(rel_x, rel_y)))
+        {
+            character.damageCharacter();
+        }
+        else
+        {
+            seekPlayer((Player) character);
+        }
     }
 
     @Override

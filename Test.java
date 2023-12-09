@@ -1,6 +1,7 @@
 import CharacterDecorator.CharacterWithHealthBar;
 import CharacterDecorator.CharacterWithLowHP;
 import CharacterDecorator.UIElement;
+import Effects.*;
 import Map.Map;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.PacketBuilder;
@@ -37,6 +38,7 @@ public class Test extends BasicGame {
     private Camera camera;
     public boolean MyTurn = true;
     private CommandInvoker invoker;
+    Effect effect;
 
     public Test() {
         super("Game");
@@ -67,6 +69,7 @@ public class Test extends BasicGame {
             player.id = id;
             camera = new Camera(container, player);
             invoker = new CommandInvoker();
+            effect = Effect.link(new AttackingEffect(), new BleedingEffect(), new GetHitEffect());
 
             //new Thread(this::Send).start();
             Send();
@@ -80,6 +83,7 @@ public class Test extends BasicGame {
 
     public void Send()
     {
+        effect.affect(player);
         try
         {
             Packet packet;
@@ -157,8 +161,6 @@ public class Test extends BasicGame {
             if(container.getInput().isKeyPressed(Input.KEY_R))
                 invoker.redo();
 
-
-
         camera.updateCamera(container);
     }
 
@@ -167,6 +169,7 @@ public class Test extends BasicGame {
         UIElement element;
 
         for(Character c : characters.values()) {
+            c.affectSelf();
             element = c;
             element.drawCharacter(g, 0, 0, c.getHP());
         }
