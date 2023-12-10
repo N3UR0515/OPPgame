@@ -137,7 +137,6 @@ public class EnemyHandler extends CharacterHandler
     @Override
     protected void receiveTileDamage() {
         characterModel.damageCharacter();
-        parent.characterModel.damageCharacter();
     }
 
     @Override

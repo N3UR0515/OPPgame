@@ -30,17 +30,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
+import Iterator.IIterator;
+import Iterator.DamageChildrenIterator;
 public class EnemyCompositeHandler extends CharacterHandler
 {
     protected EnemyFactory factory;
     protected ArrayList<CharacterHandler> children;
     protected EnemyCompositeHandler parent;
+    protected IIterator iterator;
     public EnemyCompositeHandler(int enemyId) throws IOException {
         this.characterId = enemyId;
         Random rng = new Random();
         children = new ArrayList<>();
-
+        iterator = new DamageChildrenIterator();
         factory = new MutantFactory();
        /* String enemyType = "";
         int randomIndex = rng.nextInt(3);
@@ -179,9 +181,7 @@ public class EnemyCompositeHandler extends CharacterHandler
 
     @Override
     protected void receiveTileDamage() {
-        characterModel.damageCharacter();
-        if(parent != null)
-            parent.characterModel.damageCharacter();
+        iterator.damageLastChildren(children);
     }
 
     @Override

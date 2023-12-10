@@ -29,7 +29,7 @@ public class PacketSenderProxy {
         //System.out.println(logEntry);
         //System.out.println("X:" + packet.getX() + "  Y:" + packet.getY() + "  HP:" + packet.getHP() + "  ID:" + packet.getId());// Output to console for demonstration purposes
         logger.println(logEntry);
-        logger.println("X:" + packet.getX() + "  Y:" + packet.getY() + "  HP:" + packet.getHP() + "  ID:" + packet.getId());
+        logger.println("X:" + packet.getX() + "  Y:" + packet.getY() + "  HP:" + packet.getHP() + "  ID:" + packet.getId() + "  Type:" + packet.getEnemyType());
         logger.flush();
     }
 
