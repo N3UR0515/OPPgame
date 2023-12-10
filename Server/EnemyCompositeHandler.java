@@ -35,6 +35,7 @@ public class EnemyCompositeHandler extends CharacterHandler
 {
     protected EnemyFactory factory;
     protected ArrayList<CharacterHandler> children;
+    protected EnemyCompositeHandler parent;
     public EnemyCompositeHandler(int enemyId) throws IOException {
         this.characterId = enemyId;
         Random rng = new Random();
@@ -114,6 +115,24 @@ public class EnemyCompositeHandler extends CharacterHandler
                     iterator.remove();
                 }
             }
+            if(children.isEmpty())
+            {
+                try {
+                    EnemyHandler enemy =new EnemyHandler(characterId * 100);
+                    enemy.setParent(this);
+                    children.add(enemy);
+                    if(characterId == 0)
+                    {
+                        EnemyCompositeHandler enemyComposite = new EnemyCompositeHandler(characterId * 100 + 1);
+                        enemyComposite.parent = this;
+                        children.add(enemyComposite);
+                    }
+                    //
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
         }
     }
 
@@ -153,12 +172,16 @@ public class EnemyCompositeHandler extends CharacterHandler
     @Override
     protected boolean checkForTurn() {
         Turnline turnline = Turnline.getInstance();
+        if(parent != null)
+            return turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == parent.characterId;
         return turnline.getCharacter() != null && turnline.getCharacter() instanceof Enemy && turnline.getCharacter().id == characterId;
     }
 
     @Override
     protected void receiveTileDamage() {
         characterModel.damageCharacter();
+        if(parent != null)
+            parent.characterModel.damageCharacter();
     }
 
     @Override
