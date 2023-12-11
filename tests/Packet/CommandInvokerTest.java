@@ -44,8 +44,6 @@ public class CommandInvokerTest
         enemy = new Witch(9, map, 9, 9);
         packet = mock(Packet.class);
         characters = new HashMap<>();
-//        characters.put(0, player);
-//        characters.put(1, enemy);
     }
     /**
      * Parasoft Jtest UTA: Test for CommandInvoker

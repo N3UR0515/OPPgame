@@ -11,7 +11,6 @@ public class Runner extends Enemy {
     public Runner(int HP, Map map, int rel_x, int rel_y) {
         super(HP, map, rel_x, rel_y);
     }
-
     @Override
     public void drawCharacter(Graphics g, int x, int y, int HP) {
         if (map.getTileByLoc(rel_x, rel_y).getClass() != HiderTile.class) {
