@@ -2,7 +2,7 @@ package Map;
 
 import Map.Tile.*;
 import Character.Camera;
-import PickUp.PickUpHeal;
+import Visitor.*;
 import PickUp.PickUpStore;
 import org.newdawn.slick.Graphics;
 import java.util.*;
@@ -83,17 +83,24 @@ public class Map implements Serializable {
         }
 
         //Generating paths
+        Visitor bfsVisitor = new BFSVisitor();
+        Visitor backVisitor  = new BacktrackVisitor();
+        Tile[] prec;
         while (coordSave.size() != 0)  {
             String StartPoint = coordSave.remove(0);
             if (coordSave.size() > 5) {
                 for (int i = 0; i < 2; i++) {
                     int chosenIndex = rand.nextInt(coordSave.size());
-                    BFS(StartPoint, coordSave.get(chosenIndex));
+                    prec = this.accept(bfsVisitor, StartPoint, coordSave.get(chosenIndex));
+                    Tile current = prec[prec.length-1];
+                    this.accept(backVisitor, prec, current, rand.nextInt(4)==3, rand);
                 }
             } else if (coordSave.size() <= 0) {
                 break;
             } else {
-                BFS(StartPoint, coordSave.get(0));
+                prec = this.accept(bfsVisitor, StartPoint, coordSave.get(0));
+                Tile current = prec[prec.length-1];
+                this.accept(backVisitor, prec, current, rand.nextInt(4)==3, rand);
             }
         }
 
@@ -198,41 +205,6 @@ public class Map implements Serializable {
         }
     }
 
-    protected void BFS(String start, String end){
-        ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
-        Tile[] prec = new Tile[this.tiles.length];
-
-        // Starting tile followed by destination tile
-        Tile startTile = this.getTileByLoc(decryptCol(start), decryptRow(start));
-        Tile tileToFind = this.getTileByLoc(decryptCol(end), decryptRow(end));
-        openQueue.add(startTile);
-        prec[startTile.getTrel_x() * this.rows + startTile.getTrel_y()] = startTile;
-
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
-
-            if (isCloseToTile(tileToFind, currentTile)) {
-                Random RNG = new Random();
-                int decisionMaker = RNG.nextInt(4);
-                paintPath(prec, currentTile, decisionMaker == 3, RNG);
-                return;
-            }
-
-            closedList.add(currentTile);
-
-            // Get neighboring tiles
-            ArrayList<Tile> neighbors = getNeighbors(currentTile);
-
-            for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
-                    prec[neighbor.getTrel_x() * this.rows + neighbor.getTrel_y()] = currentTile;
-                }
-            }
-        }
-    }
-
     protected int decryptCol(String coordinate){
         int split = coordinate.indexOf("_");
         return Integer.parseInt(coordinate.substring(0, split));
@@ -243,44 +215,10 @@ public class Map implements Serializable {
         return Integer.parseInt(coordinate.substring(split+1));
     }
 
-    protected ArrayList<Tile> getNeighbors(Tile tile) {
-        ArrayList<Tile> neighbors = new ArrayList<>();
-
-        int x = tile.getTrel_x();
-        int y = tile.getTrel_y();
-
-        int[][] directionsEven = {
-                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-        };
-        int[][] directionsOdd = {
-                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-        };
-        int[][] directions ={};
-
-        if(tile.id)
-        {
-            directions = directionsEven;
-        }
-        else
-        {
-            directions = directionsOdd;
-        }
-        for (int[] dir : directions) {
-            int dx = dir[0];
-            int dy = dir[1];
-
-            if (x + dx >= 0 && x + dx < this.getCols() && y + dy >= 0 && y + dy < this.getRows()) {
-                Tile neighbor = this.getTileByLoc(x + dx, y + dy);
-                neighbors.add(neighbor);
-            }
-        }
-
-        return neighbors;
-    }
-
     //Not to be confused with "viewport" areas. For this method, area means getting tiles around one specific tile
     protected void getAreaTiles(ArrayList<Tile> list, int depth, Tile currentTile) {
-        ArrayList<Tile> temp = getNeighbors(currentTile);
+        Visitor visitor = new NeighboringTilesVisitor();
+        ArrayList<Tile> temp = this.accept(visitor, currentTile);
         list.addAll(temp);
         if (depth > 0) {
             for (Tile t : temp){
@@ -289,67 +227,8 @@ public class Map implements Serializable {
         }
     }
 
-    protected void paintPath(Tile[] prec, Tile currentTile, boolean isWide, Random rng) {
-        boolean isFiery = isWide && rng.nextInt(6) == 5;
-        while (prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] != currentTile) {
-            if (isWide) {
-                ArrayList<Tile> neighbors = getNeighbors(currentTile);
-                for (Tile n : neighbors){
-                    if (isUnavailable(n)) {
-                        if (isFiery && rng.nextInt(16) == 4) {
-                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(2, n.id, n.getTrel_y(), n.getTrel_x(), "");
-                        } else {
-                            tiles[n.getTrel_x() * this.rows + n.getTrel_y()] = factory.createTile(0, n.id, n.getTrel_y(), n.getTrel_x(), "");
-                        }
-                    }
-                }
-            }
-            if (isUnavailable(currentTile)) {
-                if (isFiery && rng.nextInt(16) == 4){
-                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(2, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x(), "");
-                } else {
-                    tiles[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()] = factory.createTile(0, currentTile.id, currentTile.getTrel_y(), currentTile.getTrel_x(), "");
-                }
-            }
-            currentTile = prec[currentTile.getTrel_x() * this.rows + currentTile.getTrel_y()];
-        }
-    }
-
-    protected boolean isUnavailable(Tile tile) {
+    public boolean isUnavailable(Tile tile) {
         return tile.getClass()== UnavailableTile.class;
-    }
-
-    protected boolean isCloseToTile(Tile destination, Tile currentTile) {
-        int destX = destination.getTrel_x();
-        int destY = destination.getTrel_y();
-
-        if(currentTile.id)
-        {
-            //{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-            if((destX == currentTile.getTrel_x() -1 && destY == currentTile.getTrel_y() - 1) ||
-                    (destX == currentTile.getTrel_x() && destY == currentTile.getTrel_y() -1) ||
-                    (destX == currentTile.getTrel_x() +1 && destY == currentTile.getTrel_y() -1) ||
-                    (destX == currentTile.getTrel_x()-1 && destY == currentTile.getY()) ||
-                    (destX == currentTile.getTrel_x() && destY == currentTile.getY() + 1)||
-                    (destX == currentTile.getTrel_x()+1 && destY == currentTile.getY()))
-            {
-                return true;
-            }
-        }
-        else
-        {
-            //{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-            if((destX == currentTile.getTrel_x() -1 && destY == currentTile.getTrel_y()) ||
-                    (destX == currentTile.getTrel_x()+1 && destY == currentTile.getTrel_y()) ||
-                    (destX == currentTile.getTrel_x() && destY == currentTile.getTrel_y() -1) ||
-                    (destX == currentTile.getTrel_x() && destY == currentTile.getTrel_y()+1) ||
-                    (destX == currentTile.getTrel_x()-1 && destY == currentTile.getTrel_y() + 1)||
-                    (destX == currentTile.getTrel_x()+1 && destY == currentTile.getTrel_y()+1))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void drawMap(Graphics g, Camera camera) {
@@ -404,6 +283,24 @@ public class Map implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Map map = (Map) o;
         return cols == map.cols && rows == map.rows;
+    }
+
+    private Tile[] accept(Visitor visitor, String from, String to) {
+        Tile startTile = this.getTileByLoc(decryptCol(from), decryptRow(from));
+        Tile tileToFind = this.getTileByLoc(decryptCol(to), decryptRow(to));
+        return visitor.visit(this, startTile, tileToFind);
+    }
+
+    private void accept(Visitor visitor, Tile[] prec, Tile currentTile, boolean isWide, Random rng){
+        visitor.visit(this, prec, currentTile, isWide, rng, this.factory);
+    }
+
+    private ArrayList<Tile> accept(Visitor visitor, Tile tile){
+        return visitor.visit(this, tile);
+    }
+
+    public void setTile(int index, Tile tile){
+        tiles[index] = tile;
     }
 
 }
