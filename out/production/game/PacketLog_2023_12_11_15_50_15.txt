@@ -1,2 +1,0 @@
-sendPacket - Mon Dec 11 15:50:15 EET 2023
-X:0  Y:0  HP:-10  ID:1  Type:null
