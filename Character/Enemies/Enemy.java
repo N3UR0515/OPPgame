@@ -2,12 +2,15 @@ package Character.Enemies;
 
 import AbstractFactory.EnemyFactory;
 import Character.Character;
-import Character.Camera;
 import Character.Player;
+import Character.Camera;
+import Visitor.BFSVisitor;
 
 import FlyWeight.MonsterImage;
 import Map.Tile.*;
 import Map.Map;
+import Visitor.Visitor;
+import Visitor.BacktrackVisitor;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -103,83 +106,64 @@ public abstract class Enemy extends Character {
     }
 
     protected void seekPlayer(Character player) {
-        ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
-        Tile[] prec = new Tile[map.getTileCount()];
-
-        // Starting tile
-        Tile startTile = map.getTileByLoc(rel_x, rel_y);
-        openQueue.add(startTile);
-        prec[startTile.getTrel_x()*map.getRows()+ startTile.getTrel_y()] = startTile;
-
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
-
-            if (checkDistance(player, currentTile)) {
-                // Found the player, update the enemy's position
-                moveEnemyToPlayer(prec, currentTile);
-                return;
-            }
-
-            closedList.add(currentTile);
-
-            // Get neighboring tiles
-            ArrayList<Tile> neighbors = getNeighbors(currentTile);
-
-            for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
-                    prec[neighbor.getTrel_x() * map.getRows() + neighbor.getTrel_y()] =  currentTile;
-                }
-            }
-        }
+        Visitor bfsVisitor = new BFSVisitor();
+        Visitor backVisitor = new BacktrackVisitor();
+        Tile[] prec = this.accept(bfsVisitor, player);
+        this.accept(backVisitor, prec, prec[prec.length-1]);
     }
 
-    protected void moveEnemyToPlayer(Tile[] prec, Tile currentTile) {
-        while (prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()] != currentTile) {
-            if (checkDistance(currentTile)) {
-                this.rel_x = currentTile.getTrel_x();
-                this.rel_y = currentTile.getTrel_y();
-                break;
-            }
-            currentTile = prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()];
-        }
+//    protected void moveEnemyToPlayer(Tile[] prec, Tile currentTile) {
+//        while (prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()] != currentTile) {
+//            if (checkDistance(currentTile)) {
+//                this.rel_x = currentTile.getTrel_x();
+//                this.rel_y = currentTile.getTrel_y();
+//                break;
+//            }
+//            currentTile = prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()];
+//        }
+//    }
+
+//    protected ArrayList<Tile> getNeighbors(Tile tile) {
+//        ArrayList<Tile> neighbors = new ArrayList<>();
+//
+//        int x = tile.getTrel_x();
+//        int y = tile.getTrel_y();
+//
+//        int[][] directionsEven = {
+//                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
+//        };
+//        int[][] directionsOdd = {
+//                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
+//        };
+//        int[][] directions ={};
+//
+//        if(tile.id)
+//        {
+//            directions = directionsEven;
+//        }
+//        else
+//        {
+//            directions = directionsOdd;
+//        }
+//        for (int[] dir : directions) {
+//            int dx = dir[0];
+//            int dy = dir[1];
+//
+//            if (x + dx >= 0 && x + dx < map.getCols() && y + dy >= 0 && y + dy < map.getRows()) {
+//                Tile neighbor = map.getTileByLoc(x + dx, y + dy);
+//                if (neighbor.getClass() != UnavailableTile.class && neighbor.getOnTile() == null){
+//                    neighbors.add(neighbor);
+//                }
+//            }
+//        }
+//
+//        return neighbors;
+//    }
+
+    private Tile[] accept(Visitor visitor, Character player){
+        return visitor.visit(this, (Player) player);
     }
-
-    protected ArrayList<Tile> getNeighbors(Tile tile) {
-        ArrayList<Tile> neighbors = new ArrayList<>();
-
-        int x = tile.getTrel_x();
-        int y = tile.getTrel_y();
-
-        int[][] directionsEven = {
-                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-        };
-        int[][] directionsOdd = {
-                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-        };
-        int[][] directions ={};
-
-        if(tile.id)
-        {
-            directions = directionsEven;
-        }
-        else
-        {
-            directions = directionsOdd;
-        }
-        for (int[] dir : directions) {
-            int dx = dir[0];
-            int dy = dir[1];
-
-            if (x + dx >= 0 && x + dx < map.getCols() && y + dy >= 0 && y + dy < map.getRows()) {
-                Tile neighbor = map.getTileByLoc(x + dx, y + dy);
-                if (neighbor.getClass() != UnavailableTile.class && neighbor.getOnTile() == null){
-                    neighbors.add(neighbor);
-                }
-            }
-        }
-
-        return neighbors;
+    private void accept(Visitor backVisitor, Tile[] prec, Tile tile) {
+        backVisitor.visit(this, prec, tile);
     }
 }

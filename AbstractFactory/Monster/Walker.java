@@ -2,11 +2,12 @@ package AbstractFactory.Monster;
 
 import Character.Enemies.Enemy;
 import FlyWeight.FlyWeightFactory;
-import FlyWeight.MonsterImage;
+import Visitor.BFSVisitor;
 import Map.Map;
 import Map.Tile.HiderTile;
 import Map.Tile.Tile;
-import org.newdawn.slick.Color;
+import Visitor.Visitor;
+import Visitor.BacktrackVisitor;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import Character.Character;
@@ -49,35 +50,17 @@ public class Walker extends Enemy {
 
     public void seekTile()
     {
-        ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
-        Tile[] prec = new Tile[map.getTileCount()];
+        Visitor bfsVisitor = new BFSVisitor();
+        Visitor backVisitor = new BacktrackVisitor();
+        Tile[] prec = this.accept(bfsVisitor);
+        this.accept(backVisitor, prec, prec[prec.length-1]);
+    }
 
-        // Starting tile
-        Tile startTile = map.getTileByLoc(rel_x, rel_y);
-        openQueue.add(startTile);
-        prec[startTile.getTrel_x()*map.getRows()+ startTile.getTrel_y()] = startTile;
+    private Tile[] accept(Visitor visitor){
+        return visitor.visit(this);
+    }
 
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
-
-            if (currentTile.getPickUp() != null) {
-                // Found the player, update the enemy's position
-                moveEnemyToPlayer(prec, currentTile);
-                return;
-            }
-
-            closedList.add(currentTile);
-
-            // Get neighboring tiles
-            ArrayList<Tile> neighbors = getNeighbors(currentTile);
-
-            for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
-                    prec[neighbor.getTrel_x() * map.getRows() + neighbor.getTrel_y()] =  currentTile;
-                }
-            }
-        }
+    private void accept(Visitor backVisitor, Tile[] prec, Tile tile) {
+        backVisitor.visit(this, prec, tile);
     }
 }
