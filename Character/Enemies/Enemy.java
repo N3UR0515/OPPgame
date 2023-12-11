@@ -112,54 +112,6 @@ public abstract class Enemy extends Character {
         this.accept(backVisitor, prec, prec[prec.length-1]);
     }
 
-//    protected void moveEnemyToPlayer(Tile[] prec, Tile currentTile) {
-//        while (prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()] != currentTile) {
-//            if (checkDistance(currentTile)) {
-//                this.rel_x = currentTile.getTrel_x();
-//                this.rel_y = currentTile.getTrel_y();
-//                break;
-//            }
-//            currentTile = prec[currentTile.getTrel_x() * map.getRows() + currentTile.getTrel_y()];
-//        }
-//    }
-
-//    protected ArrayList<Tile> getNeighbors(Tile tile) {
-//        ArrayList<Tile> neighbors = new ArrayList<>();
-//
-//        int x = tile.getTrel_x();
-//        int y = tile.getTrel_y();
-//
-//        int[][] directionsEven = {
-//                {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}
-//        };
-//        int[][] directionsOdd = {
-//                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}
-//        };
-//        int[][] directions ={};
-//
-//        if(tile.id)
-//        {
-//            directions = directionsEven;
-//        }
-//        else
-//        {
-//            directions = directionsOdd;
-//        }
-//        for (int[] dir : directions) {
-//            int dx = dir[0];
-//            int dy = dir[1];
-//
-//            if (x + dx >= 0 && x + dx < map.getCols() && y + dy >= 0 && y + dy < map.getRows()) {
-//                Tile neighbor = map.getTileByLoc(x + dx, y + dy);
-//                if (neighbor.getClass() != UnavailableTile.class && neighbor.getOnTile() == null){
-//                    neighbors.add(neighbor);
-//                }
-//            }
-//        }
-//
-//        return neighbors;
-//    }
-
     private Tile[] accept(Visitor visitor, Character player){
         return visitor.visit(this, (Player) player);
     }
