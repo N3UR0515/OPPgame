@@ -28,6 +28,7 @@ public class Game extends StateBasedGame {
     public static final int MainMenuState = 0;
     public static final int MatchmakingState = 1;
     public static final int GameplayState = 2;
+    public static final int EndgameState = 3;
     private Player player;
     private final String SERVER_IP = "localhost";
     private final int SERVER_PORT = 12345;
@@ -153,6 +154,7 @@ public class Game extends StateBasedGame {
         addState(new MainMenuState(MainMenuState, this));
         addState(new MatchmakingState(MatchmakingState, this));
         addState(new GameplayState(GameplayState, this));
+        addState(new EndgameState(EndgameState, this));
     }
 
     public void setPlayer(Player player) {

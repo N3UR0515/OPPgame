@@ -156,6 +156,10 @@ public class GameplayState extends BasicGameState {
             this.game.getInvoker().redo();
 
         this.game.getCamera().updateCamera(container);
+        if (this.game.getPlayer().getHP() <= 0)
+        {
+            game.enterState(Game.EndgameState);
+        }
     }
 
     @Override

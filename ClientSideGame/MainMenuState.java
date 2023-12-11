@@ -32,9 +32,7 @@ public class MainMenuState extends BasicGameState {
 
     @Override
     public void keyPressed(int key, char c) {
-        // Check if the key pressed is '1' (Start Game)
         if (key == Input.KEY_1) {
-            // Switch to the GameplayState
             game.enterState(Game.MatchmakingState);
         }
     }
