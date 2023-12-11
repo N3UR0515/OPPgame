@@ -175,5 +175,9 @@ public class Server {
         return temp;
     }
 
+    public static void removeClient(int clientID){
+        clients.remove(clientID);
+    }
+
 }
 

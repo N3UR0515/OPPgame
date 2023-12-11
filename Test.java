@@ -11,7 +11,6 @@ import Packet.Builder.PlayerAttackPacketBuilder;
 import Packet.*;
 import Map.Tile.*;
 import Packet.Command.*;
-import PickUp.PickUpStore;
 import org.newdawn.slick.*;
 import Character.*;
 import Character.Character;

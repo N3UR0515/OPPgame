@@ -1,0 +1,144 @@
+sendPacket - Mon Dec 11 17:27:09 EET 2023
+X:0  Y:0  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:11 EET 2023
+X:0  Y:1  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:11 EET 2023
+X:0  Y:2  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:12 EET 2023
+X:0  Y:3  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:12 EET 2023
+X:0  Y:4  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:12 EET 2023
+X:0  Y:5  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:12 EET 2023
+X:0  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:13 EET 2023
+X:0  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:13 EET 2023
+X:0  Y:8  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:14 EET 2023
+X:0  Y:9  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:14 EET 2023
+X:0  Y:10  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:14 EET 2023
+X:0  Y:11  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:14 EET 2023
+X:0  Y:12  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:14 EET 2023
+X:0  Y:13  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:14  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:15  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:16  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:17  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:18  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:15 EET 2023
+X:0  Y:19  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:16 EET 2023
+X:1  Y:18  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:16 EET 2023
+X:2  Y:18  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:16 EET 2023
+X:3  Y:17  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:16 EET 2023
+X:4  Y:17  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:17 EET 2023
+X:5  Y:16  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:17 EET 2023
+X:6  Y:16  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:17 EET 2023
+X:7  Y:15  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:18 EET 2023
+X:8  Y:15  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:18 EET 2023
+X:8  Y:14  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:18 EET 2023
+X:8  Y:13  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:18 EET 2023
+X:8  Y:12  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:19 EET 2023
+X:8  Y:11  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:19 EET 2023
+X:8  Y:10  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:19 EET 2023
+X:8  Y:9  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:19 EET 2023
+X:8  Y:8  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:20 EET 2023
+X:8  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:20 EET 2023
+X:8  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:22 EET 2023
+X:8  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:23 EET 2023
+X:8  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:24 EET 2023
+X:8  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:25 EET 2023
+X:8  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:25 EET 2023
+X:8  Y:5  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:25 EET 2023
+X:8  Y:4  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:25 EET 2023
+X:8  Y:3  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:26 EET 2023
+X:8  Y:2  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:26 EET 2023
+X:9  Y:1  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:27 EET 2023
+X:10  Y:1  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:27 EET 2023
+X:11  Y:0  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:27 EET 2023
+X:12  Y:0  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:28 EET 2023
+X:12  Y:1  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:28 EET 2023
+X:12  Y:2  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:28 EET 2023
+X:12  Y:3  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:29 EET 2023
+X:12  Y:4  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:30 EET 2023
+X:12  Y:5  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:30 EET 2023
+X:12  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:30 EET 2023
+X:12  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:31 EET 2023
+X:13  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:31 EET 2023
+X:14  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:31 EET 2023
+X:15  Y:6  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:32 EET 2023
+X:16  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:32 EET 2023
+X:17  Y:7  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:32 EET 2023
+X:18  Y:8  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:32 EET 2023
+X:19  Y:8  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:33 EET 2023
+X:20  Y:9  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:33 EET 2023
+X:21  Y:9  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:33 EET 2023
+X:22  Y:10  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:33 EET 2023
+X:23  Y:10  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:34 EET 2023
+X:24  Y:11  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:34 EET 2023
+X:25  Y:11  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:35 EET 2023
+X:26  Y:12  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:35 EET 2023
+X:27  Y:12  HP:-10  ID:1  Type:null
+sendPacket - Mon Dec 11 17:27:36 EET 2023
+X:28  Y:13  HP:-10  ID:1  Type:null
