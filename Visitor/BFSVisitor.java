@@ -2,6 +2,7 @@ package Visitor;
 
 import AbstractFactory.Monster.Walker;
 import Character.Enemies.Enemy;
+import Iterator.BFSIterator;
 import Map.Map;
 import Map.Tile.Tile;
 import Character.Player;
@@ -15,18 +16,18 @@ public class BFSVisitor extends Visitor {
     @Override
     public Tile[] visit(Map map, Tile from, Tile to) {
         ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
+        BFSIterator iterator = new BFSIterator();
         Tile[] prec = new Tile[map.getTileCount() + 1];
 
         // Starting tile followed by destination tile
-        openQueue.add(from);
+        iterator.add(from);
         prec[from.getTrel_x() * map.getRows() + from.getTrel_y()] = from;
 
         //Declaring another visitor for neighboring tiles
         Visitor visitor = new NeighboringTilesVisitor();
 
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
+        while (iterator.hasNext(null)) {
+            Tile currentTile = (Tile) iterator.getNext(null);
 
             if (isCloseToTile(to, currentTile)) {
                 prec[prec.length - 1] = currentTile;
@@ -39,8 +40,8 @@ public class BFSVisitor extends Visitor {
             ArrayList<Tile> neighbors = this.accept(visitor, map, currentTile);
 
             for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
+                if (!closedList.contains(neighbor) && !(Boolean) iterator.find(neighbor)) {
+                    iterator.add(neighbor);
                     prec[neighbor.getTrel_x() * map.getRows() + neighbor.getTrel_y()] = currentTile;
                 }
             }
@@ -51,19 +52,19 @@ public class BFSVisitor extends Visitor {
     @Override
     public Tile[] visit(Enemy enemy, Player destination) {
         ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
+        BFSIterator iterator = new BFSIterator();
         Tile[] prec = new Tile[enemy.getMap().getTileCount()+1];
 
         // Starting tile
         Tile startTile = enemy.getMap().getTileByLoc(enemy.getRel_x(), enemy.getRel_y());
-        openQueue.add(startTile);
+        iterator.add(startTile);
         prec[startTile.getTrel_x()*enemy.getMap().getRows()+ startTile.getTrel_y()] = startTile;
 
         //Declaring another visitor for neighboring tiles
         Visitor visitor = new NeighboringTilesVisitor();
 
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
+        while (iterator.hasNext(null)) {
+            Tile currentTile = (Tile) iterator.getNext(null);
 
             if (isCloseToTile(enemy.getMap().getTileByLoc(destination.getRel_x(),  destination.getRel_y()), currentTile)) {
                 prec[prec.length - 1] = currentTile;
@@ -76,8 +77,8 @@ public class BFSVisitor extends Visitor {
             ArrayList<Tile> neighbors = this.accept(visitor, enemy, currentTile);
 
             for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
+                if (!closedList.contains(neighbor) && !(Boolean)iterator.find(neighbor)) {
+                    iterator.add(neighbor);
                     prec[neighbor.getTrel_x() * enemy.getMap().getRows() + neighbor.getTrel_y()] =  currentTile;
                 }
             }
@@ -88,18 +89,18 @@ public class BFSVisitor extends Visitor {
     @Override
     public Tile[] visit(Walker enemy) {
         ArrayList<Tile> closedList = new ArrayList<>();
-        Queue<Tile> openQueue = new LinkedList<>();
+        BFSIterator iterator = new BFSIterator();
         Tile[] prec = new Tile[enemy.getMap().getTileCount() + 1];
 
         // Starting tile
         Tile startTile = enemy.getMap().getTileByLoc(enemy.getRel_x(), enemy.getRel_y());
-        openQueue.add(startTile);
+        iterator.add(startTile);
         prec[startTile.getTrel_x()*enemy.getMap().getRows()+ startTile.getTrel_y()] = startTile;
 
         Visitor visitor = new NeighboringTilesVisitor();
 
-        while (!openQueue.isEmpty()) {
-            Tile currentTile = openQueue.poll();
+        while (iterator.hasNext(null)) {
+            Tile currentTile = (Tile) iterator.getNext(null);
 
             if (currentTile.getPickUp() != null) {
                 prec[prec.length - 1] = currentTile;
@@ -112,8 +113,8 @@ public class BFSVisitor extends Visitor {
             ArrayList<Tile> neighbors = this.accept(visitor, enemy, currentTile);
 
             for (Tile neighbor : neighbors) {
-                if (!closedList.contains(neighbor) && !openQueue.contains(neighbor)) {
-                    openQueue.add(neighbor);
+                if (!closedList.contains(neighbor) && !(Boolean)iterator.find(neighbor)) {
+                    iterator.add(neighbor);
                     prec[neighbor.getTrel_x() * enemy.getMap().getRows() + neighbor.getTrel_y()] =  currentTile;
                 }
             }
