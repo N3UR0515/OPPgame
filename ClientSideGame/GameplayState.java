@@ -150,9 +150,9 @@ public class GameplayState extends BasicGameState {
         this.game.getInvoker().invoke();
         if(this.game.getCharacters().get(this.game.getPlayer().id) != null)
             this.game.getPlayer().setHP(this.game.getCharacters().get(this.game.getPlayer().id).getHP());
-        if(container.getInput().isKeyPressed(Input.KEY_P))
+        while(container.getInput().isKeyDown(Input.KEY_P))
             this.game.getInvoker().undo();
-        if(container.getInput().isKeyPressed(Input.KEY_R))
+        while (container.getInput().isKeyDown(Input.KEY_R))
             this.game.getInvoker().redo();
 
         this.game.getCamera().updateCamera(container);

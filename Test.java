@@ -5,6 +5,7 @@ import CharacterDecorator.UIElement;
 import Effects.*;
 import Logs.PacketSenderProxy;
 import Map.Map;
+import Mediator.ChatMediator;
 import Packet.Builder.ChangeOfPlayerPositionPacketBuilder;
 import Packet.Builder.PacketBuilder;
 import Packet.Builder.PlayerAttackPacketBuilder;
@@ -14,7 +15,9 @@ import Packet.Command.*;
 import org.newdawn.slick.*;
 import Character.*;
 import Character.Character;
-
+import Server.MusicAdapter.WAVPlayer;
+import Server.MusicAdapter.WAVPlayerAdapter;
+import Server.MusicAdapter.MusicPlayer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -41,7 +44,8 @@ public class Test extends BasicGame {
     public boolean MyTurn = true;
     private CommandInvoker invoker;
     Effect effect;
-
+    public static MusicPlayer musicPlayer;
+    private ChatMediator chatMediator;
     public Test() {
         super("Game");
     }
@@ -49,7 +53,7 @@ public class Test extends BasicGame {
     public static void main(String[] arguments) {
         try {
             AppGameContainer app = new AppGameContainer(new Test());
-            app.setDisplayMode(640, 480, false);
+            app.setDisplayMode(1024, 1024, false);
             app.setShowFPS(true);
             app.setVSync(true);
             app.start();
@@ -60,6 +64,8 @@ public class Test extends BasicGame {
 
     public void init(GameContainer container) throws SlickException {
         try {
+            musicPlayer = new WAVPlayerAdapter(new WAVPlayer());
+            musicPlayer.playIntroMusic("./IntroMusic.wav");
             socket = new Socket(SERVER_IP, SERVER_PORT);
             out = new ObjectOutputStream(socket.getOutputStream());
             packetSenderProxy = new PacketSenderProxy(out);
@@ -73,6 +79,18 @@ public class Test extends BasicGame {
             camera = new Camera(container, player);
             invoker = new CommandInvoker();
             effect = Effect.link(new AttackingEffect(), new BleedingEffect(), new GetHitEffect());
+
+            Image buttonImage = new Image(80, 30);
+            Graphics buttonGraphics = buttonImage.getGraphics();
+
+            buttonGraphics.setColor(Color.gray);
+            buttonGraphics.fillRect(0, 0, buttonImage.getWidth(), buttonImage.getHeight());
+            buttonGraphics.setColor(Color.white);
+            buttonGraphics.drawRect(0, 0, buttonImage.getWidth(), buttonImage.getHeight());
+
+            buttonGraphics.flush();
+
+            chatMediator = new ChatMediator(container, buttonImage);
 
             //new Thread(this::Send).start();
             Send();
@@ -144,19 +162,22 @@ public class Test extends BasicGame {
 
 
     public void update(GameContainer container, int delta) throws SlickException {
-            if (player.updateCharacter(container))
-            {
-                new Thread(this::Send).start();
-                MyTurn = false;
-            };
+        if (player.updateCharacter(container))
+        {
+            new Thread(this::Send).start();
+            MyTurn = false;
+        }
 
-            invoker.invoke();
-            if(characters.get(player.id) != null)
-                player.setHP(characters.get(player.id).getHP());
-            if(container.getInput().isKeyPressed(Input.KEY_P))
-                invoker.undo();
-            if(container.getInput().isKeyPressed(Input.KEY_R))
-                invoker.redo();
+        Input input = container.getInput();
+        chatMediator.getSendMessageButton().checkClick(input);
+
+        invoker.invoke();
+        if(characters.get(player.id) != null)
+            player.setHP(characters.get(player.id).getHP());
+        if(container.getInput().isKeyPressed(Input.KEY_P))
+            invoker.undo();
+        if(container.getInput().isKeyPressed(Input.KEY_R))
+            invoker.redo();
 
         camera.updateCamera(container);
     }
@@ -164,6 +185,10 @@ public class Test extends BasicGame {
     public void render(GameContainer container, Graphics g) throws SlickException {
         map.drawMap(g, camera);
         UIElement element;
+
+        chatMediator.getChatHistory().render(container,g);
+        chatMediator.getChatInputField().render(container,g);
+        chatMediator.getSendMessageButton().render(container,g);
 
         for(Character c : characters.values()) {
             if(c instanceof Enemy)  {

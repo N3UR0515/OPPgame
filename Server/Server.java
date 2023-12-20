@@ -1,5 +1,7 @@
 package Server;
 
+import Interpreter.Context;
+import Interpreter.Expression;
 import Map.Map;
 import Map.Area;
 import Map.Tile.Tile;
@@ -7,16 +9,16 @@ import Packet.Packet;
 import Character.Character;
 import Character.Player;
 import Character.Enemies.Enemy;
-import Server.MusicAdapter.WAVPlayer;
-import Server.MusicAdapter.WAVPlayerAdapter;
-import Server.MusicAdapter.MusicPlayer;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+import Interpreter.StartServerExpression;
+import Interpreter.StopServerExpression;
+import Interpreter.RestartServerExpression;
 
 public class Server {
     private static final int PORT = 12345;
@@ -29,12 +31,46 @@ public class Server {
     public static Map initMap;
     static Area[] areas;
     public static List<Tile> tiles;
-    public static MusicPlayer player;
-
+    private static boolean running = true;
+    private static ServerSocket serverSocket;
+    private static Thread serverThread;
     public static void main(String[] args) {
-        try {
-            player = new WAVPlayerAdapter(new WAVPlayer());
+        new Thread(Server::handleConsoleCommands).start();
 
+        serverThread = new Thread(Server::initializeServer);
+        serverThread.start();
+    }
+    public static void startServer() {
+        if (!running) {
+            running = true;
+            serverThread = new Thread(Server::initializeServer);
+            serverThread.start();
+            System.out.println("Server started.");
+        } else {
+            System.out.println("Server is already running.");
+        }
+    }
+
+    public static void stopServer() {
+        if (!running){
+            return;
+        }
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+                running = false;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (serverThread != null) {
+            serverThread.interrupt();
+        }
+        System.out.println("Server stopped.");
+    }
+
+    private static void initializeServer() {
+        try {
             map = new Map(100, 100);
             initMap = map.copy();
             tiles = map.generateHealthTiles();
@@ -67,13 +103,13 @@ public class Server {
             }
 
 
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(PORT);
             System.out.println("Server.Server is running and listening on port " + PORT);
 
             new Thread(Server::Turns).start();
 
 
-            while (true) {
+            while (running) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
 
@@ -90,7 +126,11 @@ public class Server {
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (running) {
+                e.printStackTrace();
+            } else {
+                System.out.println("Server stopped.");
+            }
         }
     }
 
@@ -179,5 +219,34 @@ public class Server {
         clients.remove(clientID);
     }
 
+    private static void handleConsoleCommands() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            Context context = new Context();
+
+            while (true) {
+                System.out.println("Enter command (start, stop, restart):");
+                String command = scanner.nextLine();
+
+                Expression expression = getExpression(command);
+                if (expression != null) {
+                    expression.interpret(context);
+                } else {
+                    System.out.println("Invalid command.");
+                }
+            }
+        }
+    }
+
+    private static Expression getExpression(String command) {
+        return switch (command.toLowerCase()) {
+            case "start" -> new StartServerExpression();
+            case "stop" -> new StopServerExpression();
+            case "restart" -> new RestartServerExpression(new StopServerExpression(), new StartServerExpression());
+            default -> {
+                System.out.println("Command not recognized");
+                yield null;
+            }
+        };
+    }
 }
 
