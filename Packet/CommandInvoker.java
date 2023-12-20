@@ -4,12 +4,14 @@ import java.util.*;
 
 import Packet.Command.PacketCommand;
 import Character.Character;
-
+import Memento.Memento;
+import Memento.PacketCommandMemento;
 public class CommandInvoker {
     private PacketCommand packetCommand;
     private Queue<PacketCommand> packetCommandQueue;
-    private Stack<PacketCommand> commandHistory;
-    private Stack<PacketCommand> redoCommands;
+    private Stack<Memento> commandHistory;
+    private Stack<Memento> redoCommands;
+
     public CommandInvoker()
     {
         packetCommandQueue = new ArrayDeque<>();
@@ -23,60 +25,33 @@ public class CommandInvoker {
             packetCommandQueue.add(command);
     }
 
-    public void undo()
-    {
-        packetCommand.undo();
-        if(!commandHistory.empty())
-        {
-            packetCommand = commandHistory.pop();
-            if(packetCommand != null) {
-                System.out.println(packetCommand);
-                packetCommand.execute();
-                redoCommands.push(packetCommand);
-        }
-
-        }
-    }
-    public void redo()
-    {
-        if(!redoCommands.empty())
-        {
-            packetCommand = redoCommands.pop();
-            packetCommand.execute();
-            commandHistory.push(packetCommand);
+    public void undo() {
+        if (!commandHistory.empty()) {
+            System.out.println("Memento undo");
+            System.out.println(commandHistory.size());
+            Memento memento = commandHistory.pop();
+            redoCommands.push(memento);
+            memento.restore();
         }
     }
 
-    public void invoke()
-    {
-        if(!packetCommandQueue.isEmpty())
-        {
-            while(!redoCommands.empty())
-            {
-                redoCommands.peek().execute();
-                commandHistory.push(redoCommands.pop());
-            }
+    public void redo() {
+        if (!redoCommands.empty()) {
+            System.out.println("Memento redo");
+            Memento memento = redoCommands.pop();
+            System.out.println(commandHistory.size());
+            commandHistory.push(memento);
+            memento.restore();
+        }
+    }
 
+    public void invoke() {
+        if (!packetCommandQueue.isEmpty()) {
             packetCommand = packetCommandQueue.remove();
-
-            if(packetCommand != null)
-            {
+            if (packetCommand != null) {
                 packetCommand.execute();
-                commandHistory.push(packetCommand);
+                commandHistory.push(new PacketCommandMemento(packetCommand));
             }
-
         }
-    }
-
-    public HashMap<Integer, Character> getResults()
-    {
-        if(packetCommand != null)
-            return packetCommand.getResults();
-        return null;
-    }
-
-    public PacketCommand getCommand()
-    {
-        return packetCommand;
     }
 }
