@@ -158,6 +158,5 @@ public class EnemyHandler extends CharacterHandler
 
     @Override
     protected void TurnlineNext() {
-        System.out.println("endofturn");
     }
 }
