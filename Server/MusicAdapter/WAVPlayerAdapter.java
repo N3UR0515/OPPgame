@@ -15,7 +15,7 @@ public class WAVPlayerAdapter implements MusicPlayer{
             File soundFile = new File(musicFile);
             if (soundFile.exists()) {
                 wavPlayer.playAudio(soundFile);
-                Timer timer = new Timer(4000, e -> wavPlayer.stopAudio());
+                Timer timer = new Timer(10000, e -> wavPlayer.stopAudio());
 
                 timer.setRepeats(false);
                 timer.start();

@@ -7,10 +7,6 @@ import Packet.Packet;
 import Character.Character;
 import Character.Player;
 import Character.Enemies.Enemy;
-import Server.MusicAdapter.WAVPlayer;
-import Server.MusicAdapter.WAVPlayerAdapter;
-import Server.MusicAdapter.MusicPlayer;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -29,12 +25,9 @@ public class Server {
     public static Map initMap;
     static Area[] areas;
     public static List<Tile> tiles;
-    public static MusicPlayer player;
 
     public static void main(String[] args) {
         try {
-            player = new WAVPlayerAdapter(new WAVPlayer());
-
             map = new Map(100, 100);
             initMap = map.copy();
             tiles = map.generateHealthTiles();
